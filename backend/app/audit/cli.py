@@ -2,8 +2,10 @@ import argparse
 import sys
 from pathlib import Path
 
+from app.audit.bcf_export import export_bcf
 from app.audit.engine import InvalidIfcError, audit
 from app.audit.models import AuditReport
+from app.audit.report_html import render_html
 from app.rulepack.loader import DEFAULT_PACK, load_rulepack
 
 
@@ -19,9 +21,10 @@ def print_summary(report: AuditReport) -> None:
 
 def write_outputs(report: AuditReport, out_dir: Path) -> list[Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
-    path = out_dir / "report.json"
-    path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
-    return [path]
+    (out_dir / "report.json").write_text(report.model_dump_json(indent=2), encoding="utf-8")
+    (out_dir / "report.html").write_text(render_html(report), encoding="utf-8")
+    export_bcf(report, out_dir / "issues.bcf")
+    return [out_dir / n for n in ("report.json", "report.html", "issues.bcf")]
 
 
 def main(argv=None) -> int:

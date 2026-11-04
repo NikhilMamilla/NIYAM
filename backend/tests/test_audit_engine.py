@@ -118,7 +118,8 @@ def test_cli_run_prints_summary_and_writes_report(tmp_path, capsys):
     out = capsys.readouterr().out
     assert code == 0
     assert "MBBL2016-5.4.1#b" in out and "noncompliant" in out and "overall" in out
-    assert (tmp_path / "out" / "report.json").stat().st_size > 0
+    for name in ("report.json", "report.html", "issues.bcf"):
+        assert (tmp_path / "out" / name).stat().st_size > 0
 
 
 def test_cli_run_reports_invalid_file(tmp_path, capsys):
