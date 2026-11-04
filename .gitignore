@@ -7,8 +7,8 @@ backend/.venv/
 
 # Node
 node_modules/
-package.json
-package-lock.json
+/package.json
+/package-lock.json
 
 # Env
 .env
@@ -35,3 +35,9 @@ skills-lock.json
 
 # Compiler run outputs (not committed for now)
 eval/runs/
+
+# Frontend build and test output; web-ifc wasm is copied from node_modules on install
+frontend/dist/
+frontend/public/web-ifc/
+frontend/test-results/
+frontend/playwright-report/
