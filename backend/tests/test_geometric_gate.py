@@ -177,3 +177,20 @@ def test_repair_prompt_from_a_geometric_failure_leaks_no_fixture_details():
 def test_stage_messages_never_carry_measured_values():
     result = verify(body("return [helpers.finding(e, 'fail', 'bad 1.68') for e in helpers.elements(model, 'IfcSpace')]"))
     assert "1.68" not in result.first_failure.message
+
+
+# --- found by running the audit through the real server ----------------------------------------------------------
+
+
+def test_relative_model_paths_work_from_the_sandbox_temp_directory(monkeypatch):
+    pair = fixture_pair(UNIT_AREA)
+    monkeypatch.chdir(pair.pass_path.parent)  # the child runs in another cwd, so the path must be made absolute
+    outcome = sandbox.run_check(gold(UNIT_AREA), [pair.pass_path.name], timeout_s=60)
+    assert outcome.ok, outcome.error
+    assert [f["verdict"] for f in outcome.results[0]] == ["pass"]
+
+
+def test_sandbox_children_use_one_blas_thread_so_parallel_audits_do_not_exhaust_memory():
+    env = sandbox.scrubbed_env()
+    assert env["OPENBLAS_NUM_THREADS"] == "1" and env["OMP_NUM_THREADS"] == "1"
+    assert sandbox.probe_environment()["env"]["OPENBLAS_NUM_THREADS"] == "1"

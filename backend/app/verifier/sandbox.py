@@ -32,9 +32,15 @@ class SandboxOutcome:
     kind: str | None = None  # "timeout" | "output" | "crash" | "error" when not ok
 
 
+# numpy's BLAS allocates buffers per CPU thread; several sandboxes at once ran out of memory ("OpenBLAS error:
+# Memory allocation still failed") on a loaded machine. The checks do no linear algebra, so one thread is enough.
+SINGLE_THREAD = {"OPENBLAS_NUM_THREADS": "1", "OMP_NUM_THREADS": "1", "MKL_NUM_THREADS": "1"}
+
+
 def scrubbed_env(source=None) -> dict[str, str]:
     source = os.environ if source is None else source
-    return {k: v for k, v in source.items() if k.upper() in KEEP_ENV and not SECRETISH.search(k)}
+    kept = {k: v for k, v in source.items() if k.upper() in KEEP_ENV and not SECRETISH.search(k)}
+    return kept | SINGLE_THREAD
 
 
 def _spawn(args: list[str], stdin: str, timeout_s: float):
@@ -46,7 +52,8 @@ def _spawn(args: list[str], stdin: str, timeout_s: float):
 def run_check(code: str, ifc_paths, *, timeout_s: float = DEFAULT_TIMEOUT_S,
               max_output_bytes: int = DEFAULT_MAX_OUTPUT_BYTES) -> SandboxOutcome:
     """Execute `code` (already AST-validated) against each model in its own process and return the raw findings."""
-    args = [str(RUNNER), str(BACKEND_DIR), str(max_output_bytes), *map(str, ifc_paths)]
+    # the child runs in a fresh temporary directory, so every path it is given must be absolute
+    args = [str(RUNNER), str(BACKEND_DIR), str(max_output_bytes), *(str(Path(p).resolve()) for p in ifc_paths)]
     try:
         done = _spawn(args, code, timeout_s)
     except subprocess.TimeoutExpired:
