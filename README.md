@@ -53,6 +53,24 @@ uvicorn app.main:app --reload
 
 `GET /health` returns `{"status": "ok"}`.
 
+## Rule corpus (MBBL 2016)
+
+Place the source PDF at `rules/source/mbbl-2016.pdf` (see `rules/source/README.md`), then from
+`backend/` with the venv active:
+
+```bash
+python -m app.corpus.cli ingest          # PDF -> backend/data/corpus.db (gitignored)
+python -m app.corpus.cli stats
+python -m app.corpus.cli search "stair"
+python -m app.corpus.cli show MBBL2016-5.4.3
+python -m app.corpus.cli mark MBBL2016-5.4.3 --tier geometric --topic stairs --status selected
+python -m app.corpus.cli export-selected  # -> rules/corpus/mbbl-2016.selected.yaml (tracked)
+python -m app.corpus.cli import-selected
+python -m app.corpus.cli suggest          # keyword shortlist -> docs/corpus-candidates.md
+```
+
+`page` is the 1-based page of the PDF file (printed page number = PDF page - 18).
+
 ## Configuration
 
 Copy `.env.example` to `.env` and fill in values. No secrets are committed.
