@@ -34,3 +34,22 @@ An element that a rule should apply to but that lacks the profile data the rule 
 a door without `Pset_DoorCommon.FireExit`, or an exit door without `Qto_DoorBaseQuantities.Width`)
 cannot be checked. Audits must report such elements as **unchecked**, not as passing. An IDS
 specification that applies to nothing in a model proves nothing about that model.
+
+## Spaces, stair flights and geometry (geometric rules)
+
+Geometric rules compute a value from the model's geometry instead of reading a declared one. They need
+`Body` geometry (an extruded solid is enough) in a millimetre or metre project; all computed values are in
+metres or square metres.
+
+| Meaning | Where it is read |
+|---|---|
+| Kind of room (`Bathroom`, `Habitable`, `Store`, ...) | `IfcSpace` property `Pset_SpaceCommon.Category` (`IfcLabel`) |
+| Floor area of a space | computed: the footprint of the space's body geometry (`space_floor_area_m2`) |
+| Height of a room | computed: vertical extent of the space's body geometry, floor to slab (`element_height_m`) |
+| Declared floor area | `Qto_SpaceBaseQuantities.NetFloorArea` (`IfcQuantityArea`); not used by rules |
+| Use of a building | `IfcBuilding` property `Pset_BuildingCommon.OccupancyType` (`Residential`, `Commercial`, ...) |
+| Width of a stair flight | computed: extent of an `IfcStairFlight`'s body geometry along its local Y axis (the run is along local X) (`stair_flight_width_m`) |
+
+- A space or flight with no geometry cannot have a computed value: rules report it as unchecked.
+- A space without `Pset_SpaceCommon.Category`, or a stair flight in a building without
+  `Pset_BuildingCommon.OccupancyType`, cannot be matched to a rule: unchecked, never a pass.
