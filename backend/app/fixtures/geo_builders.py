@@ -81,7 +81,8 @@ def add_control_building(f, building, name, occupancy):
     """A second building (own storey) so a control stair can sit in a different occupancy."""
     other = run(f, "root.create_entity", ifc_class="IfcBuilding", name=name)
     run(f, "aggregate.assign_object", products=[other], relating_object=building.Decomposes[0].RelatingObject)
-    set_occupancy(f, other, occupancy)
+    if occupancy is not None:
+        set_occupancy(f, other, occupancy)
     storey = run(f, "root.create_entity", ifc_class="IfcBuildingStorey", name=f"{name} storey")
     run(f, "aggregate.assign_object", products=[storey], relating_object=other)
     return storey

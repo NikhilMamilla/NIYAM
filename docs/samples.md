@@ -26,3 +26,14 @@ Regenerate (deterministic, byte-identical) from `backend/`:
 ```bash
 python ../scripts/build_sample_buildings.py
 ```
+
+## Geometric samples (D and E)
+
+`sample_d_rooms_stairs_mm` (millimetres, 9 spaces + 5 stair flights) and `sample_e_rooms_stairs_m` (metres,
+8 spaces + 4 flights) seed the three geometric rules (`MBBL2016-4.5.2#1` bathroom area, `4.3.1.1#1` habitable
+room height, `4.17.2#A` residential stair width). Every geometric rule sees a passing, a failing, an unchecked
+(no geometry, or no `Category` / `OccupancyType` data) and an out-of-scope element, including values exactly at
+the bound (1.8 m², 2.75 m, 1.0 m). The `*.truth.json` files list the expected verdict of every element and rule,
+written by hand in `app/fixtures/samples.py` independently of the audit, which `tests/test_geometric_samples.py`
+compares element by element. They contain no doors, so the three door rules report "nothing checked" on them.
+All geometry is simple extruded boxes; none of it is a real building.

@@ -10,6 +10,7 @@ import ifcopenshell
 import ifcopenshell.util.unit
 import numpy as np
 
+from app.fixtures import geo_builders
 from app.fixtures.builders import REPO_ROOT, TIMESTAMP, _stabilise, add_door, add_storey, guid, new_model, run
 
 SAMPLES_DIR = REPO_ROOT / "fixtures" / "samples"
@@ -56,7 +57,50 @@ SAMPLES = {
     "sample_b_m": ("m", SAMPLE_B, "noncompliant"),
     "sample_c_no_fireexit_mm": ("mm", SAMPLE_C, "incomplete"),
 }
+# Geometric samples: rooms and stair flights, no doors. Spaces: name, Pset_SpaceCommon.Category (None = not
+# declared), body geometry as (x, y, height) in metres (None = no geometry), expected verdicts for
+# (4.5.2#1 bathroom area >= 1.8 m2, 4.3.1.1#1 habitable room height >= 2.75 m). Flights: name, occupancy of
+# their building (None = not declared), width in metres (None = no geometry), expected verdict for 4.17.2#A
+# (residential stair width >= 1.0 m).
+GEO_RULES = ("MBBL2016-4.5.2#1", "MBBL2016-4.3.1.1#1")
+STAIR_RULE = "MBBL2016-4.17.2#A"
+SAMPLE_D = (
+    [("D-B-01 bathroom 2.4 m2", "Bathroom", (2.0, 1.2, 2.75), "PO"),
+     ("D-B-02 small bathroom 1.5 m2", "Bathroom", (1.25, 1.2, 2.75), "FO"),
+     ("D-B-03 bathroom exactly 1.8 m2", "Bathroom", (1.5, 1.2, 2.75), "PO"),
+     ("D-B-04 bathroom without geometry", "Bathroom", None, "UO"),
+     ("D-H-01 living room 3.0 m high", "Habitable", (4.0, 3.0, 3.0), "OP"),
+     ("D-H-02 bedroom 2.5 m high", "Habitable", (3.5, 3.0, 2.5), "OF"),
+     ("D-H-03 bedroom without geometry", "Habitable", None, "OU"),
+     ("D-S-01 store room", "Store", (2.0, 2.0, 2.0), "OO"),
+     ("D-X-01 space without category", None, (2.0, 2.0, 2.75), "UU")],
+    [("D-ST-01 residential flight 1.2 m", "Residential", 1.2, "P"),
+     ("D-ST-02 residential flight 0.9 m", "Residential", 0.9, "F"),
+     ("D-ST-03 residential flight without geometry", "Residential", None, "U"),
+     ("D-ST-04 commercial flight 0.8 m", "Commercial", 0.8, "O"),
+     ("D-ST-05 flight in a building without occupancy", None, 1.1, "U")],
+)
+SAMPLE_E = (
+    [("E-B-01 bathroom 3.0 m2", "Bathroom", (2.5, 1.2, 2.4), "PO"),
+     ("E-B-02 bathroom 1.68 m2", "Bathroom", (1.4, 1.2, 2.4), "FO"),
+     ("E-B-03 bathroom without geometry", "Bathroom", None, "UO"),
+     ("E-H-01 bedroom exactly 2.75 m high", "Habitable", (3.0, 3.5, 2.75), "OP"),
+     ("E-H-02 bedroom 2.7 m high", "Habitable", (3.0, 3.0, 2.7), "OF"),
+     ("E-H-03 bedroom without geometry", "Habitable", None, "OU"),
+     ("E-S-01 store room", "Store", (1.5, 1.5, 2.1), "OO"),
+     ("E-X-01 space without category", None, (2.5, 2.0, 2.75), "UU")],
+    [("E-ST-01 residential flight exactly 1.0 m", "Residential", 1.0, "P"),
+     ("E-ST-02 residential flight 0.85 m", "Residential", 0.85, "F"),
+     ("E-ST-03 commercial flight 0.8 m", "Commercial", 0.8, "O"),
+     ("E-ST-04 flight in a building without occupancy", None, 1.2, "U")],
+)
+GEO_SAMPLES = {
+    "sample_d_rooms_stairs_mm": ("mm", SAMPLE_D, "noncompliant"),
+    "sample_e_rooms_stairs_m": ("m", SAMPLE_E, "noncompliant"),
+}
 DESCRIPTIONS = {
+    "sample_d_rooms_stairs_mm": "Synthetic model in millimetres: 9 spaces and 5 stair flights for the geometric rules.",
+    "sample_e_rooms_stairs_m": "Synthetic model in metres: 8 spaces and 4 stair flights for the geometric rules.",
     "sample_a_mm": "Synthetic 2-storey model in millimetres, 12 doors covering every v0 rule case.",
     "sample_b_m": "Synthetic 2-storey model in metres, 10 doors covering every v0 rule case.",
     "sample_c_no_fireexit_mm": "Synthetic model whose 4 doors have no FireExit data: the audit is incomplete.",
@@ -122,8 +166,40 @@ def build_sample(name: str, out_dir: Path) -> Path:
     return path
 
 
+def build_geo_sample(name: str, out_dir: Path) -> Path:
+    unit, (spaces, flights), expected_status = GEO_SAMPLES[name]
+    f, storey = new_model(f"NIYAM synthetic {name}", length_unit=unit)
+    building = storey.Decomposes[0].RelatingObject
+    geo_builders.set_occupancy(f, building, "Residential")
+    storeys = {"Residential": storey}
+    truth_spaces, truth_stairs, x = [], [], 0.0
+    for space_name, category, size, codes in spaces:
+        sx, sy, height = size or (None, None, None)
+        geo_builders.add_space(f, storey, space_name, category=category, size_x_m=sx, size_y_m=sy, height_m=height,
+                               x_m=x)
+        x += (sx or 2.0) + 0.5
+        truth_spaces.append({"name": space_name, "global_id": guid(space_name), "category": category,
+                             "size_m": size, "expected": dict(zip(GEO_RULES, (CODE[c] for c in codes)))})
+    for flight_name, occupancy, width, code in flights:
+        if occupancy not in storeys:  # one extra building per distinct occupancy (None = declares none)
+            storeys[occupancy] = geo_builders.add_control_building(f, building, f"{occupancy or 'Unlabelled'} block",
+                                                                   occupancy)
+        geo_builders.add_stair_flight(f, storeys[occupancy], flight_name, width_m=width, x_m=x)
+        x += 3.5
+        truth_stairs.append({"name": flight_name, "global_id": guid(flight_name), "building_occupancy": occupancy,
+                             "width_m": width, "expected": {STAIR_RULE: CODE[code]}})
+    _stabilise(f, name, keep_names=frozenset(s[0] for s in spaces) | frozenset(s[0] for s in flights))
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"{name}.ifc"
+    f.write(str(path))
+    (out_dir / f"{name}.truth.json").write_text(json.dumps(
+        {"sample": name, "synthetic": True, "length_unit": unit, "expected_status": expected_status,
+         "doors": [], "spaces": truth_spaces, "stairs": truth_stairs}, indent=2) + "\n", encoding="utf-8")
+    return path
+
+
 def build_samples(out_dir: Path = SAMPLES_DIR) -> list[Path]:
-    return [build_sample(name, out_dir) for name in SAMPLES]
+    return [build_sample(name, out_dir) for name in SAMPLES] + [build_geo_sample(name, out_dir) for name in GEO_SAMPLES]
 
 
 def build_ifc2x3(out_dir: Path = INVALID_DIR) -> Path:

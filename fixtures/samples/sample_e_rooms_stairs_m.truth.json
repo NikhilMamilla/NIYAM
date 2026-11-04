@@ -1,0 +1,151 @@
+{
+  "sample": "sample_e_rooms_stairs_m",
+  "synthetic": true,
+  "length_unit": "m",
+  "expected_status": "noncompliant",
+  "doors": [],
+  "spaces": [
+    {
+      "name": "E-B-01 bathroom 3.0 m2",
+      "global_id": "3u6mSFzFTS3OuSsEDpAD2D",
+      "category": "Bathroom",
+      "size_m": [
+        2.5,
+        1.2,
+        2.4
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "passed",
+        "MBBL2016-4.3.1.1#1": "out_of_scope"
+      }
+    },
+    {
+      "name": "E-B-02 bathroom 1.68 m2",
+      "global_id": "0wCm4EsMLRfhADPK_eS7PP",
+      "category": "Bathroom",
+      "size_m": [
+        1.4,
+        1.2,
+        2.4
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "failed",
+        "MBBL2016-4.3.1.1#1": "out_of_scope"
+      }
+    },
+    {
+      "name": "E-B-03 bathroom without geometry",
+      "global_id": "3CyiZxzwnVYQBtocBLaFaQ",
+      "category": "Bathroom",
+      "size_m": null,
+      "expected": {
+        "MBBL2016-4.5.2#1": "unchecked",
+        "MBBL2016-4.3.1.1#1": "out_of_scope"
+      }
+    },
+    {
+      "name": "E-H-01 bedroom exactly 2.75 m high",
+      "global_id": "2XvQ$kAXvVVgv5rfmB2Jb1",
+      "category": "Habitable",
+      "size_m": [
+        3.0,
+        3.5,
+        2.75
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "out_of_scope",
+        "MBBL2016-4.3.1.1#1": "passed"
+      }
+    },
+    {
+      "name": "E-H-02 bedroom 2.7 m high",
+      "global_id": "34ya9tLZnVwhfLnkdU_ByI",
+      "category": "Habitable",
+      "size_m": [
+        3.0,
+        3.0,
+        2.7
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "out_of_scope",
+        "MBBL2016-4.3.1.1#1": "failed"
+      }
+    },
+    {
+      "name": "E-H-03 bedroom without geometry",
+      "global_id": "1wydYXEnPQD8yseMXFcxae",
+      "category": "Habitable",
+      "size_m": null,
+      "expected": {
+        "MBBL2016-4.5.2#1": "out_of_scope",
+        "MBBL2016-4.3.1.1#1": "unchecked"
+      }
+    },
+    {
+      "name": "E-S-01 store room",
+      "global_id": "0MoeNxUqHKjuOC53aCVhm7",
+      "category": "Store",
+      "size_m": [
+        1.5,
+        1.5,
+        2.1
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "out_of_scope",
+        "MBBL2016-4.3.1.1#1": "out_of_scope"
+      }
+    },
+    {
+      "name": "E-X-01 space without category",
+      "global_id": "0F$NArJFnQ2OzeENUUWj3O",
+      "category": null,
+      "size_m": [
+        2.5,
+        2.0,
+        2.75
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "unchecked",
+        "MBBL2016-4.3.1.1#1": "unchecked"
+      }
+    }
+  ],
+  "stairs": [
+    {
+      "name": "E-ST-01 residential flight exactly 1.0 m",
+      "global_id": "1hzYD4mK9H4QstUlA6e3Lr",
+      "building_occupancy": "Residential",
+      "width_m": 1.0,
+      "expected": {
+        "MBBL2016-4.17.2#A": "passed"
+      }
+    },
+    {
+      "name": "E-ST-02 residential flight 0.85 m",
+      "global_id": "2MW7hiBsDLBh4ihFEEceFO",
+      "building_occupancy": "Residential",
+      "width_m": 0.85,
+      "expected": {
+        "MBBL2016-4.17.2#A": "failed"
+      }
+    },
+    {
+      "name": "E-ST-03 commercial flight 0.8 m",
+      "global_id": "0N0nPm13zGpBrwSWDf8sde",
+      "building_occupancy": "Commercial",
+      "width_m": 0.8,
+      "expected": {
+        "MBBL2016-4.17.2#A": "out_of_scope"
+      }
+    },
+    {
+      "name": "E-ST-04 flight in a building without occupancy",
+      "global_id": "35153CODrKSfxWsyXXXYUE",
+      "building_occupancy": null,
+      "width_m": 1.2,
+      "expected": {
+        "MBBL2016-4.17.2#A": "unchecked"
+      }
+    }
+  ]
+}

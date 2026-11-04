@@ -1,0 +1,174 @@
+{
+  "sample": "sample_d_rooms_stairs_mm",
+  "synthetic": true,
+  "length_unit": "mm",
+  "expected_status": "noncompliant",
+  "doors": [],
+  "spaces": [
+    {
+      "name": "D-B-01 bathroom 2.4 m2",
+      "global_id": "01M_mG7mnMFeejaQMhLKTC",
+      "category": "Bathroom",
+      "size_m": [
+        2.0,
+        1.2,
+        2.75
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "passed",
+        "MBBL2016-4.3.1.1#1": "out_of_scope"
+      }
+    },
+    {
+      "name": "D-B-02 small bathroom 1.5 m2",
+      "global_id": "2rNp0YwxDMzA6w25ZqLoWA",
+      "category": "Bathroom",
+      "size_m": [
+        1.25,
+        1.2,
+        2.75
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "failed",
+        "MBBL2016-4.3.1.1#1": "out_of_scope"
+      }
+    },
+    {
+      "name": "D-B-03 bathroom exactly 1.8 m2",
+      "global_id": "3FvhxUetHMJ8lMq5VN5pI_",
+      "category": "Bathroom",
+      "size_m": [
+        1.5,
+        1.2,
+        2.75
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "passed",
+        "MBBL2016-4.3.1.1#1": "out_of_scope"
+      }
+    },
+    {
+      "name": "D-B-04 bathroom without geometry",
+      "global_id": "1ipwkcF$PKwRSewC87Xr94",
+      "category": "Bathroom",
+      "size_m": null,
+      "expected": {
+        "MBBL2016-4.5.2#1": "unchecked",
+        "MBBL2016-4.3.1.1#1": "out_of_scope"
+      }
+    },
+    {
+      "name": "D-H-01 living room 3.0 m high",
+      "global_id": "2tiEP8_ozJ7xJZoYLZCfW5",
+      "category": "Habitable",
+      "size_m": [
+        4.0,
+        3.0,
+        3.0
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "out_of_scope",
+        "MBBL2016-4.3.1.1#1": "passed"
+      }
+    },
+    {
+      "name": "D-H-02 bedroom 2.5 m high",
+      "global_id": "1vXJtjLJvOFB_ufu60JMhc",
+      "category": "Habitable",
+      "size_m": [
+        3.5,
+        3.0,
+        2.5
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "out_of_scope",
+        "MBBL2016-4.3.1.1#1": "failed"
+      }
+    },
+    {
+      "name": "D-H-03 bedroom without geometry",
+      "global_id": "2FNYVOtifL1986zAI55uCq",
+      "category": "Habitable",
+      "size_m": null,
+      "expected": {
+        "MBBL2016-4.5.2#1": "out_of_scope",
+        "MBBL2016-4.3.1.1#1": "unchecked"
+      }
+    },
+    {
+      "name": "D-S-01 store room",
+      "global_id": "0Ag9nIYZPVEPTGtJYjyliD",
+      "category": "Store",
+      "size_m": [
+        2.0,
+        2.0,
+        2.0
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "out_of_scope",
+        "MBBL2016-4.3.1.1#1": "out_of_scope"
+      }
+    },
+    {
+      "name": "D-X-01 space without category",
+      "global_id": "3618C9R3vMvhyjh$BcnOPy",
+      "category": null,
+      "size_m": [
+        2.0,
+        2.0,
+        2.75
+      ],
+      "expected": {
+        "MBBL2016-4.5.2#1": "unchecked",
+        "MBBL2016-4.3.1.1#1": "unchecked"
+      }
+    }
+  ],
+  "stairs": [
+    {
+      "name": "D-ST-01 residential flight 1.2 m",
+      "global_id": "2Gk12hXTPSbv7omxgU13gE",
+      "building_occupancy": "Residential",
+      "width_m": 1.2,
+      "expected": {
+        "MBBL2016-4.17.2#A": "passed"
+      }
+    },
+    {
+      "name": "D-ST-02 residential flight 0.9 m",
+      "global_id": "2skuOy3ubKew80cBSPHXAV",
+      "building_occupancy": "Residential",
+      "width_m": 0.9,
+      "expected": {
+        "MBBL2016-4.17.2#A": "failed"
+      }
+    },
+    {
+      "name": "D-ST-03 residential flight without geometry",
+      "global_id": "31M$zvq_bK28bK4DUkmvL6",
+      "building_occupancy": "Residential",
+      "width_m": null,
+      "expected": {
+        "MBBL2016-4.17.2#A": "unchecked"
+      }
+    },
+    {
+      "name": "D-ST-04 commercial flight 0.8 m",
+      "global_id": "3GMOxTBbnSV8XT23jQmz$0",
+      "building_occupancy": "Commercial",
+      "width_m": 0.8,
+      "expected": {
+        "MBBL2016-4.17.2#A": "out_of_scope"
+      }
+    },
+    {
+      "name": "D-ST-05 flight in a building without occupancy",
+      "global_id": "3ooqFAWsbSzvD_f9Azz42D",
+      "building_occupancy": null,
+      "width_m": 1.1,
+      "expected": {
+        "MBBL2016-4.17.2#A": "unchecked"
+      }
+    }
+  ]
+}
