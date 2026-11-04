@@ -1,3 +1,42 @@
+- id: MBBL2016-4.17.2#A
+  clause_id: MBBL2016-4.17.2
+  text: 'The minimum width of staircase shall be as follows: A Residential buildings (dwellings) 1.0 m'
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4.17.2_A.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'IfcStairFlight in an IfcBuilding with Pset_BuildingCommon.OccupancyType=Residential: flight
+    width (local Y extent of the flight geometry) >= 1.0 m. Ambiguity: ''width of staircase'' taken as
+    flight width, not clear width between handrails; other building types (1.5 m, 2.0 m) and the row-housing
+    note (0.75 m) are not encoded; flights in other occupancy types are out of scope.'
+- id: MBBL2016-4.3.1.1#1
+  clause_id: MBBL2016-4.3.1.1
+  text: The height of all rooms for human habitation shall not be less than 2.75 m measured from the surface
+    of the floor to the lowest point of the ceiling (bottom of slab)
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4.3.1.1_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'IfcSpace with Pset_SpaceCommon.Category=Habitable: vertical extent of the space geometry (floor
+    to underside of slab) >= 2.75 m. Ambiguity: assumes the modelled space spans floor surface to slab
+    soffit; the beam (2.4 m), pitched-roof (average height) and air-conditioned (2.4 m) provisions in
+    the following sentences are not encoded; applies to residential/business/mercantile only (4.3.1.2),
+    building type not checked.'
+- id: MBBL2016-4.5.2#1
+  clause_id: MBBL2016-4.5.2
+  text: The area of a bathroom shall not be less than 1.8 m2
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4.5.2_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'IfcSpace with Pset_SpaceCommon.Category=Bathroom: floor area computed from the space geometry
+    (down-facing faces of the body mesh) >= 1.8 m2. Ambiguity: the same sentence adds ''with a minimum
+    width of 1.2 m'' (not encoded: width of a non-rectangular footprint is not defined by the clause);
+    ''bathroom'' is mapped to the Category convention; geometric area vs declared Qto NetFloorArea not
+    distinguished by the clause.'
 - id: MBBL2016-5.4.1#b
   clause_id: MBBL2016-5.4.1
   text: No exit doorway shall be less than 1m in width.
