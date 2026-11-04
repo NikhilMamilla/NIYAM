@@ -86,6 +86,21 @@ The gate accepts a candidate IDS only if it is well-formed, valid IDS 1.0, loads
 applies to something in both fixtures, passes the `__pass` fixture and fails the `__fail`
 fixture on exactly the expected element.
 
+## IDS compiler (LLM)
+
+Configure a hosted and/or open model in `.env` (see `.env.example`), then from `backend/`:
+
+```bash
+python -m app.compiler.cli compile "MBBL2016-5.4.2#1" --role hosted            # gated repair loop
+python -m app.compiler.cli compile "MBBL2016-5.4.2#1" --role open --no-gate    # ablation baseline
+python -m app.compiler.cli compile-all-pilots --role hosted --max-repairs 3
+python ../scripts/live_smoke.py   # gated run of all pilots; prints "skipped" if not configured
+```
+
+The prompt contains the IDS authoring rules, `docs/modelling-profile.md` and two synthetic
+examples; it never contains the pilot units' gold IDS or fixtures. Results are written to
+`eval/runs/<run_id>/` (gitignored).
+
 ## Configuration
 
 Copy `.env.example` to `.env` and fill in values. No secrets are committed.
