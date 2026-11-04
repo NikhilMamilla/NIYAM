@@ -35,11 +35,16 @@ def run(f, usecase, **kwargs):
     return ifcopenshell.api.run(usecase, f, **kwargs)
 
 
-def new_model(name: str):
+def new_model(name: str, length_unit: str = "mm"):
     f = ifcopenshell.file(schema="IFC4")
     f.header.file_name.time_stamp = TIMESTAMP
     project = run(f, "root.create_entity", ifc_class="IfcProject", name=name)
-    run(f, "unit.assign_unit")  # millimetres, as most Indian BIM authoring does
+    if length_unit == "mm":
+        run(f, "unit.assign_unit")  # millimetres, as most Indian BIM authoring does
+    elif length_unit == "m":
+        run(f, "unit.assign_unit", units=[run(f, "unit.add_si_unit", unit_type="LENGTHUNIT")])
+    else:
+        raise ValueError(f"length_unit must be 'mm' or 'm', not {length_unit!r}")
     parent = project
     for ifc_class in ("IfcSite", "IfcBuilding", "IfcBuildingStorey"):
         child = run(f, "root.create_entity", ifc_class=ifc_class, name=ifc_class[3:])
@@ -48,16 +53,27 @@ def new_model(name: str):
     return f, parent
 
 
-def add_door(f, storey, name, *, fire_exit, operation_type="SINGLE_SWING_LEFT", width_mm=1000.0, height_mm=2100.0):
+def add_storey(f, building_storey, name: str):
+    building = building_storey.Decomposes[0].RelatingObject
+    storey = run(f, "root.create_entity", ifc_class="IfcBuildingStorey", name=name)
+    run(f, "aggregate.assign_object", products=[storey], relating_object=building)
+    return storey
+
+
+def add_door(f, storey, name, *, fire_exit, operation_type="SINGLE_SWING_LEFT", width=1000.0, height=2100.0):
+    """width/height are in project length units. fire_exit=None omits Pset_DoorCommon; width=None omits
+    the width (OverallWidth and Qto_DoorBaseQuantities.Width)."""
     door = run(f, "root.create_entity", ifc_class="IfcDoor", name=name)
     door.GlobalId = guid(name)  # same GlobalId in pass and fail fixtures
     door.OperationType = operation_type
-    door.OverallWidth, door.OverallHeight = width_mm, height_mm
+    door.OverallWidth, door.OverallHeight = width, height
     run(f, "spatial.assign_container", products=[door], relating_structure=storey)
-    pset = run(f, "pset.add_pset", product=door, name="Pset_DoorCommon")
-    run(f, "pset.edit_pset", pset=pset, properties={"FireExit": fire_exit})
+    if fire_exit is not None:
+        pset = run(f, "pset.add_pset", product=door, name="Pset_DoorCommon")
+        run(f, "pset.edit_pset", pset=pset, properties={"FireExit": fire_exit})
     qto = run(f, "pset.add_qto", product=door, name="Qto_DoorBaseQuantities")
-    run(f, "pset.edit_qto", qto=qto, properties={"Width": width_mm, "Height": height_mm})
+    quantities = {"Height": height} if width is None else {"Width": width, "Height": height}
+    run(f, "pset.edit_qto", qto=qto, properties=quantities)
     return door
 
 
@@ -71,9 +87,9 @@ PILOTS = {
         {"operation_type": "REVOLVING"},
     ),
     "MBBL2016-5.4.1#b": (
-        {"width_mm": 1000.0},  # exactly at the bound: "not less than" is inclusive
-        {"width_mm": 900.0},
-        {"width_mm": 750.0},  # bathroom-type door, allowed 0.75 m by the same sub-item
+        {"width": 1000.0},  # exactly at the bound: "not less than" is inclusive
+        {"width": 900.0},
+        {"width": 750.0},  # bathroom-type door, allowed 0.75 m by the same sub-item
     ),
     "MBBL2016-5.4.1#c": (
         {"operation_type": "SINGLE_SWING_RIGHT"},
