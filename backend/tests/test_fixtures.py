@@ -48,3 +48,27 @@ def test_expected_failing_entity_is_a_fire_exit_door_in_both_fixtures(unit_id):
         doors = {d.GlobalId: d for d in model.by_type("IfcDoor")}
         assert pair.expected_failing <= doors.keys()
         assert len(doors) >= 2  # door under test plus a non-exit control door
+
+
+# --- geometric pilot fixtures ---------------------------------------------------------------------------------
+
+from app.fixtures import geo_builders  # noqa: E402
+
+
+@pytest.mark.parametrize("length_unit", ["mm", "m"])
+@pytest.mark.parametrize("unit_id", geo_builders.UNITS)
+def test_geometric_fixtures_regenerate_identically(unit_id, length_unit, tmp_path):
+    built = geo_builders.build_pair(unit_id, tmp_path, length_unit)
+    committed = fixture_pair(unit_id, length_unit=length_unit)
+    for mine, theirs in ((built.pass_path, committed.pass_path), (built.fail_path, committed.fail_path)):
+        assert theirs.exists(), f"missing {theirs}; run scripts/build_fixtures.py"
+        assert mine.read_bytes().splitlines() == theirs.read_bytes().splitlines()
+
+
+@pytest.mark.parametrize("unit_id", geo_builders.UNITS)
+def test_geometric_pair_differs_only_in_the_bounded_value(unit_id):
+    pair = fixture_pair(unit_id)
+    a, b = pair.pass_path.read_text().splitlines(), pair.fail_path.read_text().splitlines()
+    assert len(a) == len(b)
+    # the bounded value appears in the geometry (and, for the area unit, the declared quantity)
+    assert 1 <= sum(x != y for x, y in zip(a, b)) <= 4

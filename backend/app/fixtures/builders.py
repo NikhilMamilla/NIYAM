@@ -100,10 +100,10 @@ PILOTS = {
 PILOT_UNITS = list(PILOTS)
 
 
-def _stabilise(f, key: str) -> None:
+def _stabilise(f, key: str, keep_names: frozenset[str] = frozenset()) -> None:
     """Make output byte-reproducible: fixed GlobalIds and sorted set-valued aggregates."""
     for entity in f.by_type("IfcRoot"):
-        if not entity.is_a("IfcDoor"):  # doors keep name-based ids shared by pass and fail
+        if not entity.is_a("IfcDoor") and entity.Name not in keep_names:  # these keep name-based ids
             entity.GlobalId = guid(f"{key}/#{entity.id()}")
     for ua in f.by_type("IfcUnitAssignment"):
         ua.Units = sorted(ua.Units, key=lambda e: e.id())
@@ -127,11 +127,18 @@ def build_pair(unit_id: str, out_dir: Path) -> FixturePair:
 
 
 def build_all(out_dir: Path = FIXTURES_DIR) -> list[FixturePair]:
+    from app.fixtures import geo_builders  # imports this module, so it is loaded lazily
+
     out_dir.mkdir(parents=True, exist_ok=True)
-    return [build_pair(unit_id, out_dir) for unit_id in PILOT_UNITS]
+    return [build_pair(unit_id, out_dir) for unit_id in PILOT_UNITS] + [
+        geo_builders.build_pair(unit_id, out_dir, unit) for unit_id in geo_builders.UNITS for unit in ("mm", "m")]
 
 
-def fixture_pair(unit_id: str, fixtures_dir: Path = FIXTURES_DIR) -> FixturePair:
+def fixture_pair(unit_id: str, fixtures_dir: Path = FIXTURES_DIR, length_unit: str = "mm") -> FixturePair:
+    from app.fixtures import geo_builders
+
+    if unit_id in geo_builders.VALUES:
+        return geo_builders.pair_paths(unit_id, fixtures_dir, length_unit)
     if unit_id not in PILOTS:
         raise KeyError(f"no fixtures defined for {unit_id}")
     name = safe_name(unit_id)
