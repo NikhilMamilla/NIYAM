@@ -18,5 +18,13 @@ class Settings(BaseSettings):
     llm_max_retries: int = 3
     llm_timeout_s: float = 120.0
 
+    audit_data_dir: Path = REPO_ROOT / "backend" / "data" / "audits"
+    max_upload_mb: float = 100.0
+    cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+
 
 settings = Settings()
+
+
+def get_settings() -> Settings:
+    return settings

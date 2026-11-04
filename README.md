@@ -101,6 +101,17 @@ The prompt contains the IDS authoring rules, `docs/modelling-profile.md` and two
 examples; it never contains the pilot units' gold IDS or fixtures. Results are written to
 `eval/runs/<run_id>/` (gitignored).
 
+## Audit (no LLM)
+
+```bash
+python -m app.audit.cli run ../fixtures/samples/sample_a_mm.ifc --out ../eval/audit-demo
+```
+
+API (`uvicorn app.main:app`): `POST /api/audit` (multipart `file`, `.ifc`, max `MAX_UPLOAD_MB`),
+`GET /api/audit/{id}`, `GET /api/audit/{id}/report.html`, `GET /api/audit/{id}/issues.bcf`,
+`GET /api/rulepack`. Uploads are stored under `backend/data/audits/<uuid>/` (gitignored). See
+`docs/audit.md` for verdicts and export limitations, and `docs/samples.md` for the synthetic models.
+
 ## Configuration
 
 Copy `.env.example` to `.env` and fill in values. No secrets are committed.
