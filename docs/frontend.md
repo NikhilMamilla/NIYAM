@@ -1,0 +1,56 @@
+# Web app (frontend/)
+
+## Stack (exact pins in `frontend/package.json`, lockfile committed)
+
+| Package | Version | Role |
+|---|---|---|
+| react, react-dom | 19.3.1 | UI |
+| @thatopen/components | 3.6.0 | world, camera, renderer, IfcLoader |
+| @thatopen/fragments | 3.6.0 | fragments model: colouring, visibility, boxes, picking; worker |
+| three | 0.187.0 | rendering |
+| camera-controls | 3.1.2 | peer of @thatopen/components |
+| web-ifc | **0.0.77** | IFC parsing in the browser (wasm) |
+| vite / @vitejs/plugin-react | 8.3.5 / 6.2.1 | dev server and build |
+| typescript | 7.0.2 | strict type checking (`tsc -p tsconfig.json`) |
+| vitest | 5.1.0 | unit tests for pure logic |
+| @playwright/test | 1.64.1 | end-to-end tests (same version as the root, reusing its Chromium) |
+| @types/react, @types/react-dom, @types/three, @types/node | 19.3.0, 19.3.0, 0.187.0, 22.20.5 | types |
+
+`@thatopen/components-front` is not used: the fragments model API covers highlighting and picking,
+and it would add `potree-core`. There is no linter: the app was scaffolded by hand rather than from
+the Vite template, so no ESLint dependencies were added.
+
+**web-ifc is pinned to 0.0.77.** With 0.0.78 the browser build fails while converting any model
+(`BindingError: function StreamMeshes called with 4 arguments, expected 3`): its browser wasm does
+not match its JavaScript. 0.0.78's Node build works, and That Open 3.6 accepts `>=0.0.77`.
+
+## Offline: no CDN at runtime
+
+- The web-ifc wasm is copied from `node_modules` to `public/web-ifc/` by `npm install`
+  (`scripts/copy-wasm.mjs`) and loaded with `autoSetWasm: false`. That Open's default fetches it from
+  unpkg.
+- The fragments worker is bundled by Vite from `@thatopen/fragments/worker`, instead of
+  `FragmentsManager.getWorker()`, which also fetches from unpkg.
+- The e2e test asserts that loading and auditing sample A makes no request to any other host.
+
+## How results reach the 3D view
+
+The browser converts the IFC to fragments only after the server has accepted the audit: web-ifc runs
+on the main thread and can spin on unreadable bytes, which would freeze the page before the error
+banner could appear. Audit records are mapped to viewer ids by GlobalId
+(`model.getLocalIdsByGuids`); the viewport's `data-id-mapping` attribute records whether those ids
+equal the API's `express_id` (they do for the samples). An element's colour is its most serious
+verdict across rules: failed (red) > unchecked (amber) > passed (grey) > out of scope (faded).
+
+## Check manually in a real browser
+
+The e2e suite runs Chromium with SwiftShader (software WebGL). Please confirm in your own browser:
+
+1. The 3D view renders with your GPU in Chrome/Edge and in Firefox (only Chromium was tested).
+2. Orbit, pan and zoom feel right with mouse and trackpad; clicking a door selects it, and a click
+   that ends a drag does not.
+3. "Reset view" and selecting an element animate the camera; with the OS "reduce motion" setting on,
+   they jump without animation.
+4. Drag-and-drop of an `.ifc` file onto the drop zone (the tests use the file picker).
+5. A large real-world IFC4 model: time to view, and that the "may be slow" note appears above 30 MB.
+6. Screen-reader output (NVDA or VoiceOver) for the summary, rule list and detail panel.

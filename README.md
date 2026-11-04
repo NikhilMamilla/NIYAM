@@ -7,18 +7,30 @@ NIYAM is an open-source tool that uses an LLM to compile Indian building rules i
 checks, validates every draft against open-standard tools, audits IFC models, and exports BCF
 issues.
 
-This repository currently contains only the project scaffold and a smoke test proving the core
-open-source stack (IfcOpenShell + ifctester) works end to end. No LLM, rule ingestion, or frontend
-code exists yet.
+Current state: an MBBL 2016 rule corpus, a verifier-gated IDS compiler, rulepack v0 (three draft,
+not human-reviewed door rules), an audit engine with HTML and BCF export, an upload API, and a web
+app that shows the audit beside the model in 3D. All sample buildings are synthetic.
 
 ## Layout
 
-- `backend/` — FastAPI app and the IFC/IDS verification logic.
-- `rules/`, `fixtures/ifc/`, `fixtures/ids/`, `eval/` — placeholders for the future rule corpus,
-  test models, gold IDS files, and evaluation scripts.
-- `frontend/` — placeholder, not yet scaffolded.
-- `docs/` — includes [`notes-ifctester.md`](docs/notes-ifctester.md), the verified ifctester API
-  notes from building the smoke test.
+- `backend/` — FastAPI app: corpus, verifier gate, LLM compiler, rulepack, audit engine, API.
+- `frontend/` — Vite + React + TypeScript web app with a That Open Engine 3D viewer.
+- `rules/` — rule corpus units and `rulepack/v0`; `fixtures/` — IFC fixtures, gold IDS, samples.
+- `docs/` — design notes, the modelling profile, `frontend.md`, and `screenshots/`.
+
+## Run the web app (two terminals)
+
+```bash
+# terminal 1: API on http://127.0.0.1:8000
+cd backend && source .venv/Scripts/activate && uvicorn app.main:app --host 127.0.0.1 --port 8000
+
+# terminal 2: web app on http://localhost:5173 (proxies /api to the API)
+./scripts/dev-frontend.sh            # or: cd frontend && npm ci && npm run dev
+```
+
+Open http://localhost:5173, then upload an IFC4 file or click "Try sample A (mm)". On macOS/Linux
+activate the venv with `source .venv/bin/activate`. Frontend checks, from `frontend/`:
+`npm test` (Vitest), `npm run build` (tsc + Vite), `npx playwright test` (starts both servers).
 
 ## Setup (verified on Windows, Git Bash, Python 3.11.4)
 
@@ -109,7 +121,8 @@ python -m app.audit.cli run ../fixtures/samples/sample_a_mm.ifc --out ../eval/au
 
 API (`uvicorn app.main:app`): `POST /api/audit` (multipart `file`, `.ifc`, max `MAX_UPLOAD_MB`),
 `GET /api/audit/{id}`, `GET /api/audit/{id}/report.html`, `GET /api/audit/{id}/issues.bcf`,
-`GET /api/rulepack`. Uploads are stored under `backend/data/audits/<uuid>/` (gitignored). See
+`GET /api/rulepack`, `GET /api/samples`, `GET /api/samples/{name}`, `POST /api/samples/{name}/audit`.
+Only IFC4 models are audited. Uploads are stored under `backend/data/audits/<uuid>/` (gitignored). See
 `docs/audit.md` for verdicts and export limitations, and `docs/samples.md` for the synthetic models.
 
 ## Configuration
