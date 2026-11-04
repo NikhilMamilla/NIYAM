@@ -71,6 +71,21 @@ python -m app.corpus.cli suggest          # keyword shortlist -> docs/corpus-can
 
 `page` is the 1-based page of the PDF file (printed page number = PDF page - 18).
 
+## Rule units, fixtures and the IDS gate
+
+A rule unit is one verbatim sentence or sub-item of a clause (`unit-add`, `unit-list`,
+`unit-show`, `unit-export` -> `rules/corpus/rule-units.yaml`). Pilot units have committed
+fixture pairs in `fixtures/ifc/` and draft gold IDS in `fixtures/ids/`
+(`python ../scripts/build_fixtures.py`, `python ../scripts/build_gold_ids.py`).
+
+```bash
+python -m app.verifier.cli check "MBBL2016-5.4.2#1" ../fixtures/ids/MBBL2016-5_4_2_1.ids
+```
+
+The gate accepts a candidate IDS only if it is well-formed, valid IDS 1.0, loads in ifctester,
+applies to something in both fixtures, passes the `__pass` fixture and fails the `__fail`
+fixture on exactly the expected element.
+
 ## Configuration
 
 Copy `.env.example` to `.env` and fill in values. No secrets are committed.

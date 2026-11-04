@@ -8,6 +8,15 @@
 - Validation: `spec_ids.validate(ifc_file, filepath=...)`, then read
   `spec.status`, `spec.passed_entities`, `spec.failed_entities` (sets of
   `ifcopenshell.entity_instance`).
+- **Do not use `ids.from_string(xml, validate=True)`**: it validates an `xml.etree` tree, which
+  drops the `xs:` prefix declaration, so any IDS containing `<xs:restriction base="xs:double">`
+  is rejected with "unmapped prefix 'xs' in a QName". `ids.open(path, validate=True)` and
+  `ids.get_schema().validate(xml_text)` validate correctly. `from_string(xml)` without
+  validation loads fine.
+- `Specification.parse` does not read `@identifier` back: a loaded spec has `identifier=None`
+  even when the file carries it. Read it from the XML when tracing.
+- Attribute facets compare raw values (no unit conversion); property/quantity facets convert to
+  SI. See `notes-ids-expressiveness.md`.
 - Reporters (`ifctester.reporter`) all need `.report()` called before `.to_file(path)` — `report()`
   populates `self.results`, which `to_file` just serializes/renders.
 - `reporter.Bcf` works out of the box (`bcf-client` is pulled in automatically as an ifctester
