@@ -3,7 +3,7 @@
   text: 'The minimum width of staircase shall be as follows: A Residential buildings (dwellings) 1.0 m'
   tier: geometric
   status: pilot
-  expected_artifact: fixtures/checks/MBBL2016-4.17.2_A.py
+  expected_artifact: fixtures/checks/MBBL2016-4_17_2_A.py
   human_reviewed: false
   reviewer: null
   notes: 'IfcStairFlight in an IfcBuilding with Pset_BuildingCommon.OccupancyType=Residential: flight
@@ -16,7 +16,7 @@
     of the floor to the lowest point of the ceiling (bottom of slab)
   tier: geometric
   status: pilot
-  expected_artifact: fixtures/checks/MBBL2016-4.3.1.1_1.py
+  expected_artifact: fixtures/checks/MBBL2016-4_3_1_1_1.py
   human_reviewed: false
   reviewer: null
   notes: 'IfcSpace with Pset_SpaceCommon.Category=Habitable: vertical extent of the space geometry (floor
@@ -29,7 +29,7 @@
   text: The area of a bathroom shall not be less than 1.8 m2
   tier: geometric
   status: pilot
-  expected_artifact: fixtures/checks/MBBL2016-4.5.2_1.py
+  expected_artifact: fixtures/checks/MBBL2016-4_5_2_1.py
   human_reviewed: false
   reviewer: null
   notes: 'IfcSpace with Pset_SpaceCommon.Category=Bathroom: floor area computed from the space geometry

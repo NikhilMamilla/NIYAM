@@ -96,7 +96,7 @@ def mask_fixture_details(message: str, fixtures: FixturePair) -> str:
         for e in ifcopenshell.open(str(path)).by_type("IfcRoot"):
             role = MUST_FAIL if e.GlobalId in fixtures.expected_failing else MUST_PASS
             replacements[e.GlobalId] = role
-            if e.is_a("IfcElement") and e.Name:
+            if (e.is_a("IfcElement") or e.is_a("IfcSpatialElement")) and e.Name:  # spaces too
                 replacements[e.Name] = role
     for token in sorted(replacements, key=len, reverse=True):  # longest first: no partial overlaps
         message = message.replace(token, replacements[token])
