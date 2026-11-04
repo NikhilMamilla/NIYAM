@@ -1,5 +1,6 @@
 import json
 
+import ifcopenshell
 import pytest
 from ifctester import ids
 
@@ -136,23 +137,80 @@ def test_prompts_contain_no_gold_ids_or_fixture_content(unit_id):
     unit = load_units()[unit_id]
     clause = CLAUSE.model_copy(update={"id": unit.clause_id, "text": f"{unit.clause_id}\n{unit.text}"})
     # a realistic repair turn: the gate's own message about a rejected candidate
-    rejected = compile_with([fenced(gold().replace("IFCDOOR", "IFCWINDOW"))], max_repairs=0)[0]
-    prompts = [
-        build_system_prompt(),
-        build_user_message(unit, clause),
-        build_repair_message("<ids/>", rejected.attempts[0].gate.first_failure),
-    ]
     pair = fixture_pair(unit_id)
+    prompts = [build_system_prompt(), build_user_message(unit, clause)]
+    # the failures come from 5.4.1#c's fixtures, so they are masked with that pair, as compile_unit does
+    prompts += [build_repair_message("<ids/>", f, fixture_pair("MBBL2016-5.4.1#c")) for f in _realistic_gate_failures()]
     # lines the synthetic examples share with a gold file are IDS syntax, not rule content
     examples = "".join(f.read_text(encoding="utf-8") for f in EXAMPLES_DIR.glob("*.ids"))
     forbidden = {line for line in _distinctive_lines(gold(unit_id), 30) if line not in examples}
     assert "<simpleValue>FireExit</simpleValue>" in forbidden  # the guard still covers rule content
     forbidden |= _distinctive_lines(pair.pass_path.read_text(), 15) | _distinctive_lines(pair.fail_path.read_text(), 15)
+    forbidden |= _fixture_identifiers()
     for prompt in prompts:
-        leaked = [line for line in forbidden if line in prompt]
+        leaked = [token for token in forbidden if token in prompt]
         assert not leaked, leaked
         assert gold(unit_id) not in prompt
-    assert all(g not in "".join(prompts) for g in pair.expected_failing)  # no fixture GlobalIds
+
+
+def _fixture_identifiers() -> set[str]:
+    """Every fixture file name, element name and GlobalId across all pilot fixture pairs."""
+    tokens = set()
+    for unit_id in PILOT_UNITS:
+        pair = fixture_pair(unit_id)
+        for path in (pair.pass_path, pair.fail_path):
+            tokens.add(path.name)
+            for e in ifcopenshell.open(str(path)).by_type("IfcRoot"):
+                tokens.add(e.GlobalId)
+                if e.is_a("IfcElement"):
+                    tokens.add(e.Name)
+    return tokens
+
+
+def _realistic_gate_failures():
+    """Real gate failures that name fixture elements, files and GlobalIds."""
+    from app.verifier.ids_gate import verify_ids
+    from app.fixtures.builders import FixturePair, guid
+
+    unit = load_units()["MBBL2016-5.4.1#c"]
+    pair = fixture_pair(unit.id)
+    xml = gold("MBBL2016-5.4.1#c")
+    no_filter = xml[: xml.index('<property dataType="IFCBOOLEAN">')] + xml[xml.index("</property>") + 11:]
+    wrong_expectation = FixturePair(pair.pass_path, pair.fail_path, frozenset({guid("control_non_exit_door")}))
+    return [
+        verify_ids(no_filter, unit, pair).first_failure,  # names the control door and the pass file
+        verify_ids(xml, unit, wrong_expectation).first_failure,  # names both doors and the fail file
+        verify_ids(xml.replace("IFCDOOR", "IFCWINDOW"), unit, pair).first_failure,  # names a file
+    ]
+
+
+def test_repair_prompt_masks_fixture_details_but_keeps_the_diagnosis():
+    pair = fixture_pair("MBBL2016-5.4.1#c")
+    over_broad, wrong_set, vacuous = _realistic_gate_failures()
+    assert "control_non_exit_door" in over_broad.message  # the gate itself stays detailed
+
+    prompt = build_repair_message("<ids/>", over_broad, pair)
+    assert "verdict_pass_fixture" in prompt
+    assert "must pass the compliant model but failed" in prompt
+    assert "a control element that must PASS" in prompt
+
+    prompt = build_repair_message("<ids/>", wrong_set, pair)
+    assert "the element that must FAIL in the non-compliant model" in prompt
+    assert "a control element that must PASS" in prompt
+
+    prompt = build_repair_message("<ids/>", vacuous, pair)
+    assert "applicable_on_fixtures" in prompt and "the compliant model" in prompt
+
+    for p in (build_repair_message("<ids/>", f, pair) for f in (over_broad, wrong_set, vacuous)):
+        assert not [t for t in _fixture_identifiers() if t in p]
+
+
+def test_repair_prompt_keeps_schema_error_text():
+    pair = fixture_pair(UNIT_ID)
+    result, provider = compile_with([fenced(gold().replace('ifcVersion="IFC4"', 'ifcVersion="IFC5"')),
+                                     fenced(gold())])
+    repair = provider.calls[1]["messages"][-1].content
+    assert "xsd_valid" in repair and "IFC5" in repair and "value must be one of" in repair
 
 
 def test_system_prompt_carries_profile_units_caveat_and_contract():

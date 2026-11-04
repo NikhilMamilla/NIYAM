@@ -12,6 +12,8 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Literal
 
+import ifcopenshell
+
 from app.corpus.models import Clause, RuleUnit
 from app.fixtures.builders import REPO_ROOT, FixturePair, fixture_pair, safe_name
 from app.llm.base import LLMProvider, Message
@@ -81,11 +83,31 @@ def build_user_message(unit: RuleUnit, clause: Clause) -> str:
     )
 
 
-def build_repair_message(previous: str, failure: StageResult) -> str:
+MUST_FAIL = "the element that must FAIL in the non-compliant model"
+MUST_PASS = "a control element that must PASS"
+
+
+def mask_fixture_details(message: str, fixtures: FixturePair) -> str:
+    """Replace fixture file names, element names and GlobalIds with role labels.
+
+    The gate keeps full detail for humans; the model only learns which verdict was wrong."""
+    replacements = {fixtures.pass_path.name: "the compliant model", fixtures.fail_path.name: "the non-compliant model"}
+    for path in (fixtures.pass_path, fixtures.fail_path):
+        for e in ifcopenshell.open(str(path)).by_type("IfcRoot"):
+            role = MUST_FAIL if e.GlobalId in fixtures.expected_failing else MUST_PASS
+            replacements[e.GlobalId] = role
+            if e.is_a("IfcElement") and e.Name:
+                replacements[e.Name] = role
+    for token in sorted(replacements, key=len, reverse=True):  # longest first: no partial overlaps
+        message = message.replace(token, replacements[token])
+    return message
+
+
+def build_repair_message(previous: str, failure: StageResult, fixtures: FixturePair) -> str:
     return (
         "The verifier rejected your previous answer.\n"
         f"Failing stage: {failure.stage}\n"
-        f"Message: {failure.message}\n\n"
+        f"Message: {mask_fixture_details(failure.message, fixtures)}\n\n"
         f"Previous answer:\n```xml\n{previous}\n```\n\n"
         f"Fix the problem and return the complete corrected IDS document. {OUTPUT_CONTRACT}"
     )
@@ -163,7 +185,8 @@ def compile_unit(unit: RuleUnit, parent_clause: Clause, provider: LLMProvider, *
             break
         failure = gate.first_failure if gate is not None else EXTRACTION_FAILURE
         messages += [Message("assistant", response.text),
-                     Message("user", build_repair_message(xml if xml is not None else response.text, failure))]
+                     Message("user", build_repair_message(xml if xml is not None else response.text, failure,
+                                                          fixtures))]
         result.repair_rounds += 1
 
     result.wall_time_s = time.perf_counter() - started
