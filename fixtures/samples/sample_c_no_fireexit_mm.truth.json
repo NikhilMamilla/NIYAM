@@ -1,0 +1,60 @@
+{
+  "sample": "sample_c_no_fireexit_mm",
+  "synthetic": true,
+  "length_unit": "mm",
+  "expected_status": "incomplete",
+  "doors": [
+    {
+      "name": "C-G-01 entrance door",
+      "global_id": "1fK_v7eIrIFw9b0rdpX5pu",
+      "storey": "Ground floor",
+      "fire_exit": null,
+      "operation_type": "SINGLE_SWING_LEFT",
+      "width_m": 1.2,
+      "expected": {
+        "MBBL2016-5.4.2#1": "unchecked",
+        "MBBL2016-5.4.1#b": "unchecked",
+        "MBBL2016-5.4.1#c": "unchecked"
+      }
+    },
+    {
+      "name": "C-G-02 revolving entrance",
+      "global_id": "3Rzdf7TvfGIv4KmnYncQeV",
+      "storey": "Ground floor",
+      "fire_exit": null,
+      "operation_type": "REVOLVING",
+      "width_m": 2.0,
+      "expected": {
+        "MBBL2016-5.4.2#1": "unchecked",
+        "MBBL2016-5.4.1#b": "unchecked",
+        "MBBL2016-5.4.1#c": "unchecked"
+      }
+    },
+    {
+      "name": "C-1-01 corridor door",
+      "global_id": "2w_2$1P6bPDvXswJ3a6QTf",
+      "storey": "First floor",
+      "fire_exit": null,
+      "operation_type": "SINGLE_SWING_RIGHT",
+      "width_m": 0.9,
+      "expected": {
+        "MBBL2016-5.4.2#1": "unchecked",
+        "MBBL2016-5.4.1#b": "unchecked",
+        "MBBL2016-5.4.1#c": "unchecked"
+      }
+    },
+    {
+      "name": "C-1-02 sliding door",
+      "global_id": "3i80E1LJfSDQY704K7rkPt",
+      "storey": "First floor",
+      "fire_exit": null,
+      "operation_type": "SLIDING_TO_LEFT",
+      "width_m": 1.0,
+      "expected": {
+        "MBBL2016-5.4.2#1": "unchecked",
+        "MBBL2016-5.4.1#b": "unchecked",
+        "MBBL2016-5.4.1#c": "unchecked"
+      }
+    }
+  ]
+}

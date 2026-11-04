@@ -2,8 +2,10 @@
 filename is only used to check the extension, never to build a path."""
 
 import json
+import logging
 import shutil
 import uuid
+from collections.abc import Awaitable, Callable
 from functools import lru_cache
 from pathlib import Path
 
@@ -14,8 +16,10 @@ from starlette.concurrency import run_in_threadpool
 from app.audit.cli import write_outputs
 from app.audit.engine import InvalidIfcError, audit
 from app.config import Settings, get_settings
+from app.fixtures.samples import DESCRIPTIONS, SAMPLES_DIR
 from app.rulepack.loader import Rulepack, load_rulepack
 
+log = logging.getLogger(__name__)
 router = APIRouter(prefix="/api")
 CHUNK = 1024 * 1024
 
@@ -33,16 +37,37 @@ def _audit_dir(settings: Settings, audit_id: uuid.UUID) -> Path:
     return path
 
 
-@router.post("/audit")
-async def create_audit(file: UploadFile, settings: Settings = Depends(get_settings)):
-    if not (file.filename or "").lower().endswith(".ifc"):
-        raise HTTPException(415, "only .ifc files are accepted")
+async def _run_audit(settings: Settings, store: Callable[[Path], Awaitable[None]]) -> dict:
+    """Create a fresh audit folder, let `store` write model.ifc into it, audit it, write the exports.
+    Any failure removes the folder."""
     audit_id = uuid.uuid4()
     audit_dir = settings.audit_data_dir / str(audit_id)
     audit_dir.mkdir(parents=True)
     model_path = audit_dir / "model.ifc"
-    limit = int(settings.max_upload_mb * 1024 * 1024)
     try:
+        await store(model_path)
+        try:
+            report = await run_in_threadpool(audit, model_path, get_rulepack())  # CPU bound
+            await run_in_threadpool(write_outputs, report, audit_dir)
+        except InvalidIfcError as e:
+            raise HTTPException(422, str(e)) from e
+        except Exception as e:
+            log.exception("audit %s failed", audit_id)  # traceback stays server-side
+            raise HTTPException(500, "internal error while auditing the model") from e
+    except BaseException:
+        shutil.rmtree(audit_dir, ignore_errors=True)
+        raise
+    return {"audit_id": str(audit_id), "status": report.status, "summary": report.summary.model_dump(),
+            "rules": [r.model_dump() for r in report.rules]}
+
+
+@router.post("/audit")
+async def create_audit(file: UploadFile, settings: Settings = Depends(get_settings)):
+    if not (file.filename or "").lower().endswith(".ifc"):
+        raise HTTPException(415, "only .ifc files are accepted")
+    limit = int(settings.max_upload_mb * 1024 * 1024)
+
+    async def store(model_path: Path) -> None:
         size = 0
         with open(model_path, "wb") as out:
             while chunk := await file.read(CHUNK):
@@ -50,16 +75,42 @@ async def create_audit(file: UploadFile, settings: Settings = Depends(get_settin
                 if size > limit:
                     raise HTTPException(413, f"file exceeds the {settings.max_upload_mb:g} MB upload limit")
                 out.write(chunk)
-        try:
-            report = await run_in_threadpool(audit, model_path, get_rulepack())  # CPU bound
-        except InvalidIfcError as e:
-            raise HTTPException(422, str(e)) from e
-        await run_in_threadpool(write_outputs, report, audit_dir)
-    except BaseException:
-        shutil.rmtree(audit_dir, ignore_errors=True)
-        raise
-    return {"audit_id": str(audit_id), "status": report.status, "summary": report.summary.model_dump(),
-            "rules": [r.model_dump() for r in report.rules]}
+
+    return await _run_audit(settings, store)
+
+
+def _samples() -> dict[str, Path]:
+    """The allowlist: exactly the committed sample files, keyed by name. User input only ever looks up a key."""
+    return {p.stem: p for p in sorted(SAMPLES_DIR.glob("*.ifc"))}
+
+
+def _sample(name: str) -> Path:
+    path = _samples().get(name)
+    if path is None:
+        raise HTTPException(404, "sample not found")
+    return path
+
+
+@router.get("/samples")
+def list_samples():
+    return [{"name": name, "description": DESCRIPTIONS.get(name, "Synthetic sample model."),
+             "size_bytes": path.stat().st_size} for name, path in _samples().items()]
+
+
+@router.get("/samples/{name}")
+def get_sample(name: str):
+    path = _sample(name)
+    return FileResponse(path, media_type="application/octet-stream", filename=path.name)
+
+
+@router.post("/samples/{name}/audit")
+async def audit_sample(name: str, settings: Settings = Depends(get_settings)):
+    source = _sample(name)
+
+    async def store(model_path: Path) -> None:
+        shutil.copyfile(source, model_path)
+
+    return await _run_audit(settings, store)
 
 
 @router.get("/audit/{audit_id}")

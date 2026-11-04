@@ -6,7 +6,9 @@ Expected verdicts are written by hand per door and rule, independently of the au
 import json
 from pathlib import Path
 
-from app.fixtures.builders import REPO_ROOT, _stabilise, add_door, add_storey, guid, new_model
+import ifcopenshell
+
+from app.fixtures.builders import REPO_ROOT, TIMESTAMP, _stabilise, add_door, add_storey, guid, new_model
 
 SAMPLES_DIR = REPO_ROOT / "fixtures" / "samples"
 RULES = ("MBBL2016-5.4.2#1", "MBBL2016-5.4.1#b", "MBBL2016-5.4.1#c")
@@ -40,8 +42,25 @@ SAMPLE_B = [
     ("B-1-04 door without FireExit", 1, None, "SINGLE_SWING_LEFT", 1.0, "UUU"),
     ("B-1-05 sliding door without FireExit", 1, None, "SLIDING_TO_LEFT", 0.9, "UUU"),
 ]
-SAMPLES = {"sample_a_mm": ("mm", SAMPLE_A, "noncompliant"), "sample_b_m": ("m", SAMPLE_B, "noncompliant")}
+# No door declares FireExit: nothing can be checked, so the audit must be "incomplete", never "compliant".
+SAMPLE_C = [
+    ("C-G-01 entrance door", 0, None, "SINGLE_SWING_LEFT", 1.2, "UUU"),
+    ("C-G-02 revolving entrance", 0, None, "REVOLVING", 2.0, "UUU"),
+    ("C-1-01 corridor door", 1, None, "SINGLE_SWING_RIGHT", 0.9, "UUU"),
+    ("C-1-02 sliding door", 1, None, "SLIDING_TO_LEFT", 1.0, "UUU"),
+]
+SAMPLES = {
+    "sample_a_mm": ("mm", SAMPLE_A, "noncompliant"),
+    "sample_b_m": ("m", SAMPLE_B, "noncompliant"),
+    "sample_c_no_fireexit_mm": ("mm", SAMPLE_C, "incomplete"),
+}
+DESCRIPTIONS = {
+    "sample_a_mm": "Synthetic 2-storey model in millimetres, 12 doors covering every v0 rule case.",
+    "sample_b_m": "Synthetic 2-storey model in metres, 10 doors covering every v0 rule case.",
+    "sample_c_no_fireexit_mm": "Synthetic model whose 4 doors have no FireExit data: the audit is incomplete.",
+}
 STOREYS = ("Ground floor", "First floor")
+INVALID_DIR = REPO_ROOT / "fixtures" / "invalid"
 
 
 def build_sample(name: str, out_dir: Path) -> Path:
@@ -69,3 +88,14 @@ def build_sample(name: str, out_dir: Path) -> Path:
 
 def build_samples(out_dir: Path = SAMPLES_DIR) -> list[Path]:
     return [build_sample(name, out_dir) for name in SAMPLES]
+
+
+def build_ifc2x3(out_dir: Path = INVALID_DIR) -> Path:
+    """A minimal IFC2X3 file, used to check that non-IFC4 uploads are refused."""
+    f = ifcopenshell.file(schema="IFC2X3")
+    f.header.file_name.time_stamp = TIMESTAMP
+    f.create_entity("IfcProject", GlobalId=guid("ifc2x3 project"), Name="IFC2X3 test project")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / "ifc2x3_minimal.ifc"
+    f.write(str(path))
+    return path

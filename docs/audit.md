@@ -12,6 +12,13 @@
 | `failed` | selected, complete, and the rule's IDS fails it (for a `maxOccurs="0"` IDS: it matches) |
 | `passed` | selected, complete, and the IDS passes it; never given when required data is missing |
 
+Each element record carries `global_id`, `express_id` (its STEP id in the audited file, for
+mapping to geometry in a viewer), and for failed/unchecked elements `reason_plain` (one sentence
+built from the rule's IDS and the element's actual values, e.g. "Declared width is 0.9 m; this
+rule requires at least 1 m.", falling back to a generic sentence plus the raw message when a value
+cannot be derived) and `reason_raw` (the ifctester or engine message). Only IFC4 models are
+audited; other schemas are refused.
+
 Rule and audit status: `noncompliant` if anything failed; else `incomplete` if anything is
 unchecked; else `compliant` if at least one element was checked; else `nothing_checked`.
 

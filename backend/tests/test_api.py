@@ -109,6 +109,73 @@ def test_rulepack_endpoint(client):
     assert all(x["human_reviewed"] is False and x["clause_text"] and x["rule_text"] for x in rules)
 
 
+def test_non_ifc4_schema_is_422_and_cleaned_up(client, data_dir, tmp_path):
+    import ifcopenshell
+    import ifcopenshell.guid
+
+    f = ifcopenshell.file(schema="IFC2X3")
+    f.create_entity("IfcProject", GlobalId=ifcopenshell.guid.new(), Name="old")  # api needs owner history in 2X3
+    path = tmp_path / "old.ifc"
+    f.write(str(path))
+    r = upload(client, path)
+    assert r.status_code == 422
+    assert r.json() == {"detail": "unsupported IFC schema IFC2X3: NIYAM v0.1 audits IFC4 models"}
+    assert not any(data_dir.iterdir())
+
+
+def test_unexpected_audit_error_is_500_without_traceback(client, data_dir, monkeypatch, caplog):
+    import app.api.audit as api_audit
+
+    def boom(*args, **kwargs):
+        raise RuntimeError("secret internal detail")
+
+    monkeypatch.setattr(api_audit, "audit", boom)
+    r = upload(client)
+    assert r.status_code == 500
+    assert r.json() == {"detail": "internal error while auditing the model"}
+    assert "secret internal detail" not in r.text
+    assert "secret internal detail" in caplog.text  # logged server-side
+    assert not any(data_dir.iterdir())
+
+
+# --- sample endpoints -----------------------------------------------------------------
+
+
+def test_samples_list_matches_files_exactly(client):
+    r = client.get("/api/samples")
+    assert r.status_code == 200
+    files = {p.stem: p for p in SAMPLES_DIR.glob("*.ifc")}
+    listed = r.json()
+    assert {s["name"] for s in listed} == set(files)
+    for s in listed:
+        assert s["size_bytes"] == files[s["name"]].stat().st_size and s["description"]
+
+
+def test_sample_download(client):
+    r = client.get("/api/samples/sample_a_mm")
+    assert r.status_code == 200 and r.content == (SAMPLES_DIR / "sample_a_mm.ifc").read_bytes()
+    assert "sample_a_mm.ifc" in r.headers["content-disposition"]
+
+
+def test_sample_audit_matches_upload_audit(client):
+    via_sample = client.post("/api/samples/sample_a_mm/audit")
+    via_upload = upload(client)
+    assert via_sample.status_code == 200
+    a, b = via_sample.json(), via_upload.json()
+    assert a["audit_id"] != b["audit_id"]
+    assert {k: v for k, v in a.items() if k != "audit_id"} == {k: v for k, v in b.items() if k != "audit_id"}
+    assert client.get(f"/api/audit/{a['audit_id']}/issues.bcf").status_code == 200
+
+
+@pytest.mark.parametrize("name", ["..%2Fsamples%2Fsample_a_mm", "sample_a_mm.ifc", "sample_a_mm.truth",
+                                  "..", "%2E%2E", "SAMPLE_A_MM", "sample_a_mm%00", "nope"])
+def test_unknown_or_traversal_sample_names_are_404(client, data_dir, name):
+    assert client.get(f"/api/samples/{name}").status_code == 404
+    # "/api/samples/../audit" is normalised by the client to "POST /api/audit" (422: no file); never a 2xx
+    assert client.post(f"/api/samples/{name}/audit").status_code in (404, 405, 422)
+    assert not data_dir.exists() or not any(data_dir.iterdir())
+
+
 def test_cors_allows_configured_dev_origin(client):
     r = client.options("/api/rulepack", headers={"Origin": "http://localhost:5173",
                                                   "Access-Control-Request-Method": "GET"})

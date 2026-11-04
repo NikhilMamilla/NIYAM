@@ -41,7 +41,8 @@ def test_html_shows_summary_clauses_and_issue_tables(report):
     for r, e in issues(report):
         assert e.global_id in html
     assert "A-1-06 exit without width quantity" in html
-    assert "missing required data: Qto_DoorBaseQuantities.Width" in html
+    assert "missing required data: Qto_DoorBaseQuantities.Width" in html  # raw reason
+    assert "Declared width is 0.9 m; this rule requires at least 1 m." in html  # plain reason
     assert "not human-reviewed" in html
 
 
@@ -50,7 +51,7 @@ def test_html_escapes_all_dynamic_text():
     rule = RuleResult(
         unit_id="X#1", clause_id="X", clause_text=f"clause {evil}", rule_text=f"rule {evil}", source_doc="d",
         page=1, severity="error", human_reviewed=True, status="noncompliant", counts=Counts(failed=1),
-        elements=[ElementResult(global_id="g'\"&", name=evil, ifc_class="IfcDoor", verdict="failed", reason=evil)])
+        elements=[ElementResult(global_id="g'\"&", express_id=1, name=evil, ifc_class="IfcDoor", verdict="failed", reason_plain=evil, reason_raw=evil)])
     report = AuditReport(ifc_file=f"{evil}.ifc", ifc_schema="IFC4", rulepack_version="v0", status="noncompliant",
                          summary=Counts(failed=1), rules=[rule])
     html = render_html(report)
@@ -98,5 +99,5 @@ def test_bcf_topics_read_back(report, bcf_path):
         assert topic.topic.labels == [expected_label]
         assert topic.topic.priority == "High"
         assert rule.clause_text in topic.topic.description
-        assert element.reason in topic.topic.description
+        assert element.reason_plain in topic.topic.description and element.reason_raw in topic.topic.description
         assert element.global_id in topic.topic.description

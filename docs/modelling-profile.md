@@ -23,6 +23,8 @@ that follows it. The profile covers exactly what the current rules use; nothing 
 - Exit-door rules select doors with `Pset_DoorCommon.FireExit = TRUE`; doors with `FALSE` are out of
   scope of those rules.
 - `OperationType` is read from the door occurrence itself, not from an `IfcDoorType`.
+- An `IfcDoor.OperationType` of `NOTDEFINED` (or no value) counts as missing data: rules that need the
+  operation type report the door as unchecked.
 - The profile does not define which physical width `Qto_DoorBaseQuantities.Width` represents
   (clear opening, leaf or frame). Rules compare the declared quantity only.
 

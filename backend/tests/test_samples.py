@@ -29,7 +29,22 @@ def test_audit_matches_truth_element_by_element(name):
     assert report.status == truth["expected_status"]
 
 
-@pytest.mark.parametrize("name", SAMPLES)
+def test_sample_without_fire_exit_data_is_incomplete_never_compliant():
+    report = audit(SAMPLES_DIR / "sample_c_no_fireexit_mm.ifc", load_rulepack())
+    assert report.status == "incomplete"
+    assert report.summary.passed == report.summary.failed == 0 and report.summary.unchecked > 0
+
+
+def test_every_failed_or_unchecked_record_has_a_plain_reason():
+    for name in SAMPLES:
+        report = audit(SAMPLES_DIR / f"{name}.ifc", load_rulepack())
+        for r in report.rules:
+            for e in r.elements:
+                has_reason = e.verdict in ("failed", "unchecked")
+                assert (e.reason_plain is not None) == has_reason and (e.reason_raw is not None) == has_reason
+
+
+@pytest.mark.parametrize("name", ["sample_a_mm", "sample_b_m"])
 def test_samples_cover_every_required_case(name):
     truth = json.loads((SAMPLES_DIR / f"{name}.truth.json").read_text(encoding="utf-8"))
     assert truth["synthetic"] is True and 10 <= len(truth["doors"]) <= 12

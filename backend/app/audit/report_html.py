@@ -34,7 +34,8 @@ def _counts_row(label: str, c, status: str) -> str:
 def _element_table(elements: list[ElementResult]) -> str:
     rows = "".join(
         f"<tr><td>{_e(e.name)}</td><td>{_e(e.ifc_class)}</td><td><code>{_e(e.global_id)}</code></td>"
-        f"<td>{_e(e.reason)}</td></tr>" for e in elements)
+        f"<td>{_e(e.reason_plain)}<details><summary>Technical detail</summary>{_e(e.reason_raw)}</details></td></tr>"
+        for e in elements)
     return f"<table><tr><th>Name</th><th>Class</th><th>GlobalId</th><th>Reason</th></tr>{rows}</table>"
 
 

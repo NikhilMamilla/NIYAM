@@ -31,7 +31,8 @@ def export_bcf(report: AuditReport, path: Path) -> int:
             description = (
                 f"Rule {rule.unit_id}: {rule.rule_text}\n"
                 f"Element: {e.name or '(unnamed)'} ({e.ifc_class}, GlobalId {e.global_id})\n"
-                f"Verdict: {e.verdict}. Reason: {e.reason}\n\n"
+                f"Verdict: {e.verdict}. Reason: {e.reason_plain}\n"
+                f"Technical detail: {e.reason_raw}\n\n"
                 f"Clause {rule.clause_id} ({rule.source_doc}, page {rule.page}):\n{rule.clause_text}"
                 + ("" if rule.human_reviewed else "\n\nDraft rule encoding, not human-reviewed.")
             )

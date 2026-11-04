@@ -18,10 +18,12 @@ class Counts(BaseModel):
 
 class ElementResult(BaseModel):
     global_id: str
+    express_id: int  # STEP id in the audited file; lets a viewer map results to geometry
     name: str | None
     ifc_class: str
     verdict: Verdict
-    reason: str | None = None
+    reason_plain: str | None = None  # one plain-English sentence, from rule scope and element data
+    reason_raw: str | None = None  # the underlying ifctester or engine message
 
 
 class RuleResult(BaseModel):
