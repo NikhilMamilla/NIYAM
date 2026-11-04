@@ -12,6 +12,12 @@ package-lock.json
 
 # Env
 .env
+.venv/
+
+# Corpus: source PDFs and local DB are never committed
+rules/source/*
+!rules/source/README.md
+backend/data/
 
 # IDE
 .vscode/
