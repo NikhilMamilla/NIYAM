@@ -106,7 +106,7 @@ export class Viewer {
     if (!model) return;
     const box = localIds?.length ? await model.getMergedBox(localIds) : new THREE.Box3().setFromObject(model.object);
     if (box.isEmpty()) return;
-    const padded = box.clone().expandByScalar(localIds?.length ? 1.5 : 0.5);
+    const padded = box.clone().expandByScalar(localIds?.length ? 2.5 : 0.5);
     await this.world.camera.controls.fitToBox(padded, !prefersReducedMotion());
     await this.fragments.core.update(true);
   }

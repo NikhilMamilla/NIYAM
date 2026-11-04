@@ -122,7 +122,7 @@ export function SummaryCard({ audit, fileName, fileSize }: { audit: AuditResult;
     <section className="panel summary" aria-labelledby="summary-h">
       <h2 id="summary-h" className="visually-hidden">Audit summary</h2>
       <p className="file-line" title={fileName}>{fileName} <span>· {formatBytes(fileSize)}</span></p>
-      <div className="overall" data-testid="overall-status">
+      <div className="overall" data-testid="overall-status" aria-live="polite">
         <StatusBadge status={audit.status} />
       </div>
       <p className="explanation">{STATUS_EXPLANATION[audit.status]}</p>

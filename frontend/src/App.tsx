@@ -39,6 +39,7 @@ export default function App() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
   const maps = useRef({ localByExpress: new Map<number, number>(), expressByLocal: new Map<number, number>() });
+  const runToken = useRef(0);
 
   const summaries = useMemo(() => (audit ? elementsByExpressId(audit) : new Map()), [audit]);
 
@@ -66,22 +67,28 @@ export default function App() {
     setFile(label);
     setView("loading");
     setIdMapping("");
+    const token = ++runToken.current;
+    const stale = () => token !== runToken.current;
     const viewer = viewerRef.current!;
-    const shown = bytes.then((b) => viewer.load(b));
-    const [auditOutcome, viewOutcome] = await Promise.allSettled([request, shown]);
-
-    if (auditOutcome.status === "rejected") {
-      const reason = auditOutcome.reason;
+    await viewer.clearModel();
+    let result: AuditResult;
+    try {
+      result = await request;
+    } catch (reason) {
+      if (stale()) return;
       setError(reason instanceof ApiError ? reason : new ApiError(0, "Unexpected error while auditing the model."));
       setPhase("idle");
       setFile(null);
       setView("empty");
-      await viewer.clearModel();
       return;
     }
-    const result = auditOutcome.value;
+    if (stale()) return;
     setAudit(result);
     setPhase("done");
+    // Convert to 3D only once the server has accepted the file: web-ifc runs on the main thread and can spin
+    // on unreadable bytes, which would freeze the page before the audit error could be shown.
+    const [viewOutcome] = await Promise.allSettled([bytes.then((b) => viewer.load(b))]);
+    if (stale()) return;
     if (viewOutcome.status === "rejected") {
       console.error("3D view failed:", viewOutcome.reason);
       setView("failed");
@@ -151,7 +158,7 @@ export default function App() {
       <a href="#results" className="skip-link">Skip to results</a>
       <header className="header">
         <div className="brand">
-          <h1>NIYAM</h1>
+          <h1 translate="no">NIYAM</h1>
           <p>Checks IFC building models against Indian building bye-laws.</p>
         </div>
         {draftRules && (

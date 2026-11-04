@@ -2,7 +2,8 @@
 import { copyFileSync, mkdirSync } from "node:fs";
 
 mkdirSync("public/web-ifc", { recursive: true });
-for (const name of ["web-ifc.wasm", "web-ifc-mt.wasm"]) {
+// single-threaded build only: the multi-threaded one needs a cross-origin-isolated page, which this app is not
+for (const name of ["web-ifc.wasm"]) {
   copyFileSync(`node_modules/web-ifc/${name}`, `public/web-ifc/${name}`);
 }
 console.log("copied web-ifc wasm to public/web-ifc/");
