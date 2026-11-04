@@ -7,8 +7,10 @@ import json
 from pathlib import Path
 
 import ifcopenshell
+import ifcopenshell.util.unit
+import numpy as np
 
-from app.fixtures.builders import REPO_ROOT, TIMESTAMP, _stabilise, add_door, add_storey, guid, new_model
+from app.fixtures.builders import REPO_ROOT, TIMESTAMP, _stabilise, add_door, add_storey, guid, new_model, run
 
 SAMPLES_DIR = REPO_ROOT / "fixtures" / "samples"
 RULES = ("MBBL2016-5.4.2#1", "MBBL2016-5.4.1#b", "MBBL2016-5.4.1#c")
@@ -63,6 +65,39 @@ STOREYS = ("Ground floor", "First floor")
 INVALID_DIR = REPO_ROOT / "fixtures" / "invalid"
 
 
+STOREY_HEIGHT_M, DOOR_SPACING_M, DOOR_HEIGHT_M = 3.5, 2.0, 2.1
+
+
+def _placement(x: float, z: float) -> np.ndarray:
+    matrix = np.eye(4)
+    matrix[0, 3], matrix[2, 3] = x, z
+    return matrix
+
+
+def _add_geometry(f, storeys, doors) -> None:
+    """Simple boxes so the samples can be viewed in 3D: one per door, one floor slab per storey (SI metres)."""
+    model = run(f, "context.add_context", context_type="Model")
+    body = run(f, "context.add_context", context_type="Model", context_identifier="Body",
+               target_view="MODEL_VIEW", parent=model)
+    for level, storey in enumerate(storeys):
+        storey.Elevation = level * STOREY_HEIGHT_M / ifcopenshell.util.unit.calculate_unit_scale(f)
+        on_level = [d for d in doors if d[1] == level]
+        length = len(on_level) * DOOR_SPACING_M + 1.0
+        slab = run(f, "root.create_entity", ifc_class="IfcSlab", name=f"{storey.Name} slab")
+        run(f, "spatial.assign_container", products=[slab], relating_structure=storey)
+        run(f, "geometry.assign_representation", product=slab, representation=run(
+            f, "geometry.add_slab_representation", context=body, depth=0.2,
+            polyline=[(0.0, -1.5), (length, -1.5), (length, 1.5), (0.0, 1.5)]))
+        run(f, "geometry.edit_object_placement", product=slab, matrix=_placement(0.0, level * STOREY_HEIGHT_M - 0.2))
+        for i, (door_name, _, _, _, width_m, _) in enumerate(on_level):
+            door = f.by_guid(guid(door_name))
+            run(f, "geometry.assign_representation", product=door, representation=run(
+                f, "geometry.add_wall_representation", context=body, length=width_m or 0.9,
+                height=DOOR_HEIGHT_M, thickness=0.1))
+            run(f, "geometry.edit_object_placement", product=door,
+                matrix=_placement(1.0 + i * DOOR_SPACING_M, level * STOREY_HEIGHT_M))
+
+
 def build_sample(name: str, out_dir: Path) -> Path:
     unit, doors, expected_status = SAMPLES[name]
     scale = 1000.0 if unit == "mm" else 1.0
@@ -72,10 +107,11 @@ def build_sample(name: str, out_dir: Path) -> Path:
     truth = []
     for door_name, level, fire_exit, op, width_m, codes in doors:
         add_door(f, storeys[level], door_name, fire_exit=fire_exit, operation_type=op,
-                 width=None if width_m is None else width_m * scale, height=2.1 * scale)
+                 width=None if width_m is None else width_m * scale, height=DOOR_HEIGHT_M * scale)
         truth.append({"name": door_name, "global_id": guid(door_name), "storey": STOREYS[level],
                       "fire_exit": fire_exit, "operation_type": op, "width_m": width_m,
                       "expected": dict(zip(RULES, (CODE[c] for c in codes)))})
+    _add_geometry(f, storeys, doors)
     _stabilise(f, name)
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"{name}.ifc"
