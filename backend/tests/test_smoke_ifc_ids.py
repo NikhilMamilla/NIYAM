@@ -72,7 +72,9 @@ def test_ids_validates_ifc_model_and_identifies_passing_and_failing_doors(tmp_pa
 
     assert spec.status is False
     assert door_a in spec.passed_entities
+    assert door_a not in spec.failed_entities
     assert door_b in spec.failed_entities
+    assert door_b not in spec.passed_entities
 
 
 def test_json_and_html_reports_are_written_and_non_empty(tmp_path):
