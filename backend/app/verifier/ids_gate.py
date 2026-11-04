@@ -89,6 +89,9 @@ def verify_ids(candidate_xml: str, unit: RuleUnit, fixtures: FixturePair) -> Gat
         except _Rejected as e:
             results.append(StageResult(name, False, str(e)))
             raise
+        except Exception as e:  # candidates are untrusted LLM output; ifctester may raise on odd input
+            results.append(StageResult(name, False, f"ifctester raised {type(e).__name__}: {e}"))
+            raise _Rejected(str(e)) from e
         results.append(StageResult(name, True, message))
         return message
 

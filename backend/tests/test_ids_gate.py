@@ -168,6 +168,19 @@ def test_string_length_restriction_on_attribute_is_allowed():
     assert result.accepted, result.first_failure
 
 
+def test_ifctester_runtime_error_is_a_rejection_not_a_crash():
+    # schema-valid, but the regex is broken; ifctester raises while evaluating the facet
+    xml = gold_xml("MBBL2016-5.4.1#c").replace(
+        "</entity>",
+        "</entity><attribute><name><simpleValue>Name</simpleValue></name><value>"
+        '<xs:restriction base="xs:string"><xs:pattern value="door[_"/></xs:restriction></value></attribute>',
+        1,
+    )
+    result = gate("MBBL2016-5.4.1#c", xml)
+    assert result.first_failure.stage == "applicable_on_fixtures"
+    assert "unterminated character class" in result.first_failure.message
+
+
 def test_verdict_messages_name_entities_by_name():
     result = gate("MBBL2016-5.4.1#c", MUTATIONS["g_missing_fire_exit_filter"][1](gold_xml("MBBL2016-5.4.1#c")))
     assert "control_non_exit_door" in result.first_failure.message
