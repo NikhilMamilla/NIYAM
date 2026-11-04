@@ -9,6 +9,7 @@ Per rule and element of the rule's scope class:
 
 import re
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import ifcopenshell
@@ -18,7 +19,9 @@ from ifctester import ids
 
 from app.audit.models import AuditReport, Counts, ElementCounts, ElementResult, RuleResult, Status, Summary
 from app.rulepack.loader import Rulepack
+from app.geometry.helpers import validate_finding
 from app.rulepack.models import RequiredData, Rule
+from app.verifier import sandbox
 
 NOT_STATED = (None, "", "NOTDEFINED")
 LENGTH_TYPES = {"IFCLENGTHMEASURE", "IFCPOSITIVELENGTHMEASURE", "IFCNONNEGATIVELENGTHMEASURE"}
@@ -178,18 +181,76 @@ def _audit_rule(model, rule: Rule, ids_xml: str) -> RuleResult:
                       status=overall_status(counts), counts=counts, elements=elements)
 
 
-def audit(ifc_path: Path, rulepack: Rulepack) -> AuditReport:
+FINDING_VERDICT = {"pass": "passed", "fail": "failed", "unchecked": "unchecked"}
+SEVERITY = ("failed", "unchecked", "passed")  # when a check reports an element twice, the worst counts
+
+
+def _geometric_result(model, rule: Rule, outcome: sandbox.SandboxOutcome) -> RuleResult:
+    """Map a sandboxed check's findings onto the elements of the rule's class. Elements the check returned no
+    finding for are out of scope. A check that timed out, crashed or returned garbage makes the rule an error."""
+    base = dict(unit_id=rule.unit_id, clause_id=rule.clause_id, clause_text=rule.clause_text,
+                rule_text=rule.rule_text, source_doc=rule.source_doc, page=rule.page, severity=rule.severity,
+                human_reviewed=rule.human_reviewed)
+    error = outcome.error if not outcome.ok else None
+    findings = outcome.results[0] if outcome.ok else []
+    if error is None and not isinstance(findings, list):
+        error = f"the check returned a {type(findings).__name__}, not a list of findings"
+    if error is None:
+        problems = [p for f in findings if (p := validate_finding(f)) is not None]
+        error = f"the check returned an invalid finding: {problems[0]}" if problems else None
+    if error is not None:
+        return RuleResult(**base, status="error", counts=Counts(), elements=[], error=error)
+
+    by_id: dict[str, dict] = {}
+    for f in findings:
+        old = by_id.get(f["global_id"])
+        if old is None or SEVERITY.index(FINDING_VERDICT[f["verdict"]]) < SEVERITY.index(FINDING_VERDICT[old["verdict"]]):
+            by_id[f["global_id"]] = f
+    elements = []
+    for e in model.by_type(rule.scope.ifc_class):
+        f = by_id.get(e.GlobalId)
+        verdict = FINDING_VERDICT[f["verdict"]] if f else "out_of_scope"
+        has_reason = verdict in ("failed", "unchecked")
+        raw = None
+        if has_reason:
+            numbers = "" if f["measured"] is None or f["required"] is None else \
+                f" (measured {f['measured']:.6g}, required {f['required']:.6g})"
+            raw = f"geometric check {rule.unit_id} reported {f['verdict']}{numbers}"
+        elements.append(ElementResult(global_id=e.GlobalId, express_id=e.id(), name=e.Name, ifc_class=e.is_a(),
+                                      verdict=verdict, reason_plain=f["detail"] if has_reason else None,
+                                      reason_raw=raw))
+    counts = Counts(**Counter(el.verdict for el in elements))
+    return RuleResult(**base, status=overall_status(counts), counts=counts, elements=elements)
+
+
+def audit(ifc_path: Path, rulepack: Rulepack, *, geometric_timeout_s: float = 60.0) -> AuditReport:
     try:
         model = ifcopenshell.open(str(ifc_path))
     except (ifcopenshell.Error, OSError, RuntimeError) as e:
         raise InvalidIfcError(f"could not read IFC file: {e}") from e
     if model.schema != "IFC4":
         raise UnsupportedSchemaError(f"unsupported IFC schema {model.schema_identifier}: NIYAM v0.1 audits IFC4 models")
-    rules = [_audit_rule(model, rule, rulepack.ids_xml(rule)) for rule in rulepack.manifest.rules]
+    # Geometric checks run in sandbox processes, all at once; a rule with no element of its class is not run.
+    geometric = [r for r in rulepack.manifest.rules if r.tier == "geometric" and model.by_type(r.scope.ifc_class)]
+    with ThreadPoolExecutor(max_workers=max(1, len(geometric))) as pool:
+        outcomes = {r.unit_id: pool.submit(sandbox.run_check, rulepack.check_code(r), [ifc_path],
+                                           timeout_s=geometric_timeout_s) for r in geometric}
+        rules = []
+        for rule in rulepack.manifest.rules:
+            if rule.tier == "ids":
+                rules.append(_audit_rule(model, rule, rulepack.ids_xml(rule)))
+            elif rule.unit_id in outcomes:
+                rules.append(_geometric_result(model, rule, outcomes[rule.unit_id].result()))
+            else:  # nothing of the rule's class in the model: nothing to check
+                rules.append(_geometric_result(model, rule, sandbox.SandboxOutcome(True, results=[[]])))
     checks = sum((r.counts for r in rules), Counts())
+    errors = sum(r.status == "error" for r in rules)
+    status = overall_status(checks)
+    if errors and status in ("compliant", "nothing_checked"):
+        status = "incomplete"  # a rule that could not run proves nothing
+    summary = Summary(checks=checks, elements=_element_counts(model, rulepack, rules), rules_with_errors=errors)
     return AuditReport(ifc_file=Path(ifc_path).name, ifc_schema=model.schema_identifier,
-                       rulepack_version=rulepack.manifest.version, status=overall_status(checks),
-                       summary=Summary(checks=checks, elements=_element_counts(model, rulepack, rules)), rules=rules)
+                       rulepack_version=rulepack.manifest.version, status=status, summary=summary, rules=rules)
 
 
 def _element_counts(model, rulepack: Rulepack, rules: list[RuleResult]) -> ElementCounts:

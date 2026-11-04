@@ -127,3 +127,98 @@ rules:
   page: 100
   human_reviewed: false
   severity: error
+- unit_id: MBBL2016-4.5.2#1
+  clause_id: MBBL2016-4.5.2
+  clause_text: '4.5.2 Size
+
+    The area of a bathroom shall not be less than 1.8 m2 with a minimum width of 1.2 m.
+
+    The floor area of water-closet shall be 1.1 m2 with a minimum width of 0.9 m. If bath
+
+    and water-closet are combined, its floor area shall not be less than 2.8 m2 with a
+
+    minimum width of 1.2 m.'
+  rule_text: The area of a bathroom shall not be less than 1.8 m2
+  check_file: checks/MBBL2016-4_5_2_1.py
+  scope:
+    ifc_class: IfcSpace
+    required_data:
+    - pset: Pset_SpaceCommon
+      name: Category
+    measures:
+    - space_floor_area_m2
+  tier: geometric
+  source_doc: MBBL-2016
+  page: 70
+  human_reviewed: false
+  severity: error
+- unit_id: MBBL2016-4.3.1.1#1
+  clause_id: MBBL2016-4.3.1.1
+  clause_text: '4.3.1.1 The height of all rooms for human habitation shall not be less than 2.75 m measured
+
+    from the surface of the floor to the lowest point of the ceiling (bottom of slab)
+
+    provided that the minimum clear headway under any beam shall not be less than 2.4 m.
+
+    In the case of pitched roof, the average height of rooms shall not be less than 2.75 m.
+
+    The minimum clear head room under a beam, folded plates or eaves shall be 2.4 m. In
+
+    the case of air-conditioned rooms, a height of not less than 2.4 m measured from the
+
+    surface of the floor to the lowest point of air-conditioning duct or the false ceiling shall
+
+    be provided.'
+  rule_text: The height of all rooms for human habitation shall not be less than 2.75 m measured from
+    the surface of the floor to the lowest point of the ceiling (bottom of slab)
+  check_file: checks/MBBL2016-4_3_1_1_1.py
+  scope:
+    ifc_class: IfcSpace
+    required_data:
+    - pset: Pset_SpaceCommon
+      name: Category
+    measures:
+    - element_height_m
+  tier: geometric
+  source_doc: MBBL-2016
+  page: 69
+  human_reviewed: false
+  severity: error
+- unit_id: MBBL2016-4.17.2#A
+  clause_id: MBBL2016-4.17.2
+  clause_text: '4.17.2 Minimum width
+
+    The minimum width of staircase shall be as follows:
+
+    A Residential buildings (dwellings) 1.0 m
+
+    NOTE — For row housing with 2
+
+    storeys, the min. width of shall be 0.75
+
+    B Residential hotel buildings 1.5 m
+
+    C Assembly buildings like auditoria, 2.0 m
+
+    theatres and cinemas
+
+    D Educational building 1.5 m
+
+    E Institutional buildings 2.0 m
+
+    F All other buildings 1.5 m'
+  rule_text: 'The minimum width of staircase shall be as follows: A Residential buildings (dwellings)
+    1.0 m'
+  check_file: checks/MBBL2016-4_17_2_A.py
+  scope:
+    ifc_class: IfcStairFlight
+    required_data:
+    - pset: Pset_BuildingCommon
+      name: OccupancyType
+    measures:
+    - stair_flight_width_m
+  tier: geometric
+  source_doc: MBBL-2016
+  page: 75
+  human_reviewed: false
+  severity: error

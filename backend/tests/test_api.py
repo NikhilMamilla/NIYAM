@@ -37,8 +37,9 @@ def test_audit_happy_path_and_downloads(client, data_dir):
     assert body["status"] == truth["expected_status"]
     assert body["summary"] == {
         "checks": {"passed": 17, "failed": 6, "unchecked": 7, "out_of_scope": 6},
-        "elements": {"total_in_model_of_scoped_classes": 12, "with_failed": 5, "with_unchecked": 3, "clean": 4}}
-    assert [rule["unit_id"] for rule in body["rules"]] == ["MBBL2016-5.4.2#1", "MBBL2016-5.4.1#b", "MBBL2016-5.4.1#c"]
+        "elements": {"total_in_model_of_scoped_classes": 12, "with_failed": 5, "with_unchecked": 3, "clean": 4},
+        "rules_with_errors": 0}
+    assert [rule["unit_id"] for rule in body["rules"]] == [*["MBBL2016-5.4.2#1", "MBBL2016-5.4.1#b", "MBBL2016-5.4.1#c"], "MBBL2016-4.5.2#1", "MBBL2016-4.3.1.1#1", "MBBL2016-4.17.2#A"]
     assert (data_dir / audit_id / "model.ifc").read_bytes() == (SAMPLES_DIR / "sample_a_mm.ifc").read_bytes()
 
     got = client.get(f"/api/audit/{audit_id}")
@@ -107,7 +108,7 @@ def test_rulepack_endpoint(client):
     r = client.get("/api/rulepack")
     assert r.status_code == 200
     rules = r.json()["rules"]
-    assert [x["unit_id"] for x in rules] == ["MBBL2016-5.4.2#1", "MBBL2016-5.4.1#b", "MBBL2016-5.4.1#c"]
+    assert [x["unit_id"] for x in rules] == [*["MBBL2016-5.4.2#1", "MBBL2016-5.4.1#b", "MBBL2016-5.4.1#c"], "MBBL2016-4.5.2#1", "MBBL2016-4.3.1.1#1", "MBBL2016-4.17.2#A"]
     assert all(x["human_reviewed"] is False and x["clause_text"] and x["rule_text"] for x in rules)
 
 

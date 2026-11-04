@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 Verdict = Literal["passed", "failed", "unchecked", "out_of_scope"]
 Status = Literal["compliant", "noncompliant", "incomplete", "nothing_checked"]
+RuleStatus = Literal["compliant", "noncompliant", "incomplete", "nothing_checked", "error"]
 
 
 class Counts(BaseModel):
@@ -28,6 +29,7 @@ class ElementCounts(BaseModel):
 class Summary(BaseModel):
     checks: Counts  # rule x element checks: one element is counted once per rule
     elements: ElementCounts
+    rules_with_errors: int = 0  # geometric rules whose check timed out or crashed: not checked, not passed
 
 
 class ElementResult(BaseModel):
@@ -49,9 +51,10 @@ class RuleResult(BaseModel):
     page: int
     severity: str
     human_reviewed: bool
-    status: Status
+    status: RuleStatus
     counts: Counts
     elements: list[ElementResult]
+    error: str | None = None  # why a rule has status "error"
 
 
 class AuditReport(BaseModel):

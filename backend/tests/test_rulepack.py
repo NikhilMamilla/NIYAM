@@ -22,6 +22,7 @@ def gold_path(unit_id):
 def test_v0_rulepack_loads_with_expected_scopes():
     pack = load_rulepack(V0)
     rules = {r.unit_id: r for r in pack.manifest.rules}
+    rules = {u: r for u, r in rules.items() if r.tier == "ids"}  # the geometric rules are covered separately
     assert set(rules) == {"MBBL2016-5.4.2#1", "MBBL2016-5.4.1#b", "MBBL2016-5.4.1#c"}
     for r in rules.values():
         assert r.human_reviewed is False and r.tier == "ids" and r.severity == "error"
@@ -139,4 +140,4 @@ def test_cli_list_and_validate(capsys):
     out = capsys.readouterr().out
     assert "MBBL2016-5.4.2#1" in out and "reviewed=False" in out
     assert cli.main(["--pack", str(V0), "validate"]) == 0
-    assert "3 rule(s) valid" in capsys.readouterr().out
+    assert "6 rule(s) valid" in capsys.readouterr().out

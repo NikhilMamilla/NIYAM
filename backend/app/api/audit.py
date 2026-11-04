@@ -47,7 +47,8 @@ async def _run_audit(settings: Settings, store: Callable[[Path], Awaitable[None]
     try:
         await store(model_path)
         try:
-            report = await run_in_threadpool(audit, model_path, get_rulepack())  # CPU bound
+            report = await run_in_threadpool(  # CPU bound
+                audit, model_path, get_rulepack(), geometric_timeout_s=settings.geometric_timeout_s)
             await run_in_threadpool(write_outputs, report, audit_dir)
         except InvalidIfcError as e:
             raise HTTPException(422, str(e)) from e

@@ -151,7 +151,7 @@ def test_non_ifc4_schema_is_rejected(tmp_path, pack):
 def test_model_without_fire_exit_data_is_never_compliant(tmp_path, pack):
     report = audit(model_file(tmp_path, [("a", {"fire_exit": None}), ("b", {"fire_exit": None})]), pack)
     assert report.status == "incomplete"
-    assert all(r.status == "incomplete" and r.counts.passed == 0 for r in report.rules)
+    assert all(r.status == "incomplete" and r.counts.passed == 0 for r in report.rules if r.unit_id.startswith("MBBL2016-5.4"))
 
 
 def test_model_without_doors_is_nothing_checked(tmp_path, pack):

@@ -20,6 +20,7 @@ class Settings(BaseSettings):
 
     audit_data_dir: Path = REPO_ROOT / "backend" / "data" / "audits"
     max_upload_mb: float = 100.0
+    geometric_timeout_s: float = 60.0  # per geometric rule, wall clock, in its sandbox process
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
 
 

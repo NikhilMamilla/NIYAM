@@ -41,6 +41,7 @@ class Scope(_Strict):
     ifc_class: str
     selector: Selector | None = None
     required_data: list[RequiredData]
+    measures: list[str] | None = None  # geometric rules: the helper-derived values the check computes
 
 
 class Rule(_Strict):
@@ -48,13 +49,21 @@ class Rule(_Strict):
     clause_id: str
     clause_text: str
     rule_text: str
-    ids_file: str
+    ids_file: str | None = None  # tier "ids"
+    check_file: str | None = None  # tier "geometric": a Python check run only through the sandbox
     scope: Scope
-    tier: Literal["ids"] = "ids"
+    tier: Literal["ids", "geometric"] = "ids"
     source_doc: str
     page: int
     human_reviewed: bool = False
     severity: Literal["error", "warning"] = "error"
+
+    @model_validator(mode="after")
+    def _artifact_matches_tier(self):
+        wanted, other = ("ids_file", "check_file") if self.tier == "ids" else ("check_file", "ids_file")
+        if getattr(self, wanted) is None or getattr(self, other) is not None:
+            raise ValueError(f"{self.unit_id}: a {self.tier} rule needs {wanted} and no {other}")
+        return self
 
 
 class Manifest(_Strict):

@@ -10,7 +10,7 @@ h1{font-size:24px;margin:0 0 4px}h2{font-size:19px;margin:32px 0 6px}h3{font-siz
 .meta{color:#555}.note{background:#fff6e0;border:1px solid #e9c46a;padding:8px 12px;border-radius:6px}
 .badge{display:inline-block;padding:1px 8px;border-radius:10px;font-weight:600;font-size:13px}
 .noncompliant{background:#fde2e1;color:#9b1c1c}.incomplete{background:#fff1c2;color:#7a5200}
-.compliant{background:#dcf5e3;color:#11612f}.nothing_checked{background:#e8e8ed;color:#444}
+.compliant{background:#dcf5e3;color:#11612f}.nothing_checked{background:#e8e8ed;color:#444}.error{background:#fde2e1;color:#9b1c1c;border:1px solid #9b1c1c}
 table{border-collapse:collapse;width:100%;margin:6px 0 12px;font-size:14px}
 th,td{border:1px solid #d8d8de;padding:5px 8px;text-align:left;vertical-align:top}th{background:#f3f3f6}
 pre{white-space:pre-wrap;background:#f6f6f8;padding:10px 12px;border-radius:6px;font:13px/1.45 ui-monospace,monospace}
@@ -49,6 +49,9 @@ def _rule_section(r: RuleResult) -> str:
         f"<p><strong>Rule:</strong> {_e(r.rule_text)}</p>",
         f"<h3>Clause text</h3><pre>{_e(r.clause_text)}</pre>",
     ]
+    if r.error:
+        parts.append(f'<p class="note"><strong>This rule could not be run:</strong> {_e(r.error)}. '
+                     "Its elements were not checked; this is not a pass.</p>")
     for verdict, heading in (("failed", "Failed elements"), ("unchecked", "Unchecked elements (missing data)")):
         elements = [e for e in r.elements if e.verdict == verdict]
         parts.append(f"<h3>{heading} ({len(elements)})</h3>")
