@@ -92,6 +92,14 @@ test("sample A: status, counts, rules, downloads and 3D highlighting", async ({ 
   await page.screenshot({ path: `${SHOTS}/01-sample-a-audit.png` });
 });
 
+test("the external-request guard flags a request to another host (it can fail)", async ({ page }) => {
+  const external = watchExternalRequests(page);
+  await page.goto("/");
+  expect(external).toEqual([]);
+  await page.evaluate(() => fetch("http://example.invalid/").catch(() => "blocked or unresolvable, as expected"));
+  await expect.poll(() => external).toEqual(["http://example.invalid/"]);
+});
+
 test("clicking a door in 3D and an element in the list both open the detail panel", async ({ page }) => {
   await loadSample(page, "Try sample A (mm)", "sample_a_mm");
 
