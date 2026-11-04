@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+backend/.venv/
+*.egg-info/
+.pytest_cache/
+
+# Node
+node_modules/
+package.json
+package-lock.json
+
+# Env
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# IFC caches / scratch
+*.ifc.cache
+*.bak
+
+# Claude Code / agent tooling (local, not project source)
+.agents/
+.claude/
+.codex/
+skills-lock.json
