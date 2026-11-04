@@ -109,6 +109,8 @@ def _stabilise(f, key: str) -> None:
         ua.Units = sorted(ua.Units, key=lambda e: e.id())
     for rel in f.by_type("IfcRelContainedInSpatialStructure"):
         rel.RelatedElements = sorted(rel.RelatedElements, key=lambda e: e.id())
+    for rel in f.by_type("IfcRelAggregates"):
+        rel.RelatedObjects = sorted(rel.RelatedObjects, key=lambda e: e.id())
 
 
 def build_pair(unit_id: str, out_dir: Path) -> FixturePair:

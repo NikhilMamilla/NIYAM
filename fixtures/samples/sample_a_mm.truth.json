@@ -1,0 +1,164 @@
+{
+  "sample": "sample_a_mm",
+  "synthetic": true,
+  "length_unit": "mm",
+  "expected_status": "noncompliant",
+  "doors": [
+    {
+      "name": "A-G-01 main exit",
+      "global_id": "3H7XxpgEbOug89TV4PQr4a",
+      "storey": "Ground floor",
+      "fire_exit": true,
+      "operation_type": "DOUBLE_DOOR_DOUBLE_SWING",
+      "width_m": 1.8,
+      "expected": {
+        "MBBL2016-5.4.2#1": "passed",
+        "MBBL2016-5.4.1#b": "passed",
+        "MBBL2016-5.4.1#c": "passed"
+      }
+    },
+    {
+      "name": "A-G-02 side exit at 1.0 m",
+      "global_id": "3uyWqGD9DSKAyrhOa0gEQB",
+      "storey": "Ground floor",
+      "fire_exit": true,
+      "operation_type": "SINGLE_SWING_LEFT",
+      "width_m": 1.0,
+      "expected": {
+        "MBBL2016-5.4.2#1": "passed",
+        "MBBL2016-5.4.1#b": "passed",
+        "MBBL2016-5.4.1#c": "passed"
+      }
+    },
+    {
+      "name": "A-G-03 narrow exit",
+      "global_id": "3yhQm5ybjNQvwAOshBdZHl",
+      "storey": "Ground floor",
+      "fire_exit": true,
+      "operation_type": "SINGLE_SWING_RIGHT",
+      "width_m": 0.9,
+      "expected": {
+        "MBBL2016-5.4.2#1": "passed",
+        "MBBL2016-5.4.1#b": "failed",
+        "MBBL2016-5.4.1#c": "passed"
+      }
+    },
+    {
+      "name": "A-G-04 revolving exit",
+      "global_id": "0VPleGO_HT4gQeoARWLCk3",
+      "storey": "Ground floor",
+      "fire_exit": true,
+      "operation_type": "REVOLVING",
+      "width_m": 1.2,
+      "expected": {
+        "MBBL2016-5.4.2#1": "failed",
+        "MBBL2016-5.4.1#b": "passed",
+        "MBBL2016-5.4.1#c": "passed"
+      }
+    },
+    {
+      "name": "A-G-05 sliding exit",
+      "global_id": "2eLf1vV9nPdRPqJvB$LMry",
+      "storey": "Ground floor",
+      "fire_exit": true,
+      "operation_type": "SLIDING_TO_LEFT",
+      "width_m": 1.2,
+      "expected": {
+        "MBBL2016-5.4.2#1": "passed",
+        "MBBL2016-5.4.1#b": "passed",
+        "MBBL2016-5.4.1#c": "failed"
+      }
+    },
+    {
+      "name": "A-G-06 revolving lobby door (not exit)",
+      "global_id": "2qum7qgnnRqub_ZsnGxhxR",
+      "storey": "Ground floor",
+      "fire_exit": false,
+      "operation_type": "REVOLVING",
+      "width_m": 0.75,
+      "expected": {
+        "MBBL2016-5.4.2#1": "out_of_scope",
+        "MBBL2016-5.4.1#b": "out_of_scope",
+        "MBBL2016-5.4.1#c": "out_of_scope"
+      }
+    },
+    {
+      "name": "A-1-01 rolling shutter exit",
+      "global_id": "2qbmg0pa5PaPR3H8wXV8a$",
+      "storey": "First floor",
+      "fire_exit": true,
+      "operation_type": "ROLLINGUP",
+      "width_m": 1.5,
+      "expected": {
+        "MBBL2016-5.4.2#1": "passed",
+        "MBBL2016-5.4.1#b": "passed",
+        "MBBL2016-5.4.1#c": "failed"
+      }
+    },
+    {
+      "name": "A-1-02 narrow sliding exit",
+      "global_id": "2NBBU0$KrOJeHWER03vAR3",
+      "storey": "First floor",
+      "fire_exit": true,
+      "operation_type": "DOUBLE_DOOR_SLIDING",
+      "width_m": 0.8,
+      "expected": {
+        "MBBL2016-5.4.2#1": "passed",
+        "MBBL2016-5.4.1#b": "failed",
+        "MBBL2016-5.4.1#c": "failed"
+      }
+    },
+    {
+      "name": "A-1-03 sliding store door (not exit)",
+      "global_id": "0MX6qyqsTPtxRDzoW95hcG",
+      "storey": "First floor",
+      "fire_exit": false,
+      "operation_type": "SLIDING_TO_RIGHT",
+      "width_m": 0.7,
+      "expected": {
+        "MBBL2016-5.4.2#1": "out_of_scope",
+        "MBBL2016-5.4.1#b": "out_of_scope",
+        "MBBL2016-5.4.1#c": "out_of_scope"
+      }
+    },
+    {
+      "name": "A-1-04 door without FireExit",
+      "global_id": "159ORaADXIOA2kMOR7Pqy2",
+      "storey": "First floor",
+      "fire_exit": null,
+      "operation_type": "SINGLE_SWING_LEFT",
+      "width_m": 0.9,
+      "expected": {
+        "MBBL2016-5.4.2#1": "unchecked",
+        "MBBL2016-5.4.1#b": "unchecked",
+        "MBBL2016-5.4.1#c": "unchecked"
+      }
+    },
+    {
+      "name": "A-1-05 revolving door without FireExit",
+      "global_id": "0Lax8mctXPMu4KFuh6_PwD",
+      "storey": "First floor",
+      "fire_exit": null,
+      "operation_type": "REVOLVING",
+      "width_m": 1.2,
+      "expected": {
+        "MBBL2016-5.4.2#1": "unchecked",
+        "MBBL2016-5.4.1#b": "unchecked",
+        "MBBL2016-5.4.1#c": "unchecked"
+      }
+    },
+    {
+      "name": "A-1-06 exit without width quantity",
+      "global_id": "0GLiqFaf9TYg9X1VbfZxVB",
+      "storey": "First floor",
+      "fire_exit": true,
+      "operation_type": "SINGLE_SWING_LEFT",
+      "width_m": null,
+      "expected": {
+        "MBBL2016-5.4.2#1": "passed",
+        "MBBL2016-5.4.1#b": "unchecked",
+        "MBBL2016-5.4.1#c": "passed"
+      }
+    }
+  ]
+}
