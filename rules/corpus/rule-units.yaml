@@ -1,0 +1,32 @@
+- id: MBBL2016-5.4.1#b
+  clause_id: MBBL2016-5.4.1
+  text: No exit doorway shall be less than 1m in width.
+  tier: ids
+  status: pilot
+  expected_artifact: fixtures/ids/MBBL2016-5_4_1_b.ids
+  human_reviewed: false
+  reviewer: null
+  notes: 'IfcDoor with FireExit=TRUE: Qto_DoorBaseQuantities.Width >= 1.0 m. Uses the quantity, not OverallWidth:
+    IDS attribute bounds are not unit-converted (see docs/notes-ids-expressiveness.md). Ambiguity: clear
+    vs leaf vs overall width not specified.'
+- id: MBBL2016-5.4.1#c
+  clause_id: MBBL2016-5.4.1
+  text: overhead or sliding doors shall not be installed
+  tier: ids
+  status: pilot
+  expected_artifact: fixtures/ids/MBBL2016-5_4_1_c.ids
+  human_reviewed: false
+  reviewer: null
+  notes: 'IfcDoor with FireExit=TRUE: OperationType not in {SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING,
+    ROLLINGUP}. Ambiguity: scope (exit doorways) inferred from sub-item c; ''overhead'' mapped to ROLLINGUP
+    only; fragment of a comma-spliced sentence whose first half (0.9m landing width) is geometric.'
+- id: MBBL2016-5.4.2#1
+  clause_id: MBBL2016-5.4.2
+  text: Revolving door shall not be provided as a means of fire exit.
+  tier: ids
+  status: pilot
+  expected_artifact: fixtures/ids/MBBL2016-5_4_2_1.ids
+  human_reviewed: false
+  reviewer: null
+  notes: 'IfcDoor with Pset_DoorCommon.FireExit=TRUE: OperationType must not be REVOLVING. Ambiguity:
+    ''means of fire exit'' is mapped to the FireExit flag.'

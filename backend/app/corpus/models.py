@@ -18,3 +18,15 @@ class Clause(BaseModel):
     topic: str | None = None
     status: Status = "candidate"
     notes: str | None = None
+
+
+class RuleUnit(BaseModel):
+    id: str
+    clause_id: str
+    text: str
+    tier: Tier = "unclassified"
+    status: Literal["pilot", "selected", "rejected"] = "pilot"
+    expected_artifact: str | None = None
+    human_reviewed: bool = False
+    reviewer: str | None = None
+    notes: str | None = None

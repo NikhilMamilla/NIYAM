@@ -5,13 +5,14 @@ from typing import get_args
 
 from app.corpus import repository as repo
 from app.corpus.extract_mbbl import extract_pages, segment
-from app.corpus.models import Clause, Status, Tier
+from app.corpus.models import Clause, RuleUnit, Status, Tier
 from app.corpus.suggest import MAX_REVIEWABLE_CHARS, render_markdown, suggest
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_PDF = REPO_ROOT / "rules" / "source" / "mbbl-2016.pdf"
 DEFAULT_YAML = REPO_ROOT / "rules" / "corpus" / "mbbl-2016.selected.yaml"
 DEFAULT_CANDIDATES = REPO_ROOT / "docs" / "corpus-candidates.md"
+DEFAULT_UNITS_YAML = REPO_ROOT / "rules" / "corpus" / "rule-units.yaml"
 CURATED_FIELDS = ("tier", "topic", "status", "notes")
 
 
@@ -85,6 +86,39 @@ def cmd_suggest(conn, args):
     print(f"wrote {len(ranked)} candidates to {args.out} (skipped {len(skipped)} oversized clauses)")
 
 
+def cmd_unit_add(conn, args):
+    unit = RuleUnit(id=f"{args.clause_id}#{args.suffix}", clause_id=args.clause_id, text=args.text,
+                    tier=args.tier, notes=args.notes, expected_artifact=args.artifact)
+    try:
+        repo.upsert_unit(conn, unit)
+    except ValueError as e:
+        sys.exit(f"rejected: {e}")
+    print(f"added {unit.id} (tier={unit.tier}, status={unit.status})")
+
+
+def cmd_unit_list(conn, args):
+    units = repo.list_units(conn, status=args.status)
+    for u in units:
+        print(f"{u.id:22} {u.tier:12} {u.status:8} reviewed={u.human_reviewed!s:5} {' '.join(u.text.split())[:70]}")
+    print(f"{len(units)} unit(s)")
+
+
+def cmd_unit_show(conn, args):
+    u = repo.get_unit(conn, args.unit_id)
+    if not u:
+        sys.exit(f"no unit {args.unit_id}")
+    for field, value in u.model_dump().items():
+        print(f"{field}: {value}")
+
+
+def cmd_unit_export(conn, args):
+    print(f"exported {repo.export_units(conn, args.yaml)} unit(s) to {args.yaml}")
+
+
+def cmd_unit_import(conn, args):
+    print(f"imported {repo.import_units(conn, args.yaml)} unit(s) from {args.yaml}")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(prog="python -m app.corpus.cli")
     parser.add_argument("--db", type=Path, default=repo.DEFAULT_DB)
@@ -115,6 +149,25 @@ def main(argv=None):
     p.add_argument("--limit", type=int, default=80)
     p.add_argument("--out", type=Path, default=DEFAULT_CANDIDATES)
     p.set_defaults(func=cmd_suggest)
+
+    p = sub.add_parser("unit-add")
+    p.add_argument("clause_id")
+    p.add_argument("--suffix", required=True)
+    p.add_argument("--text", required=True)
+    p.add_argument("--tier", choices=get_args(Tier), required=True)
+    p.add_argument("--notes")
+    p.add_argument("--artifact", help="path of the gold file, e.g. fixtures/ids/<unit>.ids")
+    p.set_defaults(func=cmd_unit_add)
+    p = sub.add_parser("unit-list")
+    p.add_argument("--status", choices=["pilot", "selected", "rejected"])
+    p.set_defaults(func=cmd_unit_list)
+    p = sub.add_parser("unit-show")
+    p.add_argument("unit_id")
+    p.set_defaults(func=cmd_unit_show)
+    for name, func in (("unit-export", cmd_unit_export), ("unit-import", cmd_unit_import)):
+        p = sub.add_parser(name)
+        p.add_argument("--yaml", type=Path, default=DEFAULT_UNITS_YAML)
+        p.set_defaults(func=func)
 
     args = parser.parse_args(argv)
     conn = repo.connect(args.db)
