@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <info>
+    <title>EXAMPLE 2 (synthetic): external windows declare thermal transmittance</title>
+  </info>
+  <specifications>
+    <specification name="EXAMPLE-2 external windows" ifcVersion="IFC4" identifier="EXAMPLE-2"
+        description="Every external window shall state its thermal transmittance."
+        instructions="Synthetic example rule, not from any bye-law.">
+      <applicability minOccurs="0" maxOccurs="unbounded">
+        <entity>
+          <name><simpleValue>IFCWINDOW</simpleValue></name>
+        </entity>
+        <property dataType="IFCBOOLEAN">
+          <propertySet><simpleValue>Pset_WindowCommon</simpleValue></propertySet>
+          <baseName><simpleValue>IsExternal</simpleValue></baseName>
+          <value><simpleValue>TRUE</simpleValue></value>
+        </property>
+      </applicability>
+      <requirements>
+        <property dataType="IFCTHERMALTRANSMITTANCEMEASURE" cardinality="required">
+          <propertySet><simpleValue>Pset_WindowCommon</simpleValue></propertySet>
+          <baseName><simpleValue>ThermalTransmittance</simpleValue></baseName>
+        </property>
+      </requirements>
+    </specification>
+  </specifications>
+</ids>

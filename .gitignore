@@ -32,3 +32,6 @@ backend/data/
 .claude/
 .codex/
 skills-lock.json
+
+# Compiler run outputs (not committed for now)
+eval/runs/
