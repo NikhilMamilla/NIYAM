@@ -22,6 +22,19 @@ audited; other schemas are refused.
 Rule and audit status: `noncompliant` if anything failed; else `incomplete` if anything is
 unchecked; else `compliant` if at least one element was checked; else `nothing_checked`.
 
+## Summary: checks vs distinct elements
+
+`summary` has two parts (the old flat `summary.{passed,failed,…}` was replaced; every consumer —
+API, HTML, BCF, CLI, web app — was updated):
+
+- `checks` `{passed, failed, unchecked, out_of_scope}`: one per rule × element. With three door
+  rules, one door contributes three checks, so these are not door counts.
+- `elements` `{total_in_model_of_scoped_classes, with_failed, with_unchecked, clean}`: distinct
+  elements of the classes any rule scopes. An element with any failed check counts once under
+  `with_failed`; else with any unchecked check under `with_unchecked`; the rest are `clean`.
+
+Sample A: checks 17 / 6 / 7 / 6; 12 doors, 5 with violations, 3 not fully checked, 4 clean.
+
 ## Exports (`--out`)
 
 - `report.json`: the full `AuditReport`.

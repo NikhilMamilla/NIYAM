@@ -35,7 +35,9 @@ def test_audit_happy_path_and_downloads(client, data_dir):
     body = r.json()
     audit_id = str(uuid.UUID(body["audit_id"]))
     assert body["status"] == truth["expected_status"]
-    assert body["summary"] == {"passed": 17, "failed": 6, "unchecked": 7, "out_of_scope": 6}
+    assert body["summary"] == {
+        "checks": {"passed": 17, "failed": 6, "unchecked": 7, "out_of_scope": 6},
+        "elements": {"total_in_model_of_scoped_classes": 12, "with_failed": 5, "with_unchecked": 3, "clean": 4}}
     assert [rule["unit_id"] for rule in body["rules"]] == ["MBBL2016-5.4.2#1", "MBBL2016-5.4.1#b", "MBBL2016-5.4.1#c"]
     assert (data_dir / audit_id / "model.ifc").read_bytes() == (SAMPLES_DIR / "sample_a_mm.ifc").read_bytes()
 
@@ -55,7 +57,7 @@ def test_audit_happy_path_and_downloads(client, data_dir):
 
 def test_metre_sample_audits_too(client):
     r = upload(client, SAMPLES_DIR / "sample_b_m.ifc")
-    assert r.status_code == 200 and r.json()["summary"]["failed"] == 4
+    assert r.status_code == 200 and r.json()["summary"]["checks"]["failed"] == 4
 
 
 def test_client_filename_is_never_used_for_paths(client, data_dir):

@@ -191,7 +191,8 @@ def test_cli_run_prints_summary_and_writes_report(tmp_path, capsys):
     code = cli.main(["run", str(path), "--out", str(tmp_path / "out")])
     out = capsys.readouterr().out
     assert code == 0
-    assert "MBBL2016-5.4.1#b" in out and "noncompliant" in out and "overall" in out
+    assert "MBBL2016-5.4.1#b" in out and "noncompliant" in out and "overall checks" in out
+    assert "doors affected: 1 with violations, 1 could not be fully checked, 0 clean (of 2)" in out
     for name in ("report.json", "report.html", "issues.bcf"):
         assert (tmp_path / "out" / name).stat().st_size > 0
 

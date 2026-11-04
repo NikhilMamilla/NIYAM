@@ -24,6 +24,9 @@ def _short(text: str, limit: int = 70) -> str:
 def export_bcf(report: AuditReport, path: Path) -> int:
     bcf = BcfXml.create_new(f"NIYAM audit of {report.ifc_file}")
     count = 0
+    s, noun = report.summary, report.element_noun()
+    summary = (f"Audit summary: {s.checks.failed} failed checks on {s.elements.with_failed} distinct {noun}; "
+               f"{s.elements.with_unchecked} more {noun} could not be fully checked.")
     for rule in report.rules:
         for e in rule.elements:
             if e.verdict not in LABEL:
@@ -35,6 +38,7 @@ def export_bcf(report: AuditReport, path: Path) -> int:
                 f"Technical detail: {e.reason_raw}\n\n"
                 f"Clause {rule.clause_id} ({rule.source_doc}, page {rule.page}):\n{rule.clause_text}"
                 + ("" if rule.human_reviewed else "\n\nDraft rule encoding, not human-reviewed.")
+                + f"\n\n{summary}"
             )
             topic = bcf.add_topic(f"[{rule.clause_id}] {_short(rule.rule_text)}", description, "NIYAM",
                                   "Issue", "Open")

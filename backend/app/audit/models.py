@@ -16,6 +16,20 @@ class Counts(BaseModel):
         return Counts(**{k: getattr(self, k) + getattr(other, k) for k in Counts.model_fields})
 
 
+class ElementCounts(BaseModel):
+    """Distinct elements, each counted once: any failed rule -> with_failed, else any unchecked -> with_unchecked."""
+
+    total_in_model_of_scoped_classes: int = 0
+    with_failed: int = 0
+    with_unchecked: int = 0
+    clean: int = 0
+
+
+class Summary(BaseModel):
+    checks: Counts  # rule x element checks: one element is counted once per rule
+    elements: ElementCounts
+
+
 class ElementResult(BaseModel):
     global_id: str
     express_id: int  # STEP id in the audited file; lets a viewer map results to geometry
@@ -45,5 +59,19 @@ class AuditReport(BaseModel):
     ifc_schema: str
     rulepack_version: str
     status: Status
-    summary: Counts
+    summary: Summary
     rules: list[RuleResult]
+
+    def element_noun(self) -> str:
+        classes = {e.ifc_class for r in self.rules for e in r.elements}
+        return "doors" if classes == {"IfcDoor"} else "elements"
+
+    def checks_line(self) -> str:
+        c = self.summary.checks
+        return (f"Checks run: passed {c.passed}, failed {c.failed}, unchecked {c.unchecked}, "
+                f"out of scope {c.out_of_scope}")
+
+    def elements_line(self) -> str:
+        e = self.summary.elements
+        return (f"{self.element_noun().capitalize()} affected: {e.with_failed} with violations, "
+                f"{e.with_unchecked} could not be fully checked (of {e.total_in_model_of_scoped_classes} in scope classes)")

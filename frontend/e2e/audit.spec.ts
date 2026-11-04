@@ -3,6 +3,34 @@ import { readFileSync } from "node:fs";
 import { colourStats } from "./pixels";
 
 const SHOTS = "../docs/screenshots";
+const SAMPLES = "../fixtures/samples";
+
+/** Records every request to a host other than the local app/API. Shared by the real check and its self-test. */
+function watchExternalRequests(page: Page): string[] {
+  const external: string[] = [];
+  page.context().on("request", (r) => {
+    const url = new URL(r.url());
+    if (!["localhost", "127.0.0.1"].includes(url.hostname) && !["data:", "blob:"].includes(url.protocol)) external.push(r.url());
+  });
+  return external;
+}
+
+type Truth = { doors: { expected: Record<string, string> }[] };
+
+/** Expected summary computed from the hand-written truth file, independently of the audit engine. */
+function expectedFromTruth(name: string) {
+  const truth = JSON.parse(readFileSync(`${SAMPLES}/${name}.truth.json`, "utf-8")) as Truth;
+  const checks: Record<string, number> = { passed: 0, failed: 0, unchecked: 0, out_of_scope: 0 };
+  let withFailed = 0;
+  let withUnchecked = 0;
+  for (const door of truth.doors) {
+    const verdicts = Object.values(door.expected);
+    for (const v of verdicts) checks[v] = (checks[v] ?? 0) + 1;
+    if (verdicts.includes("failed")) withFailed += 1;
+    else if (verdicts.includes("unchecked")) withUnchecked += 1;
+  }
+  return { checks, withFailed, withUnchecked, total: truth.doors.length };
+}
 const IFC2X3 = "../fixtures/invalid/ifc2x3_minimal.ifc";
 
 async function loadSample(page: Page, label: string, name: string) {
@@ -20,21 +48,26 @@ async function viewportShot(page: Page) {
 }
 
 test("sample A: status, counts, rules, downloads and 3D highlighting", async ({ page, request }) => {
-  const external: string[] = [];
-  page.context().on("request", (r) => {
-    const url = new URL(r.url());
-    if (!["localhost", "127.0.0.1"].includes(url.hostname) && !["data:", "blob:"].includes(url.protocol)) external.push(r.url());
-  });
+  const external = watchExternalRequests(page);
   const audit = await loadSample(page, "Try sample A (mm)", "sample_a_mm");
+  const truth = expectedFromTruth("sample_a_mm");
 
   await expect(page.getByTestId("overall-status")).toHaveText("Non-compliant");
   const summary = page.locator(".summary");
-  for (const [key, value] of Object.entries({ passed: 17, failed: 6, unchecked: 7, out_of_scope: 6 })) {
-    expect(audit.summary[key]).toBe(value);
+  for (const [key, value] of Object.entries(truth.checks)) {
+    expect(audit.summary.checks[key]).toBe(value);
     await expect(summary.getByTestId(`count-${key}`).locator("dd")).toHaveText(String(value));
   }
+  expect(audit.summary.elements).toEqual({
+    total_in_model_of_scoped_classes: truth.total, with_failed: truth.withFailed, with_unchecked: truth.withUnchecked,
+    clean: truth.total - truth.withFailed - truth.withUnchecked,
+  });
+  await expect(summary.locator(".counts-heading")).toContainText("Checks run");
+  await expect(page.getByTestId("elements-affected")).toHaveText(
+    `Doors affected: ${truth.withFailed} with violations, ${truth.withUnchecked} could not be fully checked`);
   await expect(page.locator("li.rule .rule-id")).toHaveText(["MBBL2016-5.4.2", "MBBL2016-5.4.1", "MBBL2016-5.4.1"]);
-  await expect(page.getByTestId("viewport-summary")).toContainText("6 failed (red), 7 unchecked (amber)");
+  await expect(page.getByTestId("viewport-summary")).toContainText(
+    `Doors affected: ${truth.withFailed} with violations, ${truth.withUnchecked} could not be fully checked`);
   await expect(page.locator(".viewport")).toHaveAttribute("data-id-mapping", "express_id");
 
   const downloadPromise = page.waitForEvent("download");

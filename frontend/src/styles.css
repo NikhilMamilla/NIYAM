@@ -148,6 +148,9 @@ code { font: 0.86em/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace; over
 .overall .badge { font-size: 1.15rem; padding: 4px 14px 4px 10px; }
 .explanation { color: var(--text-2); margin-bottom: 12px; }
 
+.counts-heading { margin: 4px 0 6px; font-size: 0.9rem; }
+.counts-heading span { color: var(--text-2); font-weight: 400; }
+.summary .affected { margin: 10px 0 0; font-weight: 600; }
 .counts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 0; }
 .count { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 10px;
   border-radius: var(--radius-sm); }

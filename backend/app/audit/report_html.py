@@ -61,7 +61,7 @@ def render_html(report: AuditReport) -> str:
     note = (f'<p class="note">Rules {_e(", ".join(drafts))} are draft encodings and not human-reviewed. '
             "Unchecked elements lack the data a rule needs; they are not passes.</p>") if drafts else ""
     rows = "".join(_counts_row(_e(r.unit_id), r.counts, r.status) for r in report.rules)
-    rows += _counts_row("<strong>overall</strong>", report.summary, report.status)
+    rows += _counts_row("<strong>all checks</strong>", report.summary.checks, report.status)
     body = "\n".join(_rule_section(r) for r in report.rules)
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -69,6 +69,8 @@ def render_html(report: AuditReport) -> str:
 <h1>NIYAM audit report {_badge(report.status)}</h1>
 <p class="meta">Model <code>{_e(report.ifc_file)}</code> ({_e(report.ifc_schema)}) &middot; rulepack {_e(report.rulepack_version)}</p>
 {note}
+<p><strong>{_e(report.checks_line())}</strong> (one check per rule and element).<br>
+<strong>{_e(report.elements_line())}</strong>, each counted once.</p>
 <table><tr><th>Rule</th><th>Status</th><th>Passed</th><th>Failed</th><th>Unchecked</th><th>Out of scope</th></tr>{rows}</table>
 {body}
 </body></html>

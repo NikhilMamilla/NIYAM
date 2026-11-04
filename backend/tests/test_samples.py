@@ -29,10 +29,41 @@ def test_audit_matches_truth_element_by_element(name):
     assert report.status == truth["expected_status"]
 
 
+def _distinct_from_truth(truth: dict) -> dict:
+    """Distinct-element counts straight from the hand-written truth file: failed outranks unchecked."""
+    with_failed = with_unchecked = 0
+    for d in truth["doors"]:
+        verdicts = set(d["expected"].values())
+        if "failed" in verdicts:
+            with_failed += 1
+        elif "unchecked" in verdicts:
+            with_unchecked += 1
+    total = len(truth["doors"])
+    return {"total_in_model_of_scoped_classes": total, "with_failed": with_failed,
+            "with_unchecked": with_unchecked, "clean": total - with_failed - with_unchecked}
+
+
+def _checks_from_truth(truth: dict) -> dict:
+    checks = {"passed": 0, "failed": 0, "unchecked": 0, "out_of_scope": 0}
+    for d in truth["doors"]:
+        for v in d["expected"].values():
+            checks[v] += 1
+    return checks
+
+
+@pytest.mark.parametrize("name", SAMPLES)
+def test_summary_separates_checks_from_distinct_elements(name):
+    truth = json.loads((SAMPLES_DIR / f"{name}.truth.json").read_text(encoding="utf-8"))
+    summary = audit(SAMPLES_DIR / f"{name}.ifc", load_rulepack()).summary
+    assert summary.checks.model_dump() == _checks_from_truth(truth)
+    assert summary.elements.model_dump() == _distinct_from_truth(truth)
+
+
 def test_sample_without_fire_exit_data_is_incomplete_never_compliant():
     report = audit(SAMPLES_DIR / "sample_c_no_fireexit_mm.ifc", load_rulepack())
     assert report.status == "incomplete"
-    assert report.summary.passed == report.summary.failed == 0 and report.summary.unchecked > 0
+    checks = report.summary.checks
+    assert checks.passed == checks.failed == 0 and checks.unchecked > 0
 
 
 def test_every_failed_or_unchecked_record_has_a_plain_reason():

@@ -13,7 +13,7 @@ import {
 } from "./api";
 import { DetailPanel, Legend, RuleList, StartPanel, SummaryCard } from "./components";
 import { IconDownload, IconExternal, IconReset } from "./icons";
-import { LARGE_MODEL_BYTES, elementsByExpressId, formatBytes, paintByLocalId } from "./results";
+import { LARGE_MODEL_BYTES, affectedLine, checksLine, elementsByExpressId, formatBytes, paintByLocalId } from "./results";
 import { Viewer } from "./viewer";
 
 type Phase = "idle" | "working" | "done";
@@ -146,11 +146,10 @@ export default function App() {
     await viewerRef.current?.frame();
   };
 
-  const issueCount = audit ? audit.summary.failed + audit.summary.unchecked : 0;
-  const counts = audit?.summary;
-  const textAlternative = counts
-    ? `3D view of ${file?.name}: ${counts.failed} failed (red), ${counts.unchecked} unchecked (amber), ` +
-      `${counts.passed} passed (grey), ${counts.out_of_scope} out of scope (faded) element results.`
+  const issueCount = audit ? audit.summary.elements.with_failed + audit.summary.elements.with_unchecked : 0;
+  const textAlternative = audit
+    ? `3D view of ${file?.name}. ${affectedLine(audit)} (red: violations, amber: could not be fully checked; ` +
+      `other elements grey if passed, faded if out of scope). ${checksLine(audit)}.`
     : "3D view: no model loaded.";
 
   return (

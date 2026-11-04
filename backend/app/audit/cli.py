@@ -15,8 +15,10 @@ def print_summary(report: AuditReport) -> None:
     for r in report.rules:
         c = r.counts
         print(f"{r.unit_id:18} {r.status:16} {c.passed:>6} {c.failed:>6} {c.unchecked:>9} {c.out_of_scope:>12}")
-    s = report.summary
-    print(f"{'overall':18} {report.status:16} {s.passed:>6} {s.failed:>6} {s.unchecked:>9} {s.out_of_scope:>12}")
+    s, e = report.summary.checks, report.summary.elements
+    print(f"{'overall checks':18} {report.status:16} {s.passed:>6} {s.failed:>6} {s.unchecked:>9} {s.out_of_scope:>12}")
+    print(f"{report.element_noun()} affected: {e.with_failed} with violations, {e.with_unchecked} could not be "
+          f"fully checked, {e.clean} clean (of {e.total_in_model_of_scoped_classes})")
 
 
 def write_outputs(report: AuditReport, out_dir: Path) -> list[Path]:

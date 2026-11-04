@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AuditResult, ElementResult, RuleResult, Verdict } from "./api";
-import { STATUS_LABEL, elementsByExpressId, issuesOf, paintByLocalId, worstVerdict } from "./results";
+import { STATUS_LABEL, affectedLine, checksLine, elementsByExpressId, issuesOf, paintByLocalId, worstVerdict } from "./results";
 
 const el = (express_id: number, verdict: Verdict, name = `d${express_id}`): ElementResult => ({
   global_id: `G${express_id}`, express_id, name, ifc_class: "IfcDoor", verdict,
@@ -15,7 +15,11 @@ const rule = (unit_id: string, elements: ElementResult[]): RuleResult => ({
 });
 
 const audit = (rules: RuleResult[]): AuditResult => ({
-  audit_id: "a", status: "noncompliant", summary: { passed: 0, failed: 0, unchecked: 0, out_of_scope: 0 }, rules,
+  audit_id: "a", status: "noncompliant", rules,
+  summary: {
+    checks: { passed: 0, failed: 0, unchecked: 0, out_of_scope: 0 },
+    elements: { total_in_model_of_scoped_classes: 0, with_failed: 0, with_unchecked: 0, clean: 0 },
+  },
 });
 
 describe("status labels", () => {
@@ -69,5 +73,19 @@ describe("express id mapping", () => {
     expect(shifted.localByExpress.get(10)).toBe(110);
     expect(shifted.paints.get(112)).toBe("unchecked");
     expect(shifted.paints.has(11)).toBe(false);
+  });
+});
+
+describe("summary card wording", () => {
+  it("labels rule x element checks as checks, and distinct elements by their class", () => {
+    const a = audit([rule("A#1", [el(1, "failed"), el(2, "unchecked")])]);
+    a.summary = {
+      checks: { passed: 17, failed: 6, unchecked: 7, out_of_scope: 6 },
+      elements: { total_in_model_of_scoped_classes: 12, with_failed: 5, with_unchecked: 3, clean: 4 },
+    };
+    expect(checksLine(a)).toBe("Checks run: passed 17, failed 6, unchecked 7");
+    expect(affectedLine(a)).toBe("Doors affected: 5 with violations, 3 could not be fully checked");
+    a.rules[0]!.elements.push({ ...el(3, "passed"), ifc_class: "IfcSpace" });
+    expect(affectedLine(a)).toBe("Elements affected: 5 with violations, 3 could not be fully checked");
   });
 });

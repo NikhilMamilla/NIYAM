@@ -6,7 +6,7 @@ from bcf.v2.bcfxml import BcfXml
 
 from app.audit.bcf_export import export_bcf
 from app.audit.engine import audit
-from app.audit.models import AuditReport, Counts, ElementResult, RuleResult
+from app.audit.models import AuditReport, Counts, ElementCounts, ElementResult, RuleResult, Summary
 from app.audit.report_html import render_html
 from app.fixtures.samples import SAMPLES_DIR
 from app.rulepack.loader import load_rulepack
@@ -44,6 +44,9 @@ def test_html_shows_summary_clauses_and_issue_tables(report):
     assert "missing required data: Qto_DoorBaseQuantities.Width" in html  # raw reason
     assert "Declared width is 0.9 m; this rule requires at least 1 m." in html  # plain reason
     assert "not human-reviewed" in html
+    # rule x element checks and distinct elements are labelled apart (sample A: 12 doors, 5 + 3 affected)
+    assert "Checks run: passed 17, failed 6, unchecked 7, out of scope 6" in html
+    assert "Doors affected: 5 with violations, 3 could not be fully checked (of 12 in scope classes)" in html
 
 
 def test_html_escapes_all_dynamic_text():
@@ -53,7 +56,8 @@ def test_html_escapes_all_dynamic_text():
         page=1, severity="error", human_reviewed=True, status="noncompliant", counts=Counts(failed=1),
         elements=[ElementResult(global_id="g'\"&", express_id=1, name=evil, ifc_class="IfcDoor", verdict="failed", reason_plain=evil, reason_raw=evil)])
     report = AuditReport(ifc_file=f"{evil}.ifc", ifc_schema="IFC4", rulepack_version="v0", status="noncompliant",
-                         summary=Counts(failed=1), rules=[rule])
+                         summary=Summary(checks=Counts(failed=1), elements=ElementCounts(
+                             total_in_model_of_scoped_classes=1, with_failed=1)), rules=[rule])
     html = render_html(report)
     assert "<script" not in html.lower()
     assert "&lt;script&gt;alert(1)&lt;/script&gt;" in html
@@ -83,7 +87,7 @@ def test_bcf_zip_structure(report, bcf_path):
 def test_bcf_topics_read_back(report, bcf_path):
     bcf = BcfXml.load(bcf_path)
     topics = list(bcf.topics.values())
-    assert len(topics) == len(issues(report)) == report.summary.failed + report.summary.unchecked
+    assert len(topics) == len(issues(report)) == report.summary.checks.failed + report.summary.checks.unchecked
 
     by_guid = {}
     for t in topics:
@@ -98,6 +102,7 @@ def test_bcf_topics_read_back(report, bcf_path):
         expected_label = "violation" if element.verdict == "failed" else "unchecked"
         assert topic.topic.labels == [expected_label]
         assert topic.topic.priority == "High"
+        assert "Audit summary: 6 failed checks on 5 distinct doors; 3 more doors could not be fully checked."             in topic.topic.description
         assert rule.clause_text in topic.topic.description
         assert element.reason_plain in topic.topic.description and element.reason_raw in topic.topic.description
         assert element.global_id in topic.topic.description

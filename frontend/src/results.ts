@@ -100,6 +100,18 @@ export function paintByLocalId(
   return { paints, localByExpress, idsMatch, missing };
 }
 
+export function checksLine(audit: AuditResult): string {
+  const c = audit.summary.checks;
+  return `Checks run: passed ${c.passed}, failed ${c.failed}, unchecked ${c.unchecked}`;
+}
+
+export function affectedLine(audit: AuditResult): string {
+  const classes = new Set(audit.rules.flatMap((r) => r.elements.map((e) => e.ifc_class)));
+  const noun = classes.size === 1 && classes.has("IfcDoor") ? "Doors" : "Elements";
+  const e = audit.summary.elements;
+  return `${noun} affected: ${e.with_failed} with violations, ${e.with_unchecked} could not be fully checked`;
+}
+
 export function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;

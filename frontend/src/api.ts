@@ -34,10 +34,18 @@ export interface RuleResult {
   elements: ElementResult[];
 }
 
+export interface ElementCounts {
+  total_in_model_of_scoped_classes: number;
+  with_failed: number;
+  with_unchecked: number;
+  clean: number;
+}
+
 export interface AuditResult {
   audit_id: string;
   status: Status;
-  summary: Counts;
+  /** checks: one per rule x element; elements: distinct elements, failed outranks unchecked */
+  summary: { checks: Counts; elements: ElementCounts };
   rules: RuleResult[];
 }
 

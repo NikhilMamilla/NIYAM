@@ -16,7 +16,7 @@ import ifcopenshell.util.element
 import ifcopenshell.util.unit
 from ifctester import ids
 
-from app.audit.models import AuditReport, Counts, ElementResult, RuleResult, Status
+from app.audit.models import AuditReport, Counts, ElementCounts, ElementResult, RuleResult, Status, Summary
 from app.rulepack.loader import Rulepack
 from app.rulepack.models import RequiredData, Rule
 
@@ -186,7 +186,19 @@ def audit(ifc_path: Path, rulepack: Rulepack) -> AuditReport:
     if model.schema != "IFC4":
         raise UnsupportedSchemaError(f"unsupported IFC schema {model.schema_identifier}: NIYAM v0.1 audits IFC4 models")
     rules = [_audit_rule(model, rule, rulepack.ids_xml(rule)) for rule in rulepack.manifest.rules]
-    summary = sum((r.counts for r in rules), Counts())
+    checks = sum((r.counts for r in rules), Counts())
     return AuditReport(ifc_file=Path(ifc_path).name, ifc_schema=model.schema_identifier,
-                       rulepack_version=rulepack.manifest.version, status=overall_status(summary),
-                       summary=summary, rules=rules)
+                       rulepack_version=rulepack.manifest.version, status=overall_status(checks),
+                       summary=Summary(checks=checks, elements=_element_counts(model, rulepack, rules)), rules=rules)
+
+
+def _element_counts(model, rulepack: Rulepack, rules: list[RuleResult]) -> ElementCounts:
+    scoped = {e.id() for c in {r.scope.ifc_class for r in rulepack.manifest.rules} for e in model.by_type(c)}
+    verdicts: dict[int, set[str]] = {}
+    for r in rules:
+        for e in r.elements:
+            verdicts.setdefault(e.express_id, set()).add(e.verdict)
+    with_failed = sum("failed" in v for v in verdicts.values())
+    with_unchecked = sum("failed" not in v and "unchecked" in v for v in verdicts.values())
+    return ElementCounts(total_in_model_of_scoped_classes=len(scoped), with_failed=with_failed,
+                         with_unchecked=with_unchecked, clean=len(scoped) - with_failed - with_unchecked)

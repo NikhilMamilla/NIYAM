@@ -6,6 +6,7 @@ import {
   STATUS_EXPLANATION,
   STATUS_LABEL,
   VERDICT_LABEL,
+  affectedLine,
   formatBytes,
   issuesOf,
   type ElementSummary,
@@ -126,7 +127,9 @@ export function SummaryCard({ audit, fileName, fileSize }: { audit: AuditResult;
         <StatusBadge status={audit.status} />
       </div>
       <p className="explanation">{STATUS_EXPLANATION[audit.status]}</p>
-      <CountList counts={audit.summary} />
+      <h3 className="counts-heading">Checks run <span>(one per rule and element)</span></h3>
+      <CountList counts={audit.summary.checks} />
+      <p className="affected" data-testid="elements-affected">{affectedLine(audit)}</p>
     </section>
   );
 }
