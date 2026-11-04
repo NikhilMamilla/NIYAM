@@ -4,6 +4,8 @@ import { colourStats } from "./pixels";
 
 const SHOTS = "../docs/screenshots";
 const SAMPLES = "../fixtures/samples";
+const RULE_IDS = ["MBBL2016-5.4.2", "MBBL2016-5.4.1", "MBBL2016-5.4.1", "MBBL2016-4.5.2", "MBBL2016-4.3.1.1",
+  "MBBL2016-4.17.2"];
 
 /** Records every request to a host other than the local app/API. Shared by the real check and its self-test. */
 function watchExternalRequests(page: Page): string[] {
@@ -15,25 +17,33 @@ function watchExternalRequests(page: Page): string[] {
   return external;
 }
 
-type Truth = { doors: { expected: Record<string, string> }[] };
+type TruthElement = { expected: Record<string, string> };
+type Truth = { doors?: TruthElement[]; spaces?: TruthElement[]; stairs?: TruthElement[] };
 
 /** Expected summary computed from the hand-written truth file, independently of the audit engine. */
 function expectedFromTruth(name: string) {
   const truth = JSON.parse(readFileSync(`${SAMPLES}/${name}.truth.json`, "utf-8")) as Truth;
+  const elements = [...(truth.doors ?? []), ...(truth.spaces ?? []), ...(truth.stairs ?? [])];
   const checks: Record<string, number> = { passed: 0, failed: 0, unchecked: 0, out_of_scope: 0 };
   let withFailed = 0;
   let withUnchecked = 0;
-  for (const door of truth.doors) {
-    const verdicts = Object.values(door.expected);
+  for (const element of elements) {
+    const verdicts = Object.values(element.expected);
     for (const v of verdicts) checks[v] = (checks[v] ?? 0) + 1;
     if (verdicts.includes("failed")) withFailed += 1;
     else if (verdicts.includes("unchecked")) withUnchecked += 1;
   }
-  return { checks, withFailed, withUnchecked, total: truth.doors.length };
+  return { checks, withFailed, withUnchecked, total: elements.length };
 }
+
 const IFC2X3 = "../fixtures/invalid/ifc2x3_minimal.ifc";
 
 async function loadSample(page: Page, label: string, name: string) {
+  page.on("console", async (m) => {
+    if (m.type() !== "error") return;
+    const parts = await Promise.all(m.args().map((a) => a.evaluate((x) => (x instanceof Error ? `${x.message}` : String(x))).catch(() => "?")));
+    console.log("BROWSER ERROR:", parts.join(" ").slice(0, 600));
+  });
   await page.goto("/");
   const response = page.waitForResponse((r) => r.url().endsWith(`/api/samples/${name}/audit`) && r.request().method() === "POST");
   await page.getByRole("button", { name: label }).click();
@@ -65,7 +75,9 @@ test("sample A: status, counts, rules, downloads and 3D highlighting", async ({ 
   await expect(summary.locator(".counts-heading")).toContainText("Checks run");
   await expect(page.getByTestId("elements-affected")).toHaveText(
     `Doors affected: ${truth.withFailed} with violations, ${truth.withUnchecked} could not be fully checked`);
-  await expect(page.locator("li.rule .rule-id")).toHaveText(["MBBL2016-5.4.2", "MBBL2016-5.4.1", "MBBL2016-5.4.1"]);
+  // the three geometric rules have no spaces or stairs to look at in a door-only model: reported, not hidden
+  await expect(page.locator("li.rule .rule-id")).toHaveText(RULE_IDS);
+  await expect(page.getByTestId("rule-MBBL2016-4.5.2")).toContainText("Nothing checked");
   await expect(page.getByTestId("viewport-summary")).toContainText(
     `Doors affected: ${truth.withFailed} with violations, ${truth.withUnchecked} could not be fully checked`);
   await expect(page.locator(".viewport")).toHaveAttribute("data-id-mapping", "express_id");
@@ -191,4 +203,66 @@ test("IFC2X3 file shows the unsupported-schema message", async ({ page }) => {
   await page.locator('input[type="file"]').setInputFiles(IFC2X3);
   await expect(page.getByTestId("error-message"))
     .toHaveText("unsupported IFC schema IFC2X3: NIYAM v0.1 audits IFC4 models");
+});
+
+async function expectSummaryMatchesTruth(page: Page, audit: { summary: { checks: Record<string, number>; elements: unknown } },
+                                         name: string) {
+  const truth = expectedFromTruth(name);
+  for (const [key, value] of Object.entries(truth.checks)) {
+    expect(audit.summary.checks[key]).toBe(value);
+    await expect(page.locator(".summary").getByTestId(`count-${key}`).locator("dd")).toHaveText(String(value));
+  }
+  expect(audit.summary.elements).toEqual({
+    total_in_model_of_scoped_classes: truth.total, with_failed: truth.withFailed, with_unchecked: truth.withUnchecked,
+    clean: truth.total - truth.withFailed - truth.withUnchecked,
+  });
+  await expect(page.getByTestId("elements-affected")).toHaveText(
+    `Elements affected: ${truth.withFailed} with violations, ${truth.withUnchecked} could not be fully checked`);
+}
+
+test("geometric sample D (mm): rooms and stairs are checked, listed and coloured, rooms translucent", async ({ page }) => {
+  const audit = await loadSample(page, "Try sample D (rooms and stairs, mm)", "sample_d_rooms_stairs_mm");
+  await expect(page.getByTestId("overall-status")).toHaveText("Non-compliant");
+  await expectSummaryMatchesTruth(page, audit, "sample_d_rooms_stairs_mm");
+  expect(audit.summary.rules_with_errors).toBe(0);
+  await expect(page.locator("li.rule .rule-id")).toHaveText(RULE_IDS);
+  await expect(page.getByTestId("rule-MBBL2016-5.4.2")).toContainText("Nothing checked");
+  const stats = await colourStats(page, await viewportShot(page));
+  console.log("sample D viewport colours", JSON.stringify(stats));
+  await page.screenshot({ path: `${SHOTS}/05-geometric-sample-d.png` });
+  expect(stats.red).toBeGreaterThan(300); // a failing stair flight (opaque)
+  expect(stats.amber).toBeGreaterThan(300); // an unchecked stair flight (opaque)
+  expect(stats.pinkRed).toBeGreaterThan(300); // failing rooms, drawn translucent
+  expect(stats.paleAmber).toBeGreaterThan(300); // unchecked rooms, drawn translucent
+});
+
+test("a failed room shows computed versus required area; it is also selectable from the list", async ({ page }) => {
+  await loadSample(page, "Try sample D (rooms and stairs, mm)", "sample_d_rooms_stairs_mm");
+  await page.locator("li.rule summary").nth(3).click(); // MBBL2016-4.5.2
+  await page.getByRole("button", { name: /D-B-02 small bathroom/ }).click();
+  const panel = page.getByTestId("detail-panel");
+  await expect(panel.locator("h2")).toHaveText("D-B-02 small bathroom 1.5 m2");
+  await expect(panel).toContainText("Computed floor area is 1.50 m2; this rule requires at least 1.8 m2.");
+  await expect(panel.locator("li.finding", { hasText: "MBBL2016-4.5.2" })).toContainText("Failed");
+  await expect(panel.locator("li.finding", { hasText: "MBBL2016-4.3.1.1" })).toContainText("Out of scope");
+  await page.waitForTimeout(1200);
+  const stats = await colourStats(page, await viewportShot(page));
+  console.log("selected room colours", JSON.stringify(stats));
+  expect(stats.blue).toBeGreaterThan(300);
+  await page.screenshot({ path: `${SHOTS}/06-geometric-detail.png` });
+});
+
+test("geometric sample E (m): counts equal the truth file and a narrow stair flight is explained", async ({ page }) => {
+  const audit = await loadSample(page, "Try sample E (rooms and stairs, m)", "sample_e_rooms_stairs_m");
+  await expectSummaryMatchesTruth(page, audit, "sample_e_rooms_stairs_m");
+  await page.locator("li.rule summary").nth(5).click(); // MBBL2016-4.17.2
+  await page.getByRole("button", { name: /E-ST-02 residential flight 0.85 m/ }).click();
+  await expect(page.getByTestId("detail-panel")).toContainText(
+    "Computed stair width is 0.85 m; this rule requires at least 1 m.");
+  await page.waitForTimeout(1200);
+  const stats = await colourStats(page, await viewportShot(page));
+  console.log("sample E selected colours", JSON.stringify(stats));
+  expect(stats.red + stats.pinkRed).toBeGreaterThan(300);
+  expect(stats.blue).toBeGreaterThan(300);
+  await page.screenshot({ path: `${SHOTS}/07-geometric-sample-e.png` });
 });

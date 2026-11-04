@@ -50,3 +50,17 @@ reference IFC elements from a viewpoint, so each topic carries one *component-on
 (`<Components><Selection><Component IfcGuid="…"/>`, no camera, no snapshot); the GlobalId is also
 written into the description. Viewers that require a camera will open the topic without
 navigating to the element.
+
+## Geometric rules
+
+A rule with `tier: geometric` is a Python check run through the sandbox (`docs/geometric-gate.md`), one
+process per rule, in parallel, with a wall-clock timeout (`GEOMETRIC_TIMEOUT_S`, default 60 s). A rule is only
+run when the model has an element of its class. Each finding is mapped onto the elements of the rule's class:
+`pass` → `passed`, `fail` → `failed`, `unchecked` → `unchecked` (its sentence becomes `reason_plain`, e.g.
+"Computed floor area is 1.50 m2; this rule requires at least 1.8 m2."), and an element with no finding is
+`out_of_scope`. If an element has several findings the worst one counts.
+
+If the check times out, crashes, or returns something that is not a list of valid findings, the rule has
+`status: "error"` and an `error` message, no elements, and no checks. It is never reported as a pass. The overall
+status is then at best `incomplete` (`summary.rules_with_errors` counts such rules), and the HTML report and the
+web app say which rules could not run.

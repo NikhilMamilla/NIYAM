@@ -6,6 +6,9 @@ export interface ColourStats {
   amber: number;
   grey: number;
   blue: number;
+  /** red/amber blended with the pale background: how translucent rooms look */
+  pinkRed: number;
+  paleAmber: number;
   /** centre of the red pixels, in screenshot pixels, or null */
   redCentre: { x: number; y: number } | null;
 }
@@ -23,7 +26,7 @@ export async function colourStats(page: Page, png: Buffer): Promise<ColourStats>
     const ctx = canvas.getContext("2d")!;
     ctx.drawImage(img, 0, 0);
     const { data } = ctx.getImageData(0, 0, img.width, img.height);
-    const stats = { total: img.width * img.height, red: 0, amber: 0, grey: 0, blue: 0, redCentre: null as null | { x: number; y: number } };
+    const stats = { total: img.width * img.height, red: 0, amber: 0, grey: 0, blue: 0, pinkRed: 0, paleAmber: 0, redCentre: null as null | { x: number; y: number } };
     let sx = 0;
     let sy = 0;
     const reds: number[] = [];
@@ -37,6 +40,8 @@ export async function colourStats(page: Page, png: Buffer): Promise<ColourStats>
         sy += Math.floor(p / img.width);
       } else if (r > 150 && g > 90 && g < 200 && b < 70) stats.amber += 1;
       else if (b > 150 && r < 90 && g < 130) stats.blue += 1;
+      else if (r > 200 && r - g > 60 && g > 100 && Math.abs(g - b) < 30) stats.pinkRed += 1;
+      else if (r > 225 && g > 170 && g < 225 && b > 90 && b < 175 && r - b > 70) stats.paleAmber += 1;
       else if (Math.abs(r - g) < 12 && Math.abs(g - b) < 14 && r > 100 && r < 180) stats.grey += 1;
     }
     if (stats.red) {

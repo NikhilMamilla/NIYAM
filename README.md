@@ -7,8 +7,9 @@ NIYAM is an open-source tool that uses an LLM to compile Indian building rules i
 checks, validates every draft against open-standard tools, audits IFC models, and exports BCF
 issues.
 
-Current state: an MBBL 2016 rule corpus, a verifier-gated IDS compiler, rulepack v0 (three draft,
-not human-reviewed door rules), an audit engine with HTML and BCF export, an upload API, and a web
+Current state: an MBBL 2016 rule corpus, a verifier-gated IDS compiler and a sandbox-gated geometric (Python)
+compiler, rulepack v0 (six draft, not human-reviewed rules: three door rules as IDS, three room/stair rules as
+Python checks), an audit engine with HTML and BCF export, an upload API, and a web
 app that shows the audit beside the model in 3D. All sample buildings are synthetic.
 
 ## Layout
@@ -124,6 +125,18 @@ API (`uvicorn app.main:app`): `POST /api/audit` (multipart `file`, `.ifc`, max `
 `GET /api/rulepack`, `GET /api/samples`, `GET /api/samples/{name}`, `POST /api/samples/{name}/audit`.
 Only IFC4 models are audited. Uploads are stored under `backend/data/audits/<uuid>/` (gitignored). See
 `docs/audit.md` for verdicts and export limitations, and `docs/samples.md` for the synthetic models.
+
+## Geometric rules (Python checks)
+
+Rules whose value is computed from geometry (room area, room height, stair width) are small Python functions
+run only through a sandboxed gate; see `docs/geometric-gate.md` (it is defence in depth, not a hard security
+boundary) and `docs/notes-geometric-spike.md`.
+
+```bash
+cd backend && source .venv/Scripts/activate
+python -m app.verifier.cli check-geo "MBBL2016-4.5.2#1" ../fixtures/checks/MBBL2016-4_5_2_1.py
+python -m app.rulepack.cli add "MBBL2016-4.5.2#1" ../fixtures/checks/MBBL2016-4_5_2_1.py --gate
+```
 
 ## Configuration
 

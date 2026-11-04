@@ -1,5 +1,5 @@
 import { useId, useRef, useState, type DragEvent } from "react";
-import type { AuditResult, Counts, RuleResult, Sample, Status, Verdict } from "./api";
+import type { AuditResult, Counts, RuleResult, RuleStatus, Sample, Verdict } from "./api";
 import { STATUS_ICON, VERDICT_ICON } from "./icons";
 import { IconUpload } from "./icons";
 import {
@@ -12,7 +12,7 @@ import {
   type ElementSummary,
 } from "./results";
 
-export function StatusBadge({ status }: { status: Status }) {
+export function StatusBadge({ status }: { status: RuleStatus }) {
   const Icon = STATUS_ICON[status];
   return (
     <span className={`badge status-${status}`}>
@@ -69,6 +69,8 @@ export function StartPanel(props: {
     { name: "sample_a_mm", label: "Try sample A (mm)" },
     { name: "sample_b_m", label: "Try sample B (m)" },
     { name: "sample_c_no_fireexit_mm", label: "Try sample C (no exit data)" },
+    { name: "sample_d_rooms_stairs_mm", label: "Try sample D (rooms and stairs, mm)" },
+    { name: "sample_e_rooms_stairs_m", label: "Try sample E (rooms and stairs, m)" },
   ].filter((b) => props.samples.some((s) => s.name === b.name));
 
   return (
@@ -181,6 +183,11 @@ export function RuleList(props: {
                   <CountList counts={rule.counts} compact />
                 </summary>
                 <div className="rule-body">
+                  {rule.error && (
+                    <p className="note" role="alert" data-testid="rule-error">
+                      This rule could not be run: {rule.error}. Its elements were not checked; this is not a pass.
+                    </p>
+                  )}
                   <h3>Clause text</h3>
                   <blockquote className="clause">{rule.clause_text}</blockquote>
                   {[["Failed", failed], ["Unchecked", unchecked]].map(([label, list]) => {

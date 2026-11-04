@@ -42,6 +42,20 @@ banner could appear. Audit records are mapped to viewer ids by GlobalId
 equal the API's `express_id` (they do for the samples). An element's colour is its most serious
 verdict across rules: failed (red) > unchecked (amber) > passed (grey) > out of scope (faded).
 
+## Rooms, stairs and rules that could not run
+
+Geometric findings reach the viewer the same way as door findings (the audit's `express_id`s are mapped to
+viewer ids by GlobalId). An element's colour is still its most serious verdict. `IfcSpace` elements are rooms
+(volumes) and are drawn translucent (opacity 0.5 for failed/unchecked, 0.3 passed, 0.12 out of scope) so doors and
+walls inside them stay visible; stair flights are opaque like doors. Selecting a room or flight shows the
+check's sentence ("Computed floor area is 1.50 m2; this rule requires at least 1.8 m2.").
+
+A geometric rule whose check timed out or crashed has status `error` ("Could not run"): the rule list shows
+the reason, a note above it counts such rules, and the overall status is never better than Incomplete.
+
+The summary card shows two different numbers: **Checks run** (one per rule × element) and **Doors/Elements
+affected** (distinct elements: with violations, could not be fully checked).
+
 ## Check manually in a real browser
 
 The e2e suite runs Chromium with SwiftShader (software WebGL). Please confirm in your own browser:

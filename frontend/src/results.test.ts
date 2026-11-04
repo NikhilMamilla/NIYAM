@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { AuditResult, ElementResult, RuleResult, Verdict } from "./api";
-import { STATUS_LABEL, affectedLine, checksLine, elementsByExpressId, issuesOf, paintByLocalId, worstVerdict } from "./results";
+import {
+  STATUS_LABEL, affectedLine, checksLine, elementsByExpressId, errorRules, issuesOf, paintByLocalId, translucentLocalIds,
+  worstVerdict,
+} from "./results";
 
 const el = (express_id: number, verdict: Verdict, name = `d${express_id}`): ElementResult => ({
   global_id: `G${express_id}`, express_id, name, ifc_class: "IfcDoor", verdict,
@@ -19,6 +22,7 @@ const audit = (rules: RuleResult[]): AuditResult => ({
   summary: {
     checks: { passed: 0, failed: 0, unchecked: 0, out_of_scope: 0 },
     elements: { total_in_model_of_scoped_classes: 0, with_failed: 0, with_unchecked: 0, clean: 0 },
+    rules_with_errors: 0,
   },
 });
 
@@ -26,6 +30,7 @@ describe("status labels", () => {
   it("names every status in words, never only by colour", () => {
     expect(STATUS_LABEL).toEqual({
       noncompliant: "Non-compliant", incomplete: "Incomplete", compliant: "Compliant", nothing_checked: "Nothing checked",
+      error: "Could not run",
     });
   });
 });
@@ -82,10 +87,26 @@ describe("summary card wording", () => {
     a.summary = {
       checks: { passed: 17, failed: 6, unchecked: 7, out_of_scope: 6 },
       elements: { total_in_model_of_scoped_classes: 12, with_failed: 5, with_unchecked: 3, clean: 4 },
+      rules_with_errors: 0,
     };
     expect(checksLine(a)).toBe("Checks run: passed 17, failed 6, unchecked 7");
     expect(affectedLine(a)).toBe("Doors affected: 5 with violations, 3 could not be fully checked");
     a.rules[0]!.elements.push({ ...el(3, "passed"), ifc_class: "IfcSpace" });
     expect(affectedLine(a)).toBe("Elements affected: 5 with violations, 3 could not be fully checked");
+  });
+});
+
+describe("spaces and rule errors", () => {
+  it("draws only IfcSpace elements translucent, by viewer local id", () => {
+    const space = { ...el(5, "failed"), ifc_class: "IfcSpace" };
+    const byId = elementsByExpressId(audit([rule("G#1", [space, el(6, "passed")])]));
+    const mapped = paintByLocalId(byId, [105, 106]);
+    expect([...translucentLocalIds(byId, mapped.localByExpress)]).toEqual([105]);
+  });
+
+  it("lists the rules that could not run, with their reason", () => {
+    const broken = { ...rule("G#2", []), status: "error" as const, error: "the check timed out after 60 s" };
+    const a = audit([rule("G#1", [el(1, "passed")]), broken]);
+    expect(errorRules(a).map((r) => [r.unit_id, r.error])).toEqual([["G#2", "the check timed out after 60 s"]]);
   });
 });

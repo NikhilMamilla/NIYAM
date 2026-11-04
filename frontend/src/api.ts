@@ -2,6 +2,8 @@
 
 export type Verdict = "passed" | "failed" | "unchecked" | "out_of_scope";
 export type Status = "compliant" | "noncompliant" | "incomplete" | "nothing_checked";
+/** A rule is "error" when its geometric check timed out or crashed: nothing was checked, and it is not a pass. */
+export type RuleStatus = Status | "error";
 
 export interface Counts {
   passed: number;
@@ -29,9 +31,10 @@ export interface RuleResult {
   page: number;
   severity: string;
   human_reviewed: boolean;
-  status: Status;
+  status: RuleStatus;
   counts: Counts;
   elements: ElementResult[];
+  error?: string | null;
 }
 
 export interface ElementCounts {
@@ -45,7 +48,7 @@ export interface AuditResult {
   audit_id: string;
   status: Status;
   /** checks: one per rule x element; elements: distinct elements, failed outranks unchecked */
-  summary: { checks: Counts; elements: ElementCounts };
+  summary: { checks: Counts; elements: ElementCounts; rules_with_errors: number };
   rules: RuleResult[];
 }
 

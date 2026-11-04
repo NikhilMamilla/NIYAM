@@ -17,12 +17,20 @@ const OPACITY: Record<Paint | "selected", number> = {
   failed: 1, unchecked: 1, passed: 1, out_of_scope: 0.25, selected: 1,
 };
 
-const material = (paint: Paint | "selected"): FRAGS.MaterialDefinition => ({
-  color: new THREE.Color(COLORS[paint]),
-  renderedFaces: FRAGS.RenderedFaces.TWO,
-  opacity: OPACITY[paint],
-  transparent: OPACITY[paint] < 1,
-});
+// Rooms (IfcSpace) are volumes that would hide the doors and walls inside them, so they are drawn translucent.
+const SPACE_OPACITY: Record<Paint | "selected", number> = {
+  failed: 0.5, unchecked: 0.5, passed: 0.3, out_of_scope: 0.12, selected: 0.65,
+};
+
+const material = (paint: Paint | "selected", translucent = false): FRAGS.MaterialDefinition => {
+  const opacity = translucent ? SPACE_OPACITY[paint] : OPACITY[paint];
+  return {
+    color: new THREE.Color(COLORS[paint]),
+    renderedFaces: FRAGS.RenderedFaces.TWO,
+    opacity,
+    transparent: opacity < 1,
+  };
+};
 
 const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
@@ -32,6 +40,7 @@ export class Viewer {
   private readonly fragments: OBC.FragmentsManager;
   private model: FRAGS.FragmentsModel | null = null;
   private paints = new Map<number, Paint>();
+  private translucent = new Set<number>();
   private selected: number | null = null;
   private onlyIssues = false;
 
@@ -75,8 +84,9 @@ export class Viewer {
     return this.model ? this.model.getGuidsByLocalIds(localIds) : localIds.map(() => null);
   }
 
-  async paint(paints: Map<number, Paint>): Promise<void> {
+  async paint(paints: Map<number, Paint>, translucent = new Set<number>()): Promise<void> {
     this.paints = paints;
+    this.translucent = translucent;
     await this.repaint();
   }
 
@@ -104,11 +114,22 @@ export class Viewer {
   async frame(localIds?: number[]): Promise<void> {
     const model = this.model;
     if (!model) return;
-    const box = localIds?.length ? await model.getMergedBox(localIds) : new THREE.Box3().setFromObject(model.object);
+    const box = localIds?.length ? await model.getMergedBox(localIds) : await this.wholeModelBox(model);
     if (box.isEmpty()) return;
     const padded = box.clone().expandByScalar(localIds?.length ? 2.5 : 0.5);
     await this.world.camera.controls.fitToBox(padded, !prefersReducedMotion());
     await this.fragments.core.update(true);
+  }
+
+  /** The model's bounds. Tiles stream in, so an empty box is retried a few times before giving up. */
+  private async wholeModelBox(model: FRAGS.FragmentsModel): Promise<THREE.Box3> {
+    for (let attempt = 0; attempt < 15; attempt++) {
+      const box = model.box.isEmpty() ? new THREE.Box3().setFromObject(model.object) : model.box;
+      if (!box.isEmpty()) return box;
+      await this.fragments.core.update(true);
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+    return new THREE.Box3();
   }
 
   /** Call back with the local id under the pointer on click (null for empty space). Drags are ignored. */
@@ -139,10 +160,17 @@ export class Viewer {
     const model = this.model;
     if (!model) return;
     await model.resetHighlight();
-    const groups = new Map<Paint, number[]>();
-    for (const [id, paint] of this.paints) groups.set(paint, [...(groups.get(paint) ?? []), id]);
-    for (const [paint, ids] of groups) await model.highlight(ids, material(paint));
-    if (this.selected !== null) await model.highlight([this.selected], material("selected"));
+    const groups = new Map<string, { paint: Paint; translucent: boolean; ids: number[] }>();
+    for (const [id, paint] of this.paints) {
+      const translucent = this.translucent.has(id);
+      const group = groups.get(`${paint}/${translucent}`) ?? { paint, translucent, ids: [] };
+      group.ids.push(id);
+      groups.set(`${paint}/${translucent}`, group);
+    }
+    for (const { paint, translucent, ids } of groups.values()) await model.highlight(ids, material(paint, translucent));
+    if (this.selected !== null) {
+      await model.highlight([this.selected], material("selected", this.translucent.has(this.selected)));
+    }
     if (this.onlyIssues) await this.setOnlyIssues(true);
     await this.fragments.core.update(true);
   }
@@ -151,6 +179,7 @@ export class Viewer {
     for (const [id] of this.fragments.list) await this.fragments.core.disposeModel(id);
     this.model = null;
     this.paints.clear();
+    this.translucent.clear();
     this.selected = null;
   }
 }

@@ -141,6 +141,7 @@ code { font: 0.86em/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace; over
 .status-incomplete, .verdict-unchecked { color: var(--warn); background: var(--warn-bg); }
 .status-compliant, .verdict-passed { color: var(--pass); background: var(--pass-bg); }
 .status-nothing_checked, .verdict-out_of_scope { color: var(--oos); background: var(--oos-bg); }
+.status-error { color: var(--fail); background: var(--fail-bg); border-color: var(--fail); }
 
 .summary .file-line { font-weight: 600; overflow-wrap: anywhere; }
 .summary .file-line span { color: var(--text-2); font-weight: 400; }

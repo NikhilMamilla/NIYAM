@@ -13,7 +13,10 @@ import {
 } from "./api";
 import { DetailPanel, Legend, RuleList, StartPanel, SummaryCard } from "./components";
 import { IconDownload, IconExternal, IconReset } from "./icons";
-import { LARGE_MODEL_BYTES, affectedLine, checksLine, elementsByExpressId, formatBytes, paintByLocalId } from "./results";
+import {
+  LARGE_MODEL_BYTES, affectedLine, checksLine, elementsByExpressId, errorRules, formatBytes, paintByLocalId,
+  translucentLocalIds,
+} from "./results";
 import { Viewer } from "./viewer";
 
 type Phase = "idle" | "working" | "done";
@@ -100,7 +103,7 @@ export default function App() {
     maps.current.localByExpress = mapped.localByExpress;
     maps.current.expressByLocal = new Map([...mapped.localByExpress].map(([e, l]) => [l, e]));
     setIdMapping(mapped.idsMatch ? "express_id" : "global_id");
-    await viewer.paint(mapped.paints);
+    await viewer.paint(mapped.paints, translucentLocalIds(byExpress, mapped.localByExpress));
     setView("ready");
   }, []);
 
@@ -185,6 +188,12 @@ export default function App() {
           {audit && file && (
             <>
               <SummaryCard audit={audit} fileName={file.name} fileSize={file.size} />
+              {errorRules(audit).length > 0 && (
+                <p className="note" role="status" data-testid="rules-with-errors">
+                  {errorRules(audit).length} rule(s) could not be run ({errorRules(audit).map((r) => r.clause_id).join(", ")}),
+                  so the result is never better than Incomplete. See the rule list for the reason.
+                </p>
+              )}
               <div className="button-row downloads">
                 <a className="button" href={bcfUrl(audit.audit_id)} download data-testid="download-bcf">
                   <IconDownload />Download BCF

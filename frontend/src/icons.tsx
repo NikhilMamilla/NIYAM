@@ -1,6 +1,6 @@
 // Authored SVG icons, one stroke weight. Status icons use distinct shapes so status never depends on colour.
 import type { SVGProps } from "react";
-import type { Status, Verdict } from "./api";
+import type { RuleStatus, Verdict } from "./api";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
@@ -25,6 +25,9 @@ export const IconPassed = (p: IconProps) => (
 export const IconOutOfScope = (p: IconProps) => (
   <Svg {...p}><circle cx="10" cy="10" r="7.5" strokeDasharray="2.4 2.2" /><path d="M6.8 10h6.4" /></Svg>
 );
+export const IconError = (p: IconProps) => (
+  <Svg {...p}><path d="M6.6 2.8h6.8l4.8 4.8v6.8l-4.8 4.8H6.6l-4.8-4.8V7.6z" /><path d="M10 6.5v4.6M10 13.6v.1" /></Svg>
+);
 export const IconUpload = (p: IconProps) => (
   <Svg {...p}><path d="M10 13V3.5M6.2 7.2L10 3.4l3.8 3.8M3.5 13.5v3h13v-3" /></Svg>
 );
@@ -45,7 +48,8 @@ export const VERDICT_ICON: Record<Verdict, (p: IconProps) => React.JSX.Element> 
   out_of_scope: IconOutOfScope,
 };
 
-export const STATUS_ICON: Record<Status, (p: IconProps) => React.JSX.Element> = {
+export const STATUS_ICON: Record<RuleStatus, (p: IconProps) => React.JSX.Element> = {
+  error: IconError,
   noncompliant: IconFailed,
   incomplete: IconUnchecked,
   compliant: IconPassed,

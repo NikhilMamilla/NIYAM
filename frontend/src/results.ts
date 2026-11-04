@@ -1,9 +1,10 @@
 // Pure logic over the audit JSON: labels, grouping, and mapping results onto model element ids.
-import type { AuditResult, ElementResult, RuleResult, Status, Verdict } from "./api";
+import type { AuditResult, ElementResult, RuleResult, RuleStatus, Status, Verdict } from "./api";
 
 export type Paint = Verdict;
 
-export const STATUS_LABEL: Record<Status, string> = {
+export const STATUS_LABEL: Record<RuleStatus, string> = {
+  error: "Could not run",
   noncompliant: "Non-compliant",
   incomplete: "Incomplete",
   compliant: "Compliant",
@@ -110,6 +111,23 @@ export function affectedLine(audit: AuditResult): string {
   const noun = classes.size === 1 && classes.has("IfcDoor") ? "Doors" : "Elements";
   const e = audit.summary.elements;
   return `${noun} affected: ${e.with_failed} with violations, ${e.with_unchecked} could not be fully checked`;
+}
+
+/** Viewer local ids of IfcSpace elements: rooms are volumes, so they are drawn translucent to keep doors visible. */
+export function translucentLocalIds(
+  summaries: Map<number, ElementSummary>,
+  localByExpress: Map<number, number>,
+): Set<number> {
+  const ids = new Set<number>();
+  for (const s of summaries.values()) {
+    const local = localByExpress.get(s.expressId);
+    if (s.ifcClass === "IfcSpace" && local !== undefined) ids.add(local);
+  }
+  return ids;
+}
+
+export function errorRules(audit: AuditResult): RuleResult[] {
+  return audit.rules.filter((r) => r.status === "error");
 }
 
 export function formatBytes(bytes: number): string {
