@@ -55,6 +55,49 @@ accept non-compliant doors.
 </property>
 ```
 
+## Two encodings of a prohibition (verified on MBBL2016-5.4.2#1)
+
+Both are valid IDS 1.0, execute in ifctester 0.9.0 and are accepted by the gate
+(`backend/tests/test_ids_gate.py::test_both_prohibition_encodings_are_accepted`).
+
+1. Requirement facet with `cardinality="prohibited"` (the gold file):
+
+```xml
+<applicability minOccurs="0" maxOccurs="unbounded">
+  <entity><name><simpleValue>IFCDOOR</simpleValue></name></entity>
+  <property dataType="IFCBOOLEAN">… Pset_DoorCommon.FireExit = TRUE …</property>
+</applicability>
+<requirements>
+  <attribute cardinality="prohibited">
+    <name><simpleValue>OperationType</simpleValue></name>
+    <value><simpleValue>REVOLVING</simpleValue></value>
+  </attribute>
+</requirements>
+```
+
+2. Prohibited specification, `maxOccurs="0"`, no `<requirements>` (the violation is the applicability):
+
+```xml
+<applicability minOccurs="0" maxOccurs="0">
+  <entity><name><simpleValue>IFCDOOR</simpleValue></name></entity>
+  <attribute><name><simpleValue>OperationType</simpleValue></name>
+    <value><simpleValue>REVOLVING</simpleValue></value></attribute>
+  <property dataType="IFCBOOLEAN">… Pset_DoorCommon.FireExit = TRUE …</property>
+</applicability>
+```
+
+Differences that matter for the gate:
+
+- For a `maxOccurs="0"` spec, ifctester sets `status = False` when anything is applicable but
+  leaves `failed_entities` empty. The gate therefore treats every applicable entity of a
+  prohibited spec as a failing entity when comparing against the expected set.
+- Its full applicability matches nothing in a compliant model by design, so the gate's vacuity
+  check is per facet: every applicability facet must match at least one entity in both fixtures on
+  its own (catches misspelt classes/properties), and only non-prohibited specs must additionally
+  match as a whole.
+- Facet order inside `<applicability>` is fixed by the XSD: entity, partOf, classification,
+  attribute, property, material.
+
 ## Consequences for tiering
 
 - A numeric bound is IDS-tier only if the value lives in a **quantity or measure-typed property**

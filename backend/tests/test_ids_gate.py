@@ -90,7 +90,87 @@ def test_fail_stage_requires_exactly_the_expected_failing_entities():
     wrong_expectation = FixturePair(pair.pass_path, pair.fail_path, frozenset({guid("control_non_exit_door")}))
     result = verify_ids(gold_xml(unit_id), load_units()[unit_id], wrong_expectation)
     assert result.first_failure.stage == "verdict_fail_fixture"
-    assert guid("door_under_test") in result.first_failure.message
+    assert "door_under_test" in result.first_failure.message  # unexpected failure, by Name
+    assert "control_non_exit_door" in result.first_failure.message  # missing expected one, by Name
+
+
+PROHIBITED_SPEC_5_4_2 = """<?xml version="1.0" encoding="utf-8"?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <info><title>5.4.2 as a prohibited specification</title></info>
+  <specifications>
+    <specification name="no revolving fire exits" ifcVersion="IFC4">
+      <applicability minOccurs="0" maxOccurs="0">
+        <entity><name><simpleValue>IFCDOOR</simpleValue></name></entity>
+        <attribute><name><simpleValue>OperationType</simpleValue></name>
+          <value><simpleValue>REVOLVING</simpleValue></value></attribute>
+        <property dataType="IFCBOOLEAN"><propertySet><simpleValue>Pset_DoorCommon</simpleValue></propertySet>
+          <baseName><simpleValue>FireExit</simpleValue></baseName><value><simpleValue>TRUE</simpleValue></value></property>
+      </applicability>
+    </specification>
+  </specifications>
+</ids>"""
+
+
+def test_both_prohibition_encodings_are_accepted():
+    # gold: requirement facet with cardinality="prohibited"
+    assert gate("MBBL2016-5.4.2#1", gold_xml("MBBL2016-5.4.2#1")).accepted
+    # equivalent: maxOccurs="0" spec whose applicability matches nothing in the pass fixture by design
+    result = gate("MBBL2016-5.4.2#1", PROHIBITED_SPEC_5_4_2)
+    assert result.accepted, result.first_failure
+
+
+def test_prohibited_spec_without_fire_exit_filter_is_rejected():
+    # forbidding every revolving door (not only fire exits) wrongly flags the control door
+    start = PROHIBITED_SPEC_5_4_2.index('<property dataType="IFCBOOLEAN">')
+    end = PROHIBITED_SPEC_5_4_2.index("</property>") + len("</property>")
+    xml = PROHIBITED_SPEC_5_4_2[:start] + PROHIBITED_SPEC_5_4_2[end:]
+    result = gate("MBBL2016-5.4.2#1", xml)
+    assert result.first_failure.stage == "verdict_pass_fixture"
+    assert "control_non_exit_door" in result.first_failure.message
+
+
+def test_prohibited_spec_with_typo_facet_is_still_vacuous():
+    xml = PROHIBITED_SPEC_5_4_2.replace("<simpleValue>FireExit</simpleValue>", "<simpleValue>FireExitt</simpleValue>")
+    result = gate("MBBL2016-5.4.2#1", xml)
+    assert result.first_failure.stage == "applicable_on_fixtures"
+    assert "FireExitt" in result.first_failure.message
+
+
+ATTRIBUTE_BOUND_5_4_1_B = (
+    "<attribute><name><simpleValue>OverallWidth</simpleValue></name><value>"
+    '<xs:restriction base="xs:double"><xs:minInclusive value="1.0"/></xs:restriction></value></attribute>'
+)
+
+
+def test_numeric_bound_on_attribute_is_rejected_as_unit_unsafe():
+    xml = gold_xml("MBBL2016-5.4.1#b")
+    start = xml.index('<property dataType="IFCLENGTHMEASURE"')
+    end = xml.index("</property>", start) + len("</property>")
+    mutated = xml[:start] + ATTRIBUTE_BOUND_5_4_1_B + xml[end:]
+
+    result = gate("MBBL2016-5.4.1#b", mutated)
+
+    assert result.first_failure.stage == "unit_safe_bounds"
+    message = result.first_failure.message
+    assert "OverallWidth" in message and "minInclusive" in message
+    assert "raw file units" in message and "Qto" in message
+
+
+def test_string_length_restriction_on_attribute_is_allowed():
+    # xs:maxLength limits string length, not a measured value, so it is unit-safe
+    xml = gold_xml("MBBL2016-5.4.1#c").replace(  # this gold declares the xs: namespace
+        "</entity>",
+        "</entity><attribute><name><simpleValue>Name</simpleValue></name><value>"
+        '<xs:restriction base="xs:string"><xs:maxLength value="200"/></xs:restriction></value></attribute>',
+        1,
+    )
+    result = gate("MBBL2016-5.4.1#c", xml)
+    assert result.accepted, result.first_failure
+
+
+def test_verdict_messages_name_entities_by_name():
+    result = gate("MBBL2016-5.4.1#c", MUTATIONS["g_missing_fire_exit_filter"][1](gold_xml("MBBL2016-5.4.1#c")))
+    assert "control_non_exit_door" in result.first_failure.message
 
 
 def test_cli_check_prints_stage_table(capsys):
