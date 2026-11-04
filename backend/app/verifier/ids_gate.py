@@ -80,49 +80,63 @@ def _attribute_bounds(candidate_xml: str) -> list[str]:
     return offenders
 
 
-def verify_ids(candidate_xml: str, unit: RuleUnit, fixtures: FixturePair) -> GateResult:
-    results: list[StageResult] = []
+def _wellformed(xml: str) -> str:
+    try:
+        ET.fromstring(xml)
+    except ET.ParseError as e:
+        raise _Rejected(f"XML is not well-formed: {e}")
+    return "parsed"
 
-    def stage(name, check):
+
+def _xsd_valid(xml: str) -> str:
+    # Validate the raw text, as ids.open(path, validate=True) does. ids.from_string(validate=True)
+    # goes through an ElementTree that drops the xs: prefix, so every xs:restriction would fail.
+    try:
+        ids.get_schema().validate(xml)
+    except XMLSchemaValidationError as e:
+        raise _Rejected(f"IDS 1.0 XSD violation at {e.path}: {e.reason}")
+    return "valid against IDS 1.0 XSD"
+
+
+def _unit_safe_bounds(xml: str) -> str:
+    offenders = _attribute_bounds(xml)
+    if offenders:
+        raise _Rejected(
+            f"numeric bound on an IFC attribute: {', '.join(offenders)}. Attribute values are compared "
+            "in raw file units (in a millimetre model a 900 mm door reads 900.0, so 'minInclusive 1.0' "
+            "passes), while quantities and measure-typed properties are converted to SI metres. Put the "
+            "bound on a Qto quantity (e.g. Qto_DoorBaseQuantities.Width, dataType IFCLENGTHMEASURE) or a "
+            "measure-typed property facet instead of the attribute."
+        )
+    return "no numeric bounds on attributes"
+
+
+STATIC_STAGES = STAGES[:3]
+
+
+def _run_stages(checks) -> GateResult:
+    results: list[StageResult] = []
+    for name, check in checks:
         try:
-            message = check()
+            results.append(StageResult(name, True, check()))
         except _Rejected as e:
             results.append(StageResult(name, False, str(e)))
-            raise
+            break
         except Exception as e:  # candidates are untrusted LLM output; ifctester may raise on odd input
             results.append(StageResult(name, False, f"ifctester raised {type(e).__name__}: {e}"))
-            raise _Rejected(str(e)) from e
-        results.append(StageResult(name, True, message))
-        return message
+            break
+    first_failure = next((r for r in results if not r.passed), None)
+    return GateResult(accepted=first_failure is None, stage_results=results, first_failure=first_failure)
 
-    def wellformed():
-        try:
-            ET.fromstring(candidate_xml)
-        except ET.ParseError as e:
-            raise _Rejected(f"XML is not well-formed: {e}")
-        return "parsed"
 
-    def xsd_valid():
-        # Validate the raw text, as ids.open(path, validate=True) does. ids.from_string(validate=True)
-        # goes through an ElementTree that drops the xs: prefix, so every xs:restriction would fail.
-        try:
-            ids.get_schema().validate(candidate_xml)
-        except XMLSchemaValidationError as e:
-            raise _Rejected(f"IDS 1.0 XSD violation at {e.path}: {e.reason}")
-        return "valid against IDS 1.0 XSD"
+def static_check(xml: str) -> GateResult:
+    """The fixture-free stages: well-formed, IDS 1.0 XSD, unit-safe bounds."""
+    return _run_stages(
+        (name, lambda f=f: f(xml)) for name, f in zip(STATIC_STAGES, (_wellformed, _xsd_valid, _unit_safe_bounds))
+    )
 
-    def unit_safe_bounds():
-        offenders = _attribute_bounds(candidate_xml)
-        if offenders:
-            raise _Rejected(
-                f"numeric bound on an IFC attribute: {', '.join(offenders)}. Attribute values are compared "
-                "in raw file units (in a millimetre model a 900 mm door reads 900.0, so 'minInclusive 1.0' "
-                "passes), while quantities and measure-typed properties are converted to SI metres. Put the "
-                "bound on a Qto quantity (e.g. Qto_DoorBaseQuantities.Width, dataType IFCLENGTHMEASURE) or a "
-                "measure-typed property facet instead of the attribute."
-            )
-        return "no numeric bounds on attributes"
 
+def verify_ids(candidate_xml: str, unit: RuleUnit, fixtures: FixturePair) -> GateResult:
     loaded = {}
 
     def loads():
@@ -181,11 +195,6 @@ def verify_ids(candidate_xml: str, unit: RuleUnit, fixtures: FixturePair) -> Gat
             )
         return f"fails {paths['fail'].name} on exactly {_labels(models['fail'], failed)}"
 
-    checks = [wellformed, xsd_valid, unit_safe_bounds, loads, applicable, verdict_pass, verdict_fail]
-    try:
-        for name, check in zip(STAGES, checks):
-            stage(name, check)
-    except _Rejected:
-        pass
-    first_failure = next((r for r in results if not r.passed), None)
-    return GateResult(accepted=first_failure is None, stage_results=results, first_failure=first_failure)
+    checks = [lambda: _wellformed(candidate_xml), lambda: _xsd_valid(candidate_xml),
+              lambda: _unit_safe_bounds(candidate_xml), loads, applicable, verdict_pass, verdict_fail]
+    return _run_stages(zip(STAGES, checks))

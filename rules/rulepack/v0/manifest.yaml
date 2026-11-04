@@ -1,0 +1,129 @@
+version: v0
+rules:
+- unit_id: MBBL2016-5.4.2#1
+  clause_id: MBBL2016-5.4.2
+  clause_text: '5.4.2 Revolving Doors
+
+    Revolving door shall not be provided as a means of fire exit.'
+  rule_text: Revolving door shall not be provided as a means of fire exit.
+  ids_file: ids/MBBL2016-5_4_2_1.ids
+  scope:
+    ifc_class: IfcDoor
+    selector:
+      pset: Pset_DoorCommon
+      property: FireExit
+      value: true
+    required_data:
+    - pset: Pset_DoorCommon
+      name: FireExit
+    - attribute: OperationType
+  tier: ids
+  source_doc: MBBL-2016
+  page: 100
+  human_reviewed: false
+  severity: error
+- unit_id: MBBL2016-5.4.1#b
+  clause_id: MBBL2016-5.4.1
+  clause_text: '5.4.1 Doorways
+
+    a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
+
+    or passageway providing continuous and protected means of egress.
+
+    b. No exit doorway shall be less than 1m in width. Doorways shall be not less than 2
+
+    m in height. Doorways for bathrooms, water closet, stores etc. shall be not less than
+
+    0.75m wide.
+
+    c. Exit doorways shall open outwards, that is, away from the room but shall not
+
+    obstruct the travel along any exit. No door, when opened, shall reduce the required
+
+    width of stairway or landing to less than 0.9m, overhead or sliding doors shall not
+
+    be installed.
+
+    d. Exit door shall not open immediately upon a flight or stairs, a landing equal to at
+
+    least the width of the door shall be provided in the stairway at each doorway, level
+
+    of landing shall be the same as that of the floor which it serves.
+
+    e. Exit doorways shall be openable from the side which they serve without the use of a
+
+    key.
+
+    f. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
+
+    the direction of exit.'
+  rule_text: No exit doorway shall be less than 1m in width.
+  ids_file: ids/MBBL2016-5_4_1_b.ids
+  scope:
+    ifc_class: IfcDoor
+    selector:
+      pset: Pset_DoorCommon
+      property: FireExit
+      value: true
+    required_data:
+    - pset: Pset_DoorCommon
+      name: FireExit
+    - qto: Qto_DoorBaseQuantities
+      name: Width
+  tier: ids
+  source_doc: MBBL-2016
+  page: 100
+  human_reviewed: false
+  severity: error
+- unit_id: MBBL2016-5.4.1#c
+  clause_id: MBBL2016-5.4.1
+  clause_text: '5.4.1 Doorways
+
+    a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
+
+    or passageway providing continuous and protected means of egress.
+
+    b. No exit doorway shall be less than 1m in width. Doorways shall be not less than 2
+
+    m in height. Doorways for bathrooms, water closet, stores etc. shall be not less than
+
+    0.75m wide.
+
+    c. Exit doorways shall open outwards, that is, away from the room but shall not
+
+    obstruct the travel along any exit. No door, when opened, shall reduce the required
+
+    width of stairway or landing to less than 0.9m, overhead or sliding doors shall not
+
+    be installed.
+
+    d. Exit door shall not open immediately upon a flight or stairs, a landing equal to at
+
+    least the width of the door shall be provided in the stairway at each doorway, level
+
+    of landing shall be the same as that of the floor which it serves.
+
+    e. Exit doorways shall be openable from the side which they serve without the use of a
+
+    key.
+
+    f. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
+
+    the direction of exit.'
+  rule_text: overhead or sliding doors shall not be installed
+  ids_file: ids/MBBL2016-5_4_1_c.ids
+  scope:
+    ifc_class: IfcDoor
+    selector:
+      pset: Pset_DoorCommon
+      property: FireExit
+      value: true
+    required_data:
+    - pset: Pset_DoorCommon
+      name: FireExit
+    - attribute: OperationType
+  tier: ids
+  source_doc: MBBL-2016
+  page: 100
+  human_reviewed: false
+  severity: error

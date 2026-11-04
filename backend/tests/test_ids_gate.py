@@ -186,6 +186,18 @@ def test_verdict_messages_name_entities_by_name():
     assert "control_non_exit_door" in result.first_failure.message
 
 
+def test_static_check_runs_only_the_fixture_free_stages():
+    from app.verifier.ids_gate import STATIC_STAGES, static_check
+
+    ok = static_check(gold_xml("MBBL2016-5.4.1#b"))
+    assert ok.accepted and [s.stage for s in ok.stage_results] == STATIC_STAGES
+    assert STATIC_STAGES == ["xml_wellformed", "xsd_valid", "unit_safe_bounds"]
+    xml = gold_xml("MBBL2016-5.4.1#b")
+    start = xml.index('<property dataType="IFCLENGTHMEASURE"')
+    bad = static_check(xml[:start] + ATTRIBUTE_BOUND_5_4_1_B + xml[xml.index("</property>", start) + 11:])
+    assert bad.first_failure.stage == "unit_safe_bounds"
+
+
 def test_cli_check_prints_stage_table(capsys):
     unit_id = "MBBL2016-5.4.2#1"
     code = cli.main(["check", unit_id, str(GOLD_DIR / f"{safe_name(unit_id)}.ids")])
