@@ -63,6 +63,8 @@ def build_all_gold(out_dir: Path = GOLD_DIR) -> list[Path]:
     for unit in load_units().values():
         if unit.tier != "ids":  # geometric units have gold checks (fixtures/checks), not gold IDS
             continue
+        if (REPO_ROOT / "rules" / "specs" / f"{safe_name(unit.id)}.yaml").exists():
+            continue  # spec-generated units get their gold from app.specgen
         path = out_dir / f"{safe_name(unit.id)}.ids"
         if not build_gold(unit).to_xml(str(path)):
             raise ValueError(f"{path.name} is not valid against the IDS XSD")
