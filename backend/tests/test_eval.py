@@ -147,6 +147,9 @@ def test_dry_run_end_to_end_is_bannered_and_never_written_to_docs(config_path, i
     for f in files:
         assert f.read_text(encoding="utf-8").splitlines()[0].count(report.BANNER) == 1
     assert "n < 30" in files[0].read_text(encoding="utf-8")
+    summary = files[0].read_text(encoding="utf-8")
+    assert "## Breakdown by tier" in summary and "## Breakdown by template" in summary
+    assert "| dry-a | gated | hand-written | 2 |" in summary and {i["template"] for i in data["items"]} == {"hand-written"}
     for target in (report.DOCS_DIR, report.DOCS_DIR / "eval"):
         with pytest.raises(report.RefusedOutput):
             report.write_report(results, target)

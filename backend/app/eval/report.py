@@ -61,6 +61,17 @@ def write_report(results_path: Path, out_dir: Path | None = None) -> list[Path]:
                   "| model | both correct | gated only | ungated only | neither |", "|---|---|---|---|---|"]
         lines += [f"| {m} | {r['both_correct']} | {r['gated_only']} | {r['ungated_only']} | {r['neither']} |"
                   for m, r in sorted(table.items())]
+    for key, title in (("tier", "tier"), ("template", "template")):
+        by: dict[tuple, list[dict]] = {}
+        for i in items:
+            by.setdefault((i["model"], i["mode"], i.get(key, "hand-written")), []).append(i)
+        lines += [f"\n## Breakdown by {title}\n",
+                  f"| model | mode | {title} | n | heldout_correct | shipped | wrong_shipped |",
+                  "|---|---|---|---|---|---|---|"]
+        for (model, mode, value), group in sorted(by.items()):
+            m = group_metrics(group)
+            lines.append(f"| {model} | {mode} | {value} | {m['n']} | {m['heldout_correct']} | {m['shipped']} | "
+                         f"{m['wrong_shipped']} |")
     share = review_share(load_units().values())
     lines.append("\n## Human review\n")
     lines.append(f"Reviewed rules with decision modify or reject: {share}" if share else

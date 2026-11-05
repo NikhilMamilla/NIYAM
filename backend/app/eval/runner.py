@@ -116,7 +116,15 @@ def clause_for(unit: RuleUnit) -> Clause:
         if rule.unit_id == unit.id:
             return Clause(id=rule.clause_id, source_doc=rule.source_doc, clause_number=rule.clause_id.split("-", 1)[1],
                           text=rule.clause_text, page=rule.page)
-    raise LookupError(f"{unit.id} is not in the rulepack manifest, so its clause text is unknown")
+    from app.specgen.models import parent_clause  # spec-generated units are not in a rulepack
+
+    return parent_clause(unit.clause_id)
+
+
+def template_of(unit: RuleUnit) -> str:
+    """The spec template a unit was generated from, or 'hand-written' for the six original pilots."""
+    path = REPO_ROOT / "rules" / "specs" / f"{safe_name(unit.id)}.yaml"
+    return yaml.safe_load(path.read_text(encoding="utf-8"))["template"] if path.exists() else "hand-written"
 
 
 def _git_commit() -> str:
@@ -170,7 +178,8 @@ def run(config: EvalConfig, providers: dict[str, object], *, dry_run: bool, runs
                     final = result.attempts[-1].extracted_xml if result.attempts else None
                     shipped = result.outcome == "accepted" if mode == "gated" else final is not None
                     items.append({
-                        "model": spec.name, "mode": mode, "unit_id": unit.id, "tier": unit.tier, "repeat": repeat,
+                        "model": spec.name, "mode": mode, "unit_id": unit.id, "tier": unit.tier, "template": template_of(unit),
+                        "repeat": repeat,
                         "outcome": result.outcome, "shipped": shipped, "repair_rounds": result.repair_rounds,
                         "total_tokens": result.total_tokens, "wall_time_s": round(result.wall_time_s, 3),
                         "prompt_hash": result.attempts[0].prompt_hash if result.attempts else None,
