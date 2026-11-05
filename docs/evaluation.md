@@ -77,6 +77,15 @@ starts with **"DRY RUN: synthetic responses, not model results"**; the report ge
 report anywhere under `docs/`; `eval/results/dryrun-*/` is gitignored. **Dry-run numbers are not results and must
 never be quoted.**
 
+## Units in an evaluation
+
+Every rule unit with status `pilot` (or `selected`, as configured) is evaluated: the six hand-written pilots and
+every unit generated from a rule spec (`docs/specgen.md`). Reports break results down by tier and by template
+(`hand-written`, `door_width_min`, `door_operation_forbidden`, `space_area_min`, `space_height_min`).
+
+After `python -m app.corpus.cli review-import <sheet>`, the corpus DB is **not** updated: run
+`python -m app.corpus.cli unit-import` to load the updated `rules/corpus/rule-units.yaml`.
+
 ## Limitations
 
 - **Tiny n.** Six pilot units (three IDS, three geometric). With n = 6 per cell a 6/6 rate has a 95% interval of

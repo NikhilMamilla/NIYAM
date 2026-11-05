@@ -75,13 +75,48 @@ def sheet_rows(units: list[RuleUnit], pack: Path) -> list[dict[str, str]]:
     rows = []
     for u in units:
         rule = rules.get(u.id)
+        spec = None if rule else _spec(u.id)
+        if spec is not None:  # a spec-generated unit: not in any rulepack until it is reviewed
+            from app.specgen.models import parent_clause
+
+            clause = parent_clause(spec.clause_id)
+            page, clause_text, threshold, scope = str(clause.page), clause.text, _spec_threshold(spec), _spec_scope(spec)
+        else:
+            page, clause_text = (str(rule.page), rule.clause_text) if rule else ("", "")
+            threshold, scope = _threshold(rule, pack), _scope(rule)
         rows.append({
-            "unit_id": u.id, "clause_id": u.clause_id, "page": str(rule.page) if rule else "", "tier": u.tier,
-            "unit_text": " ".join(u.text.split()), "clause_text": rule.clause_text if rule else "",
-            "machine_reading": " ".join((u.notes or "none").split()), "threshold": _threshold(rule, pack),
-            "scope": _scope(rule), **{c: "" for c in REVIEW_COLUMNS},
+            "unit_id": u.id, "clause_id": u.clause_id, "page": page, "tier": u.tier,
+            "unit_text": " ".join(u.text.split()), "clause_text": clause_text,
+            "machine_reading": " ".join((u.notes or "none").split()), "threshold": threshold,
+            "scope": scope, **{c: "" for c in REVIEW_COLUMNS},
         })
     return rows
+
+
+def _spec(unit_id: str):
+    from app.fixtures.builders import REPO_ROOT, safe_name
+    from app.specgen.models import Spec
+
+    path = REPO_ROOT / "rules" / "specs" / f"{safe_name(unit_id)}.yaml"
+    return Spec(**yaml.safe_load(path.read_text(encoding="utf-8"))) if path.exists() else None
+
+
+def _spec_threshold(spec) -> str:
+    if spec.threshold is None:
+        return "none (forbidden operations: " + ", ".join(spec.params.forbidden_operations) + ")"
+    t = spec.threshold
+    measure = {"space_area_min": " (computed: space_floor_area_m2)", "space_height_min": " (computed: element_height_m)"}
+    return f"{'at least' if t.inclusive else 'more than'} {t.text} {t.unit}{measure.get(spec.template, '')}"
+
+
+def _spec_scope(spec) -> str:
+    if spec.template.startswith("door"):
+        s = spec.params.selector
+        value = str(s.value).upper() if isinstance(s.value, bool) else s.value
+        needs = "Qto_DoorBaseQuantities.Width" if spec.template == "door_width_min" else "OperationType"
+        return f"IfcDoor where {s.pset}.{s.property} is {value}; needs {s.pset}.{s.property}, {needs}; not in a rulepack"
+    return (f"IfcSpace where Pset_SpaceCommon.Category is {' or '.join(spec.params.categories)}; needs "
+            "Pset_SpaceCommon.Category and body geometry; not in a rulepack")
 
 
 def export_sheet(units_yaml: Path, pack: Path, out_csv: Path, out_md: Path | None = None) -> int:

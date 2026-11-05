@@ -2,6 +2,66 @@
 
 Fill in the empty columns of `review-sheet.csv` (it opens in Excel): **decision** is `accept`, `modify` or `reject`; give your name and the date. For `modify`, write the corrected reading and/or threshold. Every rule below is a draft machine encoding of the quoted clause.
 
+## MBBL2016-4.10.4#a (geometric, page 72)
+
+**Rule text:** Every basement shall be in every part at least 2.4 m in height from the floor to the underside of the roof slab or ceiling
+
+**Machine reading:** Basement spaces (Category Basement) must be at least 2.4 m high. AMBIGUITY: "in every part" asks for the minimum height everywhere, but the helper measures the vertical extent (the maximum for a non-prismatic space); this only agrees for spaces with a flat floor and ceiling. "Roof slab or ceiling" is not distinguished.
+
+**Threshold:** at least 2.4 m (computed: element_height_m)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Basement; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.10.4 The basement shall have the following requirements:
+a) Every basement shall be in every part at least 2.4 m in height from the floor to the
+underside of the roof slab or ceiling;
+b) Adequate ventilation shall be provided for the basement. The ventilation
+requirements shall be the same as required by the particular occupancy according
+to byelaws. Any deficiency may be met by providing adequate mechanical
+ventilation in the form of blowers, exhaust fans, air-conditioning systems, etc;
+c) The minimum height of the ceiling of any basement shall be 0.9m and the
+maximum, 1.2 m above the average surrounding ground level;
+d) Adequate arrangements shall be made such that surface drainage does not enter the
+basement;
+e) The walls and floors of the basement shall be watertight and be so designed that
+the effects of the surrounding soil and moisture, if any, are taken into account in
+design and adequate damp proofing treatment is given; and
+f) The access to the basement shall be separate from the main and alternative
+staircase providing access and exit from higher floors.
+g) Where the staircase is continuous in the case of buildings served by more than one
+staircase, the same shall be of enclosed type serving as a fire separation from the
+basement floor and higher floors. Open ramps shall be permitted if they are
+constructed within the building line subject to the provision of (d). The exist
+requirements in basements shall comply with the provisions of Part 4 ‘Fire and
+Life Safety’
+```
+</details>
+
+## MBBL2016-4.13#1 (geometric, page 73)
+
+**Rule text:** The size of cabins shall not be less than 3.0 m2
+
+**Machine reading:** Cabins (Category Cabin) must have a floor area of at least 3.0 m2. NOT encoded: "with a minimum width of 1.0 m", the 0.75 m clear passages, the 18.5 m travel distance and the 2.2 m maximum height of unventilated cabins.
+
+**Threshold:** at least 3.0 m2 (computed: space_floor_area_m2)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Cabin; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.13 Cabin
+The size of cabins shall not be less than 3.0 m2 with a minimum width of 1.0 m. The
+clear passages within the divided space of any floor shall not be less than 0.75 m and
+the distance from the farthest space in a cabin to any exit shall not be more than 18.5
+m. In case the sub-divided cabin does not derive direct lighting and ventilation from
+any open spaces/ mechanical means, the maximum height of the cabin shall be 2.2 m.
+```
+</details>
+
 ## MBBL2016-4.17.2#A (geometric, page 75)
 
 **Rule text:** The minimum width of staircase shall be as follows: A Residential buildings (dwellings) 1.0 m
@@ -29,6 +89,111 @@ F All other buildings 1.5 m
 ```
 </details>
 
+## MBBL2016-4.24.7.2#b (ids, page 80)
+
+**Rule text:** No exit doorways shall be less than 1m in width
+
+**Machine reading:** Exit doors (Pset_DoorCommon.FireExit = TRUE) must have Qto_DoorBaseQuantities.Width of at least 1 m. Inclusive ("not less than"). NOT encoded: "except assembly and institutional buildings where Doorway shall not be less than 2 m" (building type is not checked, so a 1.5 m exit in an assembly building passes). Duplicates MBBL2016-5.4.1#b. Clear vs leaf vs overall width is not specified.
+
+**Threshold:** at least 1 m
+
+**Applies to:** IfcDoor where Pset_DoorCommon.FireExit is TRUE; needs Pset_DoorCommon.FireExit, Qto_DoorBaseQuantities.Width; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.24.7.2 Doorways
+a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
+or passageway providing continuous and protected means of egress.
+b. No exit doorways shall be less than 1m in width except assembly and institutional
+buildings where Doorway shall not be less than 2 m.
+c. Exit doorways shall open outwards, that is away from the room but shall not obstruct
+the travel along any exit. No door when opened shall reduce the required width of
+stairway or landing to less than 0.90 m Overhead or sliding door shall not be
+installed.
+Note: In the case of buildings where there is a central corridor, the doors of rooms shall open inwards
+to permit smooth flow of traffic in the corridor
+d. Exit door shall not open immediately upon a flight of stairs. A landing equal to at
+least, the width of the door shall be provided in the stairway at each doorway. Level
+of landings shall be the same as that of the floor, which it serves.
+e. Exit doorways shall be openable from the side, which they serve without the use of a
+key.
+f. Revolving doors shall not to be provided as means of fire exit.
+g. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
+the direction of exit.
+```
+</details>
+
+## MBBL2016-4.24.7.2#c (ids, page 80)
+
+**Rule text:** Overhead or sliding door shall not be installed.
+
+**Machine reading:** Exit doors (FireExit = TRUE) must not be sliding (SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING) or overhead (ROLLINGUP). AMBIGUITY: the sentence has no subject restriction; it is read as applying to exit doorways because it sits in sub-item c about exit doorways. "Overhead" mapped to ROLLINGUP only. Duplicates MBBL2016-5.4.1#c.
+
+**Threshold:** none (forbidden operations: SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING, ROLLINGUP)
+
+**Applies to:** IfcDoor where Pset_DoorCommon.FireExit is TRUE; needs Pset_DoorCommon.FireExit, OperationType; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.24.7.2 Doorways
+a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
+or passageway providing continuous and protected means of egress.
+b. No exit doorways shall be less than 1m in width except assembly and institutional
+buildings where Doorway shall not be less than 2 m.
+c. Exit doorways shall open outwards, that is away from the room but shall not obstruct
+the travel along any exit. No door when opened shall reduce the required width of
+stairway or landing to less than 0.90 m Overhead or sliding door shall not be
+installed.
+Note: In the case of buildings where there is a central corridor, the doors of rooms shall open inwards
+to permit smooth flow of traffic in the corridor
+d. Exit door shall not open immediately upon a flight of stairs. A landing equal to at
+least, the width of the door shall be provided in the stairway at each doorway. Level
+of landings shall be the same as that of the floor, which it serves.
+e. Exit doorways shall be openable from the side, which they serve without the use of a
+key.
+f. Revolving doors shall not to be provided as means of fire exit.
+g. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
+the direction of exit.
+```
+</details>
+
+## MBBL2016-4.24.7.2#f (ids, page 80)
+
+**Rule text:** Revolving doors shall not to be provided as means of fire exit.
+
+**Machine reading:** Exit doors (FireExit = TRUE) must not have OperationType REVOLVING. "Means of fire exit" mapped to the FireExit flag. The clause's grammar ("shall not to be") is verbatim. Duplicates MBBL2016-5.4.2#1.
+
+**Threshold:** none (forbidden operations: REVOLVING)
+
+**Applies to:** IfcDoor where Pset_DoorCommon.FireExit is TRUE; needs Pset_DoorCommon.FireExit, OperationType; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.24.7.2 Doorways
+a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
+or passageway providing continuous and protected means of egress.
+b. No exit doorways shall be less than 1m in width except assembly and institutional
+buildings where Doorway shall not be less than 2 m.
+c. Exit doorways shall open outwards, that is away from the room but shall not obstruct
+the travel along any exit. No door when opened shall reduce the required width of
+stairway or landing to less than 0.90 m Overhead or sliding door shall not be
+installed.
+Note: In the case of buildings where there is a central corridor, the doors of rooms shall open inwards
+to permit smooth flow of traffic in the corridor
+d. Exit door shall not open immediately upon a flight of stairs. A landing equal to at
+least, the width of the door shall be provided in the stairway at each doorway. Level
+of landings shall be the same as that of the floor, which it serves.
+e. Exit doorways shall be openable from the side, which they serve without the use of a
+key.
+f. Revolving doors shall not to be provided as means of fire exit.
+g. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
+the direction of exit.
+```
+</details>
+
 ## MBBL2016-4.3.1.1#1 (geometric, page 69)
 
 **Rule text:** The height of all rooms for human habitation shall not be less than 2.75 m measured from the surface of the floor to the lowest point of the ceiling (bottom of slab)
@@ -53,6 +218,45 @@ be provided.
 ```
 </details>
 
+## MBBL2016-4.4.1#1 (geometric, page 70)
+
+**Rule text:** The height of a kitchen measured from the surface of the floor to the lowest point in the ceiling (bottom of slab) shall not be less than 2.75 m
+
+**Machine reading:** Kitchens (IfcSpace with Pset_SpaceCommon.Category = Kitchen) must be at least 2.75 m high, measured as the vertical extent of the space geometry, which assumes the modelled space runs from floor surface to the underside of the slab. "Not less than" read as inclusive. NOT encoded: the exception "except for the portion to accommodate floor trap of the upper floor" (a local lowering of the ceiling would make the whole kitchen fail or pass depending on modelling).
+
+**Threshold:** at least 2.75 m (computed: element_height_m)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Kitchen; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.4.1 Height
+The height of a kitchen measured from the surface of the floor to the lowest point in
+the ceiling (bottom of slab) shall not be less than 2.75 m, except for the portion to
+accommodate floor trap of the upper floor.
+```
+</details>
+
+## MBBL2016-4.5.1#1 (geometric, page 70)
+
+**Rule text:** The height of a bathroom or water-closet measured from the surface of the floor to the lowest point in the ceiling (bottom of slab) shall not be less than 2.1 m.
+
+**Machine reading:** Bathrooms, water-closets and combined bath/WC rooms (Category Bathroom, WaterCloset or CombinedBathWC) must be at least 2.1 m high (vertical extent of the space geometry, floor to slab soffit). Inclusive. Ambiguity: a combined bath/WC room is assumed to be covered by "bathroom or water-closet"; false ceilings are not distinguished.
+
+**Threshold:** at least 2.1 m (computed: element_height_m)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Bathroom or WaterCloset or CombinedBathWC; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.5.1 Height
+The height of a bathroom or water-closet measured from the surface of the floor to the
+lowest point in the ceiling (bottom of slab) shall not be less than 2.1 m.
+```
+</details>
+
 ## MBBL2016-4.5.2#1 (geometric, page 70)
 
 **Rule text:** The area of a bathroom shall not be less than 1.8 m2
@@ -71,6 +275,142 @@ The area of a bathroom shall not be less than 1.8 m2 with a minimum width of 1.2
 The floor area of water-closet shall be 1.1 m2 with a minimum width of 0.9 m. If bath
 and water-closet are combined, its floor area shall not be less than 2.8 m2 with a
 minimum width of 1.2 m.
+```
+</details>
+
+## MBBL2016-4.5.2#2 (geometric, page 70)
+
+**Rule text:** The floor area of water-closet shall be 1.1 m2
+
+**Machine reading:** Water-closets (Category WaterCloset) must have a floor area of at least 1.1 m2 (footprint of the space geometry). AMBIGUITY: the clause says "shall be 1.1 m2", read as a minimum; a reviewer may read it as an exact size. NOT encoded: "with a minimum width of 0.9 m".
+
+**Threshold:** at least 1.1 m2 (computed: space_floor_area_m2)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is WaterCloset; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.5.2 Size
+The area of a bathroom shall not be less than 1.8 m2 with a minimum width of 1.2 m.
+The floor area of water-closet shall be 1.1 m2 with a minimum width of 0.9 m. If bath
+and water-closet are combined, its floor area shall not be less than 2.8 m2 with a
+minimum width of 1.2 m.
+```
+</details>
+
+## MBBL2016-4.5.2#3 (geometric, page 70)
+
+**Rule text:** If bath and water-closet are combined, its floor area shall not be less than 2.8 m2
+
+**Machine reading:** A combined bath and water-closet room (Category CombinedBathWC) must have a floor area of at least 2.8 m2. Inclusive. The "combined" condition is mapped to a separate Category value, which the modelling profile has to define. NOT encoded: "with a minimum width of 1.2 m".
+
+**Threshold:** at least 2.8 m2 (computed: space_floor_area_m2)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is CombinedBathWC; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.5.2 Size
+The area of a bathroom shall not be less than 1.8 m2 with a minimum width of 1.2 m.
+The floor area of water-closet shall be 1.1 m2 with a minimum width of 0.9 m. If bath
+and water-closet are combined, its floor area shall not be less than 2.8 m2 with a
+minimum width of 1.2 m.
+```
+</details>
+
+## MBBL2016-4.7.1#1 (geometric, page 71)
+
+**Rule text:** It shall have a minimum height of 2.2 m.
+
+**Machine reading:** A mezzanine floor (Category Mezzanine) must be at least 2.2 m high. "It" is read as the mezzanine floor from the section title 4.7 Mezzanine Floor. AMBIGUITY: whether the height is clear height above the mezzanine or below it is not stated; the encoding uses the vertical extent of the modelled mezzanine space.
+
+**Threshold:** at least 2.2 m (computed: element_height_m)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Mezzanine; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.7.1 Height
+It shall have a minimum height of 2.2 m.
+```
+</details>
+
+## MBBL2016-4.7.2#1 (geometric, page 71)
+
+**Rule text:** The minimum size of the mezzanine floor, if it is to be used as a living room, shall not be less than 9.5 m2.
+
+**Machine reading:** A mezzanine floor must have a floor area of at least 9.5 m2. AMBIGUITY / NOT encoded: the condition "if it is to be used as a living room" is ignored, so every space with Category Mezzanine is checked; a reviewer may want a separate Category for living-room mezzanines. The one-third-of-plinth-area limit in the next sentence is not encoded.
+
+**Threshold:** at least 9.5 m2 (computed: space_floor_area_m2)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Mezzanine; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.7.2 Size
+The minimum size of the mezzanine floor, if it is to be used as a living room, shall not
+be less than 9.5 m2.
+The aggregate area of such mezzanine floor in a building shall in no case exceed one-
+third the plinth area of the building.
+```
+</details>
+
+## MBBL2016-4.8.1#1 (geometric, page 72)
+
+**Rule text:** The height of a store room shall be not less than 2.2 m.
+
+**Machine reading:** Store rooms (Category Store) must be at least 2.2 m high (vertical extent of the space geometry). Inclusive.
+
+**Threshold:** at least 2.2 m (computed: element_height_m)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Store; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.8.1 Height
+The height of a store room shall be not less than 2.2 m.
+```
+</details>
+
+## MBBL2016-4.8.2#1 (geometric, page 72)
+
+**Rule text:** The size of a store room, where provided in a residential building, shall be not less than 3 m2.
+
+**Machine reading:** Store rooms (Category Store) must have a floor area of at least 3 m2. "Size" is read as floor area. NOT encoded: the condition "where provided in a residential building"; store rooms in other building types are checked too.
+
+**Threshold:** at least 3 m2 (computed: space_floor_area_m2)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Store; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.8.2 Size
+The size of a store room, where provided in a residential building, shall be not less
+than 3 m2.
+```
+</details>
+
+## MBBL2016-4.9.1#1 (geometric, page 72)
+
+**Rule text:** The height of a garage shall be not less than 2.4 m.
+
+**Machine reading:** Garages (Category Garage) must be at least 2.4 m high. Inclusive. AMBIGUITY: private and public garages are not distinguished.
+
+**Threshold:** at least 2.4 m (computed: element_height_m)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Garage; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+<details><summary>Full clause text</summary>
+
+```
+4.9.1 Height
+The height of a garage shall be not less than 2.4 m.
 ```
 </details>
 

@@ -102,8 +102,7 @@ def cmd_review_import(conn, args):
             print(f"  {err}")
         sys.exit(1)
     print(f"changed: {', '.join(result.changed) or 'none'}; unchanged: {', '.join(result.unchanged) or 'none'}")
-    if result.changed:
-        print("run `unit-import` to load the updated rule-units.yaml into the corpus database")
+    print("note: the corpus DB is not updated; run `python -m app.corpus.cli unit-import` to load rule-units.yaml")
 
 
 def cmd_unit_add(conn, args):

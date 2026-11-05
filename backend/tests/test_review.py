@@ -126,4 +126,21 @@ def test_validation_errors_name_the_line_and_change_nothing(work, capsys):
 
 def test_committed_review_sheet_is_current():
     rows = rows_of(REPO_ROOT / "docs" / "review" / "review-sheet.csv")
-    assert len(rows) == 6 and all(r["decision"] == "" for r in rows)
+    assert len(rows) == 20 and all(r["decision"] == "" for r in rows)  # 6 hand-written + 14 spec units
+
+
+def test_review_import_reminds_that_the_corpus_db_needs_unit_import(work, capsys):
+    units, pack, sheet = work
+    fill(sheet, {"MBBL2016-4.8.1#1": {"decision": "modify", "reviewer_name": "R", "reviewed_on": "2026-11-05",
+                                      "comments": "store rooms in non-residential buildings too?"}})
+    cli.main(["review-import", str(sheet), "--units-yaml", str(units), "--pack", str(pack)])
+    out = capsys.readouterr().out
+    assert "changed: MBBL2016-4.8.1#1" in out and "run `python -m app.corpus.cli unit-import`" in out
+
+
+def test_spec_units_appear_in_the_sheet_with_their_clause_and_threshold(work):
+    rows = {r["unit_id"]: r for r in rows_of(work[2])}
+    store = rows["MBBL2016-4.8.2#1"]
+    assert (store["page"], store["threshold"]) == ("72", "at least 3 m2 (computed: space_floor_area_m2)")
+    assert "4.8.2 Size" in store["clause_text"] and "not in a rulepack" in store["scope"]
+    assert "residential building" in store["machine_reading"]
