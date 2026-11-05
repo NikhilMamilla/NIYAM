@@ -1,0 +1,267 @@
+- id: MBBL2016-4.10.4
+  source_doc: MBBL-2016
+  clause_number: 4.10.4
+  title: null
+  text: '4.10.4 The basement shall have the following requirements:
+
+    a) Every basement shall be in every part at least 2.4 m in height from the floor to the
+
+    underside of the roof slab or ceiling;
+
+    b) Adequate ventilation shall be provided for the basement. The ventilation
+
+    requirements shall be the same as required by the particular occupancy according
+
+    to byelaws. Any deficiency may be met by providing adequate mechanical
+
+    ventilation in the form of blowers, exhaust fans, air-conditioning systems, etc;
+
+    c) The minimum height of the ceiling of any basement shall be 0.9m and the
+
+    maximum, 1.2 m above the average surrounding ground level;
+
+    d) Adequate arrangements shall be made such that surface drainage does not enter the
+
+    basement;
+
+    e) The walls and floors of the basement shall be watertight and be so designed that
+
+    the effects of the surrounding soil and moisture, if any, are taken into account in
+
+    design and adequate damp proofing treatment is given; and
+
+    f) The access to the basement shall be separate from the main and alternative
+
+    staircase providing access and exit from higher floors.
+
+    g) Where the staircase is continuous in the case of buildings served by more than one
+
+    staircase, the same shall be of enclosed type serving as a fire separation from the
+
+    basement floor and higher floors. Open ramps shall be permitted if they are
+
+    constructed within the building line subject to the provision of (d). The exist
+
+    requirements in basements shall comply with the provisions of Part 4 ‘Fire and
+
+    Life Safety’'
+  page: 72
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.13
+  source_doc: MBBL-2016
+  clause_number: '4.13'
+  title: Cabin
+  text: '4.13 Cabin
+
+    The size of cabins shall not be less than 3.0 m2 with a minimum width of 1.0 m. The
+
+    clear passages within the divided space of any floor shall not be less than 0.75 m and
+
+    the distance from the farthest space in a cabin to any exit shall not be more than 18.5
+
+    m. In case the sub-divided cabin does not derive direct lighting and ventilation from
+
+    any open spaces/ mechanical means, the maximum height of the cabin shall be 2.2 m.'
+  page: 73
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.24.7.2
+  source_doc: MBBL-2016
+  clause_number: 4.24.7.2
+  title: Doorways
+  text: '4.24.7.2 Doorways
+
+    a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
+
+    or passageway providing continuous and protected means of egress.
+
+    b. No exit doorways shall be less than 1m in width except assembly and institutional
+
+    buildings where Doorway shall not be less than 2 m.
+
+    c. Exit doorways shall open outwards, that is away from the room but shall not obstruct
+
+    the travel along any exit. No door when opened shall reduce the required width of
+
+    stairway or landing to less than 0.90 m Overhead or sliding door shall not be
+
+    installed.
+
+    Note: In the case of buildings where there is a central corridor, the doors of rooms shall open inwards
+
+    to permit smooth flow of traffic in the corridor
+
+    d. Exit door shall not open immediately upon a flight of stairs. A landing equal to at
+
+    least, the width of the door shall be provided in the stairway at each doorway. Level
+
+    of landings shall be the same as that of the floor, which it serves.
+
+    e. Exit doorways shall be openable from the side, which they serve without the use of a
+
+    key.
+
+    f. Revolving doors shall not to be provided as means of fire exit.
+
+    g. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
+
+    the direction of exit.'
+  page: 80
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.4.1
+  source_doc: MBBL-2016
+  clause_number: 4.4.1
+  title: Height
+  text: '4.4.1 Height
+
+    The height of a kitchen measured from the surface of the floor to the lowest point in
+
+    the ceiling (bottom of slab) shall not be less than 2.75 m, except for the portion to
+
+    accommodate floor trap of the upper floor.'
+  page: 70
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.5.1
+  source_doc: MBBL-2016
+  clause_number: 4.5.1
+  title: Height
+  text: '4.5.1 Height
+
+    The height of a bathroom or water-closet measured from the surface of the floor to the
+
+    lowest point in the ceiling (bottom of slab) shall not be less than 2.1 m.'
+  page: 70
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.5.2
+  source_doc: MBBL-2016
+  clause_number: 4.5.2
+  title: Size
+  text: '4.5.2 Size
+
+    The area of a bathroom shall not be less than 1.8 m2 with a minimum width of 1.2 m.
+
+    The floor area of water-closet shall be 1.1 m2 with a minimum width of 0.9 m. If bath
+
+    and water-closet are combined, its floor area shall not be less than 2.8 m2 with a
+
+    minimum width of 1.2 m.'
+  page: 70
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.7.1
+  source_doc: MBBL-2016
+  clause_number: 4.7.1
+  title: Height
+  text: '4.7.1 Height
+
+    It shall have a minimum height of 2.2 m.'
+  page: 71
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.7.2
+  source_doc: MBBL-2016
+  clause_number: 4.7.2
+  title: Size
+  text: '4.7.2 Size
+
+    The minimum size of the mezzanine floor, if it is to be used as a living room, shall not
+
+    be less than 9.5 m2.
+
+    The aggregate area of such mezzanine floor in a building shall in no case exceed one-
+
+    third the plinth area of the building.'
+  page: 71
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.8.1
+  source_doc: MBBL-2016
+  clause_number: 4.8.1
+  title: Height
+  text: '4.8.1 Height
+
+    The height of a store room shall be not less than 2.2 m.'
+  page: 72
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.8.2
+  source_doc: MBBL-2016
+  clause_number: 4.8.2
+  title: Size
+  text: '4.8.2 Size
+
+    The size of a store room, where provided in a residential building, shall be not less
+
+    than 3 m2.'
+  page: 72
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.9.1
+  source_doc: MBBL-2016
+  clause_number: 4.9.1
+  title: Height
+  text: '4.9.1 Height
+
+    The height of a garage shall be not less than 2.4 m.'
+  page: 72
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null

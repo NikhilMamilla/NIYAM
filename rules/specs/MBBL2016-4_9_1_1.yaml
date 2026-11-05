@@ -1,0 +1,11 @@
+unit_id: "MBBL2016-4.9.1#1"
+clause_id: MBBL2016-4.9.1
+unit_text: The height of a garage shall be not less than 2.4 m.
+topic: room height
+template: space_height_min
+params:
+  categories: [Garage]
+threshold: {value: 2.4, text: "2.4", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  Garages (Category Garage) must be at least 2.4 m high. Inclusive. AMBIGUITY: private and public garages are not
+  distinguished.

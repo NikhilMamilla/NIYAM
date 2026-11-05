@@ -1,0 +1,12 @@
+unit_id: "MBBL2016-4.7.1#1"
+clause_id: MBBL2016-4.7.1
+unit_text: It shall have a minimum height of 2.2 m.
+topic: room height
+template: space_height_min
+params:
+  categories: [Mezzanine]
+threshold: {value: 2.2, text: "2.2", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  A mezzanine floor (Category Mezzanine) must be at least 2.2 m high. "It" is read as the mezzanine floor from the
+  section title 4.7 Mezzanine Floor. AMBIGUITY: whether the height is clear height above the mezzanine or below it is
+  not stated; the encoding uses the vertical extent of the modelled mezzanine space.

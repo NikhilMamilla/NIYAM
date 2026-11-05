@@ -1,0 +1,11 @@
+unit_id: "MBBL2016-4.24.7.2#f"
+clause_id: MBBL2016-4.24.7.2
+unit_text: Revolving doors shall not to be provided as means of fire exit.
+topic: door operation
+template: door_operation_forbidden
+params:
+  selector: {pset: Pset_DoorCommon, property: FireExit, value: true}
+  forbidden_operations: [REVOLVING]
+notes_for_reviewer: >-
+  Exit doors (FireExit = TRUE) must not have OperationType REVOLVING. "Means of fire exit" mapped to the FireExit flag.
+  The clause's grammar ("shall not to be") is verbatim. Duplicates MBBL2016-5.4.2#1.

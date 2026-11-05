@@ -1,0 +1,44 @@
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/1.0/ids.xsd">
+    <info>
+        <title>NIYAM generated IDS MBBL2016-4.24.7.2#c</title>
+        <version>0.1</version>
+        <description>DRAFT generated from a rule spec; human_reviewed=false.</description>
+    </info>
+    <specifications>
+        <specification name="MBBL2016-4.24.7.2#c door operation" ifcVersion="IFC4" identifier="MBBL2016-4.24.7.2#c" description="Overhead or sliding door shall not be installed." instructions="Source: MBBL-2016 clause MBBL2016-4.24.7.2. Draft, not human-reviewed.">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCDOOR</simpleValue>
+                    </name>
+                </entity>
+                <property dataType="IFCBOOLEAN">
+                    <propertySet>
+                        <simpleValue>Pset_DoorCommon</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>FireExit</simpleValue>
+                    </baseName>
+                    <value>
+                        <simpleValue>TRUE</simpleValue>
+                    </value>
+                </property>
+            </applicability>
+            <requirements>
+                <attribute cardinality="prohibited">
+                    <name>
+                        <simpleValue>OperationType</simpleValue>
+                    </name>
+                    <value>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="SLIDING_TO_LEFT" />
+                            <xs:enumeration value="SLIDING_TO_RIGHT" />
+                            <xs:enumeration value="DOUBLE_DOOR_SLIDING" />
+                            <xs:enumeration value="ROLLINGUP" />
+                        </xs:restriction>
+                    </value>
+                </attribute>
+            </requirements>
+        </specification>
+    </specifications>
+</ids>

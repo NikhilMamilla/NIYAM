@@ -1,0 +1,12 @@
+unit_id: "MBBL2016-4.10.4#a"
+clause_id: MBBL2016-4.10.4
+unit_text: Every basement shall be in every part at least 2.4 m in height from the floor to the underside of the roof slab or ceiling
+topic: room height
+template: space_height_min
+params:
+  categories: [Basement]
+threshold: {value: 2.4, text: "2.4", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  Basement spaces (Category Basement) must be at least 2.4 m high. AMBIGUITY: "in every part" asks for the minimum
+  height everywhere, but the helper measures the vertical extent (the maximum for a non-prismatic space); this only
+  agrees for spaces with a flat floor and ceiling. "Roof slab or ceiling" is not distinguished.

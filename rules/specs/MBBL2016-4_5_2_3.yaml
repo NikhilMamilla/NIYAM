@@ -1,0 +1,12 @@
+unit_id: "MBBL2016-4.5.2#3"
+clause_id: MBBL2016-4.5.2
+unit_text: If bath and water-closet are combined, its floor area shall not be less than 2.8 m2
+topic: room area
+template: space_area_min
+params:
+  categories: [CombinedBathWC]
+threshold: {value: 2.8, text: "2.8", unit: m2, inclusive: true}
+notes_for_reviewer: >-
+  A combined bath and water-closet room (Category CombinedBathWC) must have a floor area of at least 2.8 m2.
+  Inclusive. The "combined" condition is mapped to a separate Category value, which the modelling profile has to
+  define. NOT encoded: "with a minimum width of 1.2 m".

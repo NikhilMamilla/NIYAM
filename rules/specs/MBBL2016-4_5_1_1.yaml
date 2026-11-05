@@ -1,0 +1,12 @@
+unit_id: "MBBL2016-4.5.1#1"
+clause_id: MBBL2016-4.5.1
+unit_text: The height of a bathroom or water-closet measured from the surface of the floor to the lowest point in the ceiling (bottom of slab) shall not be less than 2.1 m.
+topic: room height
+template: space_height_min
+params:
+  categories: [Bathroom, WaterCloset, CombinedBathWC]
+threshold: {value: 2.1, text: "2.1", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  Bathrooms, water-closets and combined bath/WC rooms (Category Bathroom, WaterCloset or CombinedBathWC) must be at
+  least 2.1 m high (vertical extent of the space geometry, floor to slab soffit). Inclusive. Ambiguity: a combined
+  bath/WC room is assumed to be covered by "bathroom or water-closet"; false ceilings are not distinguished.

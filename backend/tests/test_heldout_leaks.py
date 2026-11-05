@@ -16,7 +16,7 @@ from app.verifier.ids_gate import StageResult
 
 def heldout_tokens() -> set[str]:
     tokens = set()
-    for unit_id in heldout.UNITS:
+    for unit_id in heldout.all_units():  # the six hand-written units and every spec-generated one
         p = heldout.paths(unit_id)
         tokens |= {p["pass"].name, p["fail"].name, p["truth"].name, "heldout"}
         for key in ("pass", "fail"):
@@ -45,11 +45,18 @@ def prompts_for(unit_id: str) -> list[str]:
             *(build_repair_message("candidate", f, fixture_pair(unit_id), tier=unit.tier) for f in failures)]
 
 
-@pytest.mark.parametrize("unit_id", heldout.UNITS)
+@pytest.mark.parametrize("unit_id", heldout.all_units())
 def test_no_heldout_detail_in_any_compiler_prompt(unit_id):
-    assert len(TOKENS) > 50  # the guard covers real content: names, ids, entity lines, file names
+    assert len(heldout.all_units()) == 20 and len(TOKENS) > 50  # the guard covers real content: names, ids, entity lines, file names
     for prompt in prompts_for(unit_id):
         assert not leaks(prompt), leaks(prompt)
+
+
+def test_the_guard_fails_when_a_generated_units_heldout_name_is_injected():
+    truth = heldout.load_truth("MBBL2016-4.8.1#1")
+    name = truth["models"]["MBBL2016-4_8_1_1__heldout_fail.ifc"][0]["name"]
+    prompt = prompts_for("MBBL2016-4.8.1#1")[0]
+    assert name.startswith("HO ") and leaks(prompt + f" for example {name}") == [name]
 
 
 def test_the_guard_fails_when_a_heldout_name_is_injected():

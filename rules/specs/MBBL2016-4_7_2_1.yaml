@@ -1,0 +1,12 @@
+unit_id: "MBBL2016-4.7.2#1"
+clause_id: MBBL2016-4.7.2
+unit_text: The minimum size of the mezzanine floor, if it is to be used as a living room, shall not be less than 9.5 m2.
+topic: room area
+template: space_area_min
+params:
+  categories: [Mezzanine]
+threshold: {value: 9.5, text: "9.5", unit: m2, inclusive: true}
+notes_for_reviewer: >-
+  A mezzanine floor must have a floor area of at least 9.5 m2. AMBIGUITY / NOT encoded: the condition "if it is to be
+  used as a living room" is ignored, so every space with Category Mezzanine is checked; a reviewer may want a separate
+  Category for living-room mezzanines. The one-third-of-plinth-area limit in the next sentence is not encoded.

@@ -1,0 +1,42 @@
+{
+  "unit_id": "MBBL2016-4.4.1#1",
+  "length_unit": "mm",
+  "synthetic": true,
+  "generated_from": "rules/specs/MBBL2016-4_4_1_1.yaml",
+  "models": {
+    "MBBL2016-4_4_1_1__heldout_pass.ifc": [
+      {
+        "name": "HO MBBL2016-4_4_1_1 at the bound 2.75",
+        "global_id": "00mucDfFnMtOQ5S_Iynly4",
+        "expected": "pass"
+      },
+      {
+        "name": "HO MBBL2016-4_4_1_1 ample 3.575",
+        "global_id": "0cyJ31GmfSEgL7za2pECG2",
+        "expected": "pass"
+      },
+      {
+        "name": "HO MBBL2016-4_4_1_1 out of scope 1.65",
+        "global_id": "05GKC7s4LKH8HqCPnYO$5q",
+        "expected": "out_of_scope"
+      }
+    ],
+    "MBBL2016-4_4_1_1__heldout_fail.ifc": [
+      {
+        "name": "HO MBBL2016-4_4_1_1 just failing 2.74",
+        "global_id": "3bHvnfE6vK48e$_T$SzqrA",
+        "expected": "fail"
+      },
+      {
+        "name": "HO MBBL2016-4_4_1_1 comfortable 3.3",
+        "global_id": "1d_O7E04HGrP23uJ9wTyJx",
+        "expected": "pass"
+      },
+      {
+        "name": "HO MBBL2016-4_4_1_1 out of scope 1.1",
+        "global_id": "2UCKvdiPfQM9ZQgL7Ltkvp",
+        "expected": "out_of_scope"
+      }
+    ]
+  }
+}

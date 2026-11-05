@@ -1,0 +1,11 @@
+unit_id: "MBBL2016-4.13#1"
+clause_id: MBBL2016-4.13
+unit_text: The size of cabins shall not be less than 3.0 m2
+topic: room area
+template: space_area_min
+params:
+  categories: [Cabin]
+threshold: {value: 3.0, text: "3.0", unit: m2, inclusive: true}
+notes_for_reviewer: >-
+  Cabins (Category Cabin) must have a floor area of at least 3.0 m2. NOT encoded: "with a minimum width of 1.0 m",
+  the 0.75 m clear passages, the 18.5 m travel distance and the 2.2 m maximum height of unventilated cabins.

@@ -1,0 +1,10 @@
+unit_id: "MBBL2016-4.8.1#1"
+clause_id: MBBL2016-4.8.1
+unit_text: The height of a store room shall be not less than 2.2 m.
+topic: room height
+template: space_height_min
+params:
+  categories: [Store]
+threshold: {value: 2.2, text: "2.2", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  Store rooms (Category Store) must be at least 2.2 m high (vertical extent of the space geometry). Inclusive.

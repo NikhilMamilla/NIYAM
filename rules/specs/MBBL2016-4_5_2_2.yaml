@@ -1,0 +1,12 @@
+unit_id: "MBBL2016-4.5.2#2"
+clause_id: MBBL2016-4.5.2
+unit_text: The floor area of water-closet shall be 1.1 m2
+topic: room area
+template: space_area_min
+params:
+  categories: [WaterCloset]
+threshold: {value: 1.1, text: "1.1", unit: m2, inclusive: true}
+notes_for_reviewer: >-
+  Water-closets (Category WaterCloset) must have a floor area of at least 1.1 m2 (footprint of the space geometry).
+  AMBIGUITY: the clause says "shall be 1.1 m2", read as a minimum; a reviewer may read it as an exact size. NOT
+  encoded: "with a minimum width of 0.9 m".

@@ -43,7 +43,7 @@ metres or square metres.
 
 | Meaning | Where it is read |
 |---|---|
-| Kind of room (`Bathroom`, `Habitable`, `Store`, ...) | `IfcSpace` property `Pset_SpaceCommon.Category` (`IfcLabel`) |
+| Kind of room: `Habitable`, `Bathroom`, `WaterCloset`, `CombinedBathWC`, `Kitchen`, `Store`, `Garage`, `Mezzanine`, `Basement`, `Cabin`, `Corridor` | `IfcSpace` property `Pset_SpaceCommon.Category` (`IfcLabel`) |
 | Floor area of a space | computed: the footprint of the space's body geometry (`space_floor_area_m2`) |
 | Height of a room | computed: vertical extent of the space's body geometry, floor to slab (`element_height_m`) |
 | Declared floor area | `Qto_SpaceBaseQuantities.NetFloorArea` (`IfcQuantityArea`); not used by rules |

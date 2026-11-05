@@ -1,0 +1,47 @@
+{
+  "unit_id": "MBBL2016-4.24.7.2#c",
+  "length_unit": "mm",
+  "synthetic": true,
+  "generated_from": "rules/specs/MBBL2016-4_24_7_2_c.yaml",
+  "models": {
+    "MBBL2016-4_24_7_2_c__heldout_pass.ifc": [
+      {
+        "name": "HO MBBL2016-4_24_7_2_c exit single_swing_right",
+        "global_id": "2FAsLTTwzPLgRH2_ZiV3SC",
+        "expected": "pass"
+      },
+      {
+        "name": "HO MBBL2016-4_24_7_2_c exit double_door_double_swing",
+        "global_id": "2oh3BLI79IlfcSf0j7nB76",
+        "expected": "pass"
+      },
+      {
+        "name": "HO MBBL2016-4_24_7_2_c non-exit rollingup",
+        "global_id": "2S47fh9PvVkv2WyqtrXelo",
+        "expected": "out_of_scope"
+      }
+    ],
+    "MBBL2016-4_24_7_2_c__heldout_fail.ifc": [
+      {
+        "name": "HO MBBL2016-4_24_7_2_c exit sliding_to_right",
+        "global_id": "0fPS5wLrfRTxuRDqinqv_i",
+        "expected": "fail"
+      },
+      {
+        "name": "HO MBBL2016-4_24_7_2_c exit double_door_sliding",
+        "global_id": "1jaPWMhZXUDOfTE4lrNBNJ",
+        "expected": "fail"
+      },
+      {
+        "name": "HO MBBL2016-4_24_7_2_c exit rollingup",
+        "global_id": "39zY9Vy6DQfuIFbOB1_3S5",
+        "expected": "fail"
+      },
+      {
+        "name": "HO MBBL2016-4_24_7_2_c exit single_swing_left",
+        "global_id": "1bsrCfXiPVfxcb_TBww54e",
+        "expected": "pass"
+      }
+    ]
+  }
+}

@@ -1,3 +1,29 @@
+- id: MBBL2016-4.10.4#a
+  clause_id: MBBL2016-4.10.4
+  text: Every basement shall be in every part at least 2.4 m in height from the floor to the underside
+    of the roof slab or ceiling
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_10_4_a.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Basement spaces (Category Basement) must be at least 2.4 m high. AMBIGUITY: "in every part"
+    asks for the minimum height everywhere, but the helper measures the vertical extent (the maximum for
+    a non-prismatic space); this only agrees for spaces with a flat floor and ceiling. "Roof slab or ceiling"
+    is not distinguished.'
+  reviewed_on: null
+- id: MBBL2016-4.13#1
+  clause_id: MBBL2016-4.13
+  text: The size of cabins shall not be less than 3.0 m2
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_13_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Cabins (Category Cabin) must have a floor area of at least 3.0 m2. NOT encoded: "with a minimum
+    width of 1.0 m", the 0.75 m clear passages, the 18.5 m travel distance and the 2.2 m maximum height
+    of unventilated cabins.'
+  reviewed_on: null
 - id: MBBL2016-4.17.2#A
   clause_id: MBBL2016-4.17.2
   text: 'The minimum width of staircase shall be as follows: A Residential buildings (dwellings) 1.0 m'
@@ -10,6 +36,44 @@
     width (local Y extent of the flight geometry) >= 1.0 m. Ambiguity: ''width of staircase'' taken as
     flight width, not clear width between handrails; other building types (1.5 m, 2.0 m) and the row-housing
     note (0.75 m) are not encoded; flights in other occupancy types are out of scope.'
+  reviewed_on: null
+- id: MBBL2016-4.24.7.2#b
+  clause_id: MBBL2016-4.24.7.2
+  text: No exit doorways shall be less than 1m in width
+  tier: ids
+  status: pilot
+  expected_artifact: fixtures/ids/MBBL2016-4_24_7_2_b.ids
+  human_reviewed: false
+  reviewer: null
+  notes: 'Exit doors (Pset_DoorCommon.FireExit = TRUE) must have Qto_DoorBaseQuantities.Width of at least
+    1 m. Inclusive ("not less than"). NOT encoded: "except assembly and institutional buildings where
+    Doorway shall not be less than 2 m" (building type is not checked, so a 1.5 m exit in an assembly
+    building passes). Duplicates MBBL2016-5.4.1#b. Clear vs leaf vs overall width is not specified.'
+  reviewed_on: null
+- id: MBBL2016-4.24.7.2#c
+  clause_id: MBBL2016-4.24.7.2
+  text: Overhead or sliding door shall not be installed.
+  tier: ids
+  status: pilot
+  expected_artifact: fixtures/ids/MBBL2016-4_24_7_2_c.ids
+  human_reviewed: false
+  reviewer: null
+  notes: 'Exit doors (FireExit = TRUE) must not be sliding (SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING)
+    or overhead (ROLLINGUP). AMBIGUITY: the sentence has no subject restriction; it is read as applying
+    to exit doorways because it sits in sub-item c about exit doorways. "Overhead" mapped to ROLLINGUP
+    only. Duplicates MBBL2016-5.4.1#c.'
+  reviewed_on: null
+- id: MBBL2016-4.24.7.2#f
+  clause_id: MBBL2016-4.24.7.2
+  text: Revolving doors shall not to be provided as means of fire exit.
+  tier: ids
+  status: pilot
+  expected_artifact: fixtures/ids/MBBL2016-4_24_7_2_f.ids
+  human_reviewed: false
+  reviewer: null
+  notes: Exit doors (FireExit = TRUE) must not have OperationType REVOLVING. "Means of fire exit" mapped
+    to the FireExit flag. The clause's grammar ("shall not to be") is verbatim. Duplicates MBBL2016-5.4.2#1.
+  reviewed_on: null
 - id: MBBL2016-4.3.1.1#1
   clause_id: MBBL2016-4.3.1.1
   text: The height of all rooms for human habitation shall not be less than 2.75 m measured from the surface
@@ -24,6 +88,36 @@
     soffit; the beam (2.4 m), pitched-roof (average height) and air-conditioned (2.4 m) provisions in
     the following sentences are not encoded; applies to residential/business/mercantile only (4.3.1.2),
     building type not checked.'
+  reviewed_on: null
+- id: MBBL2016-4.4.1#1
+  clause_id: MBBL2016-4.4.1
+  text: The height of a kitchen measured from the surface of the floor to the lowest point in the ceiling
+    (bottom of slab) shall not be less than 2.75 m
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_4_1_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Kitchens (IfcSpace with Pset_SpaceCommon.Category = Kitchen) must be at least 2.75 m high, measured
+    as the vertical extent of the space geometry, which assumes the modelled space runs from floor surface
+    to the underside of the slab. "Not less than" read as inclusive. NOT encoded: the exception "except
+    for the portion to accommodate floor trap of the upper floor" (a local lowering of the ceiling would
+    make the whole kitchen fail or pass depending on modelling).'
+  reviewed_on: null
+- id: MBBL2016-4.5.1#1
+  clause_id: MBBL2016-4.5.1
+  text: The height of a bathroom or water-closet measured from the surface of the floor to the lowest
+    point in the ceiling (bottom of slab) shall not be less than 2.1 m.
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_5_1_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Bathrooms, water-closets and combined bath/WC rooms (Category Bathroom, WaterCloset or CombinedBathWC)
+    must be at least 2.1 m high (vertical extent of the space geometry, floor to slab soffit). Inclusive.
+    Ambiguity: a combined bath/WC room is assumed to be covered by "bathroom or water-closet"; false ceilings
+    are not distinguished.'
+  reviewed_on: null
 - id: MBBL2016-4.5.2#1
   clause_id: MBBL2016-4.5.2
   text: The area of a bathroom shall not be less than 1.8 m2
@@ -37,6 +131,92 @@
     width of 1.2 m'' (not encoded: width of a non-rectangular footprint is not defined by the clause);
     ''bathroom'' is mapped to the Category convention; geometric area vs declared Qto NetFloorArea not
     distinguished by the clause.'
+  reviewed_on: null
+- id: MBBL2016-4.5.2#2
+  clause_id: MBBL2016-4.5.2
+  text: The floor area of water-closet shall be 1.1 m2
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_5_2_2.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Water-closets (Category WaterCloset) must have a floor area of at least 1.1 m2 (footprint of
+    the space geometry). AMBIGUITY: the clause says "shall be 1.1 m2", read as a minimum; a reviewer may
+    read it as an exact size. NOT encoded: "with a minimum width of 0.9 m".'
+  reviewed_on: null
+- id: MBBL2016-4.5.2#3
+  clause_id: MBBL2016-4.5.2
+  text: If bath and water-closet are combined, its floor area shall not be less than 2.8 m2
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_5_2_3.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'A combined bath and water-closet room (Category CombinedBathWC) must have a floor area of at
+    least 2.8 m2. Inclusive. The "combined" condition is mapped to a separate Category value, which the
+    modelling profile has to define. NOT encoded: "with a minimum width of 1.2 m".'
+  reviewed_on: null
+- id: MBBL2016-4.7.1#1
+  clause_id: MBBL2016-4.7.1
+  text: It shall have a minimum height of 2.2 m.
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_7_1_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'A mezzanine floor (Category Mezzanine) must be at least 2.2 m high. "It" is read as the mezzanine
+    floor from the section title 4.7 Mezzanine Floor. AMBIGUITY: whether the height is clear height above
+    the mezzanine or below it is not stated; the encoding uses the vertical extent of the modelled mezzanine
+    space.'
+  reviewed_on: null
+- id: MBBL2016-4.7.2#1
+  clause_id: MBBL2016-4.7.2
+  text: The minimum size of the mezzanine floor, if it is to be used as a living room, shall not be less
+    than 9.5 m2.
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_7_2_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'A mezzanine floor must have a floor area of at least 9.5 m2. AMBIGUITY / NOT encoded: the condition
+    "if it is to be used as a living room" is ignored, so every space with Category Mezzanine is checked;
+    a reviewer may want a separate Category for living-room mezzanines. The one-third-of-plinth-area limit
+    in the next sentence is not encoded.'
+  reviewed_on: null
+- id: MBBL2016-4.8.1#1
+  clause_id: MBBL2016-4.8.1
+  text: The height of a store room shall be not less than 2.2 m.
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_8_1_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: Store rooms (Category Store) must be at least 2.2 m high (vertical extent of the space geometry).
+    Inclusive.
+  reviewed_on: null
+- id: MBBL2016-4.8.2#1
+  clause_id: MBBL2016-4.8.2
+  text: The size of a store room, where provided in a residential building, shall be not less than 3 m2.
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_8_2_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Store rooms (Category Store) must have a floor area of at least 3 m2. "Size" is read as floor
+    area. NOT encoded: the condition "where provided in a residential building"; store rooms in other
+    building types are checked too.'
+  reviewed_on: null
+- id: MBBL2016-4.9.1#1
+  clause_id: MBBL2016-4.9.1
+  text: The height of a garage shall be not less than 2.4 m.
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_9_1_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Garages (Category Garage) must be at least 2.4 m high. Inclusive. AMBIGUITY: private and public
+    garages are not distinguished.'
+  reviewed_on: null
 - id: MBBL2016-5.4.1#b
   clause_id: MBBL2016-5.4.1
   text: No exit doorway shall be less than 1m in width.
@@ -48,6 +228,7 @@
   notes: 'IfcDoor with FireExit=TRUE: Qto_DoorBaseQuantities.Width >= 1.0 m. Uses the quantity, not OverallWidth:
     IDS attribute bounds are not unit-converted (see docs/notes-ids-expressiveness.md). Ambiguity: clear
     vs leaf vs overall width not specified.'
+  reviewed_on: null
 - id: MBBL2016-5.4.1#c
   clause_id: MBBL2016-5.4.1
   text: overhead or sliding doors shall not be installed
@@ -59,6 +240,7 @@
   notes: 'IfcDoor with FireExit=TRUE: OperationType not in {SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING,
     ROLLINGUP}. Ambiguity: scope (exit doorways) inferred from sub-item c; ''overhead'' mapped to ROLLINGUP
     only; fragment of a comma-spliced sentence whose first half (0.9m landing width) is geometric.'
+  reviewed_on: null
 - id: MBBL2016-5.4.2#1
   clause_id: MBBL2016-5.4.2
   text: Revolving door shall not be provided as a means of fire exit.
@@ -69,3 +251,4 @@
   reviewer: null
   notes: 'IfcDoor with Pset_DoorCommon.FireExit=TRUE: OperationType must not be REVOLVING. Ambiguity:
     ''means of fire exit'' is mapped to the FireExit flag.'
+  reviewed_on: null

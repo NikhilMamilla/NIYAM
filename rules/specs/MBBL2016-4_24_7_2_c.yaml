@@ -1,0 +1,12 @@
+unit_id: "MBBL2016-4.24.7.2#c"
+clause_id: MBBL2016-4.24.7.2
+unit_text: Overhead or sliding door shall not be installed.
+topic: door operation
+template: door_operation_forbidden
+params:
+  selector: {pset: Pset_DoorCommon, property: FireExit, value: true}
+  forbidden_operations: [SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING, ROLLINGUP]
+notes_for_reviewer: >-
+  Exit doors (FireExit = TRUE) must not be sliding (SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING) or
+  overhead (ROLLINGUP). AMBIGUITY: the sentence has no subject restriction; it is read as applying to exit doorways
+  because it sits in sub-item c about exit doorways. "Overhead" mapped to ROLLINGUP only. Duplicates MBBL2016-5.4.1#c.

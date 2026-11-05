@@ -1,0 +1,13 @@
+unit_id: "MBBL2016-4.4.1#1"
+clause_id: MBBL2016-4.4.1
+unit_text: The height of a kitchen measured from the surface of the floor to the lowest point in the ceiling (bottom of slab) shall not be less than 2.75 m
+topic: room height
+template: space_height_min
+params:
+  categories: [Kitchen]
+threshold: {value: 2.75, text: "2.75", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  Kitchens (IfcSpace with Pset_SpaceCommon.Category = Kitchen) must be at least 2.75 m high, measured as the vertical
+  extent of the space geometry, which assumes the modelled space runs from floor surface to the underside of the slab.
+  "Not less than" read as inclusive. NOT encoded: the exception "except for the portion to accommodate floor trap of
+  the upper floor" (a local lowering of the ceiling would make the whole kitchen fail or pass depending on modelling).

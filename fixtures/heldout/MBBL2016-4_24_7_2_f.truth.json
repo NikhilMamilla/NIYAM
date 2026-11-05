@@ -1,0 +1,37 @@
+{
+  "unit_id": "MBBL2016-4.24.7.2#f",
+  "length_unit": "m",
+  "synthetic": true,
+  "generated_from": "rules/specs/MBBL2016-4_24_7_2_f.yaml",
+  "models": {
+    "MBBL2016-4_24_7_2_f__heldout_pass.ifc": [
+      {
+        "name": "HO MBBL2016-4_24_7_2_f exit single_swing_right",
+        "global_id": "1UzhJ6VC5Q0R7k2UAI7HLn",
+        "expected": "pass"
+      },
+      {
+        "name": "HO MBBL2016-4_24_7_2_f exit double_door_double_swing",
+        "global_id": "1R8JG7tyHKYxCuktXhwwQT",
+        "expected": "pass"
+      },
+      {
+        "name": "HO MBBL2016-4_24_7_2_f non-exit revolving",
+        "global_id": "3$dt$LOd5UKhtbuNVkYGzo",
+        "expected": "out_of_scope"
+      }
+    ],
+    "MBBL2016-4_24_7_2_f__heldout_fail.ifc": [
+      {
+        "name": "HO MBBL2016-4_24_7_2_f exit revolving",
+        "global_id": "2eeb$txsjM8vLYuQGkkDqs",
+        "expected": "fail"
+      },
+      {
+        "name": "HO MBBL2016-4_24_7_2_f exit single_swing_left",
+        "global_id": "10p$hW9o5L3uvHDgiUKiOg",
+        "expected": "pass"
+      }
+    ]
+  }
+}
