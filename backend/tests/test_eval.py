@@ -1,0 +1,164 @@
+import json
+
+import pytest
+import yaml
+
+from app.eval import cli, report, runner
+from app.eval.dryrun import DryRunProvider
+from app.eval.metrics import Rate, group_metrics, paired, wilson_interval
+from app.fixtures.gold_ids import load_units
+from app.llm.base import Message, ProviderNotConfigured
+
+IDS_UNITS = ["MBBL2016-5.4.1#b", "MBBL2016-5.4.2#1"]
+
+
+# --- Wilson interval ---------------------------------------------------------------------------------------------
+
+
+def test_wilson_matches_the_hand_computation():
+    # p = 0.7, z^2 = 3.8415: denom = 1.38415, centre = 0.89207/1.38415 = 0.64448,
+    # half = 1.96 * sqrt(0.021 + 0.0096037) / 1.38415 = 0.24772  ->  [0.3968, 0.8922]
+    lo, hi = wilson_interval(7, 10)
+    assert lo == pytest.approx(0.3968, abs=1e-4) and hi == pytest.approx(0.8922, abs=1e-4)
+
+
+def test_wilson_edges():
+    assert wilson_interval(0, 0) is None
+    lo, hi = wilson_interval(0, 6)
+    assert lo == pytest.approx(0.0, abs=1e-12) and hi == pytest.approx(0.3903, abs=1e-4)
+    lo, hi = wilson_interval(6, 6)
+    assert hi == 1.0 and lo == pytest.approx(0.6097, abs=1e-4)
+    assert str(Rate(3, 6)).startswith("3/6 = 50% [")
+    assert str(Rate(0, 0)) == "0/0 (n/a)"
+
+
+# --- metrics -----------------------------------------------------------------------------------------------------
+
+
+def item(mode, unit, outcome, shipped, valid=True, dev=True, held=True, repairs=0, model="m"):
+    return {"model": model, "mode": mode, "unit_id": unit, "repeat": 0, "outcome": outcome, "shipped": shipped,
+            "repair_rounds": repairs, "total_tokens": 100, "wall_time_s": 1.0,
+            "score": {"valid": valid, "dev_correct": dev, "heldout_correct": held}}
+
+
+def test_group_metrics_and_wrong_shipped_rate():
+    gated = [item("gated", "a", "accepted", True), item("gated", "b", "accepted", True, held=False, repairs=2),
+             item("gated", "c", "needs_human", False, dev=False, held=False, repairs=3)]
+    m = group_metrics(gated)
+    assert (m["n"], m["shipped"].k, m["wrong_shipped"].k, m["wrong_shipped"].n) == (3, 2, 1, 2)
+    assert (m["needs_human"].k, m["heldout_correct"].k, m["mean_repairs"]) == (1, 1, 5 / 3)
+    ungated = group_metrics([item("ungated", "a", "baseline_scored", True, held=False)])
+    assert ungated["needs_human"] is None and ungated["mean_repairs"] is None
+    assert (ungated["wrong_shipped"].k, ungated["wrong_shipped"].n) == (1, 1)
+
+
+def test_paired_comparison_counts_units_not_rows():
+    items = [item("gated", "a", "accepted", True), item("ungated", "a", "baseline_scored", True, held=False),
+             item("gated", "b", "needs_human", False, held=False), item("ungated", "b", "baseline_scored", True),
+             item("gated", "c", "accepted", True), item("ungated", "c", "baseline_scored", True)]
+    assert paired(items) == {"m": {"both_correct": 1, "gated_only": 1, "ungated_only": 1, "neither": 0}}
+
+
+# --- dry-run provider --------------------------------------------------------------------------------------------
+
+
+def first_prompt(unit_id):
+    return [Message("user", f"Rule unit {unit_id}:\n<rule>x</rule>")]
+
+
+def test_dry_run_provider_is_deterministic_and_fixes_malformed_answers():
+    a, b = DryRunProvider("s"), DryRunProvider("s")
+    for unit in load_units():
+        assert a.complete("sys", first_prompt(unit), temperature=0, max_tokens=10).text == \
+            b.complete("sys", first_prompt(unit), temperature=0, max_tokens=10).text
+    p = DryRunProvider("x")
+    p._last["MBBL2016-5.4.1#b"] = "malformed"
+    repair = [*first_prompt("MBBL2016-5.4.1#b"), Message("assistant", "..."),
+              Message("user", "The verifier rejected your previous answer.")]
+    assert "(correct)" in p.complete("sys", repair, temperature=0, max_tokens=10).text
+
+
+def test_dry_run_data_is_not_read_from_the_gold_folders():
+    import inspect
+
+    from app.eval import dryrun
+    source = inspect.getsource(dryrun)
+    assert "fixtures/ids" not in source and "fixtures/checks" not in source and "GOLD_DIR" not in source
+
+
+# --- runner, plan, report ----------------------------------------------------------------------------------------
+
+
+@pytest.fixture
+def config_path(tmp_path):
+    data = {"models": [{"name": "dry-a", "role": "hosted"}], "modes": ["gated", "ungated"], "repeats": 1,
+            "temperature": 0.0, "max_repairs": 1, "budget": {"max_total_calls": 50, "max_total_tokens": 10_000_000}}
+    path = tmp_path / "config.yaml"
+    path.write_text(yaml.safe_dump(data), encoding="utf-8")
+    return path
+
+
+@pytest.fixture
+def ids_only(monkeypatch):
+    units = load_units()
+    monkeypatch.setattr(runner, "select_units", lambda config: [units[u] for u in IDS_UNITS])
+
+
+def test_plan_counts_worst_case_calls_and_refuses_over_budget(config_path, ids_only, capsys):
+    assert cli.main(["--config", str(config_path), "plan"]) == 0
+    out = capsys.readouterr().out
+    assert "LLM calls worst case: 6" in out and "OK: within the call budget" in out  # 2 units x (1+1 + 1)
+    data = yaml.safe_load(config_path.read_text())
+    data["budget"]["max_total_calls"] = 5
+    config_path.write_text(yaml.safe_dump(data))
+    assert cli.main(["--config", str(config_path), "plan"]) == 2
+    assert "REFUSED" in capsys.readouterr().out
+    assert cli.main(["--config", str(config_path), "run", "--yes", "--dry-run"]) == 2
+
+
+def test_run_requires_yes(config_path, ids_only, capsys):
+    assert cli.main(["--config", str(config_path), "run", "--dry-run"]) == 2
+    assert "pass --yes" in capsys.readouterr().out
+
+
+def test_unconfigured_provider_is_a_clear_error(config_path, ids_only, capsys, monkeypatch):
+    def boom(role):
+        raise ProviderNotConfigured("hosted LLM not configured: set HOSTED_LLM_PROVIDER in .env")
+    monkeypatch.setattr(cli, "get_provider", boom)
+    assert cli.main(["--config", str(config_path), "run", "--yes"]) == 2
+    assert "dry-a (hosted) is not configured" in capsys.readouterr().out
+
+
+def test_dry_run_end_to_end_is_bannered_and_never_written_to_docs(config_path, ids_only, tmp_path, capsys):
+    runs = tmp_path / "runs"
+    assert cli.main(["--config", str(config_path), "run", "--yes", "--dry-run", "--runs-dir", str(runs),
+                     "--no-report"]) == 0
+    [results] = list(runs.glob("dryrun-*/results.json"))
+    data = json.loads(results.read_text())
+    meta = data["meta"]
+    assert meta["dry_run"] is True and meta["provider_classes"] == {"dry-a": "DryRunProvider"}
+    assert {"run_id", "git_commit", "rulepack_hash", "temperature", "system_prompt_hashes"} <= meta.keys()
+    assert not [k for k in json.dumps(meta).lower().split('"') if "api_key" in k]
+    assert len(data["items"]) == 4 and {i["mode"] for i in data["items"]} == {"gated", "ungated"}
+    assert all(set(i["score"]) >= {"valid", "dev_correct", "heldout_correct", "vacuous", "error"} for i in data["items"])
+    assert list((results.parent / "attempts").rglob("*.json"))  # per-attempt records
+
+    files = report.write_report(results, tmp_path / "out")
+    for f in files:
+        assert f.read_text(encoding="utf-8").splitlines()[0].count(report.BANNER) == 1
+    assert "n < 30" in files[0].read_text(encoding="utf-8")
+    for target in (report.DOCS_DIR, report.DOCS_DIR / "eval"):
+        with pytest.raises(report.RefusedOutput):
+            report.write_report(results, target)
+    assert cli.main(["report", str(results), "--out", str(report.DOCS_DIR / "x")]) == 2
+    assert not (report.DOCS_DIR / "x").exists()
+
+
+def test_budget_caps_stop_a_run_and_are_recorded(config_path, ids_only, tmp_path):
+    data = yaml.safe_load(config_path.read_text())
+    data["budget"]["max_total_tokens"] = 1  # the first call already exceeds it
+    config_path.write_text(yaml.safe_dump(data))
+    run_dir = runner.run(runner.load_config(config_path), None, dry_run=True, runs_dir=tmp_path,
+                         provider_factory=lambda name, mode: DryRunProvider(name))
+    meta = json.loads((run_dir / "results.json").read_text())["meta"]
+    assert meta["stopped_early"].startswith("budget exhausted") and meta["used"]["calls"] == 1

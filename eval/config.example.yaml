@@ -1,0 +1,15 @@
+# Copy to eval/config.yaml (gitignored) and edit. Model credentials come from .env, never from this file.
+models:
+  - name: hosted-default   # a label for reports; the actual model is HOSTED_LLM_MODEL in .env
+    role: hosted
+  - name: open-default     # OPEN_MODEL_NAME at OPEN_MODEL_ENDPOINT in .env
+    role: open
+modes: [gated, ungated]
+units:
+  status: [pilot]          # pilot | selected
+repeats: 1
+temperature: 0.0
+max_repairs: 3
+budget:                    # hard caps per run: `plan` refuses when the worst case exceeds max_total_calls,
+  max_total_calls: 100     # and `run` stops (recorded as stopped_early) at either cap
+  max_total_tokens: 600000
