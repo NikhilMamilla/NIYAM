@@ -7,6 +7,7 @@ from app.corpus import repository as repo
 from app.corpus.extract_mbbl import extract_pages, segment
 from app.corpus.models import Clause, RuleUnit, Status, Tier
 from app.corpus.suggest import MAX_REVIEWABLE_CHARS, render_markdown, suggest
+from app.corpus import review
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_PDF = REPO_ROOT / "rules" / "source" / "mbbl-2016.pdf"
@@ -86,6 +87,25 @@ def cmd_suggest(conn, args):
     print(f"wrote {len(ranked)} candidates to {args.out} (skipped {len(skipped)} oversized clauses)")
 
 
+def cmd_review_export(conn, args):
+    md = args.out.with_suffix(".md")
+    n = review.export_sheet(args.units_yaml, args.pack, args.out, md)
+    print(f"wrote {n} rule unit(s) to {args.out} and {md}")
+
+
+def cmd_review_import(conn, args):
+    try:
+        result = review.import_sheet(args.sheet, args.units_yaml, args.pack, force=args.force)
+    except review.ReviewImportError as e:
+        print("review sheet rejected, nothing changed:")
+        for err in e.errors:
+            print(f"  {err}")
+        sys.exit(1)
+    print(f"changed: {', '.join(result.changed) or 'none'}; unchanged: {', '.join(result.unchanged) or 'none'}")
+    if result.changed:
+        print("run `unit-import` to load the updated rule-units.yaml into the corpus database")
+
+
 def cmd_unit_add(conn, args):
     unit = RuleUnit(id=f"{args.clause_id}#{args.suffix}", clause_id=args.clause_id, text=args.text,
                     tier=args.tier, notes=args.notes, expected_artifact=args.artifact)
@@ -158,8 +178,21 @@ def main(argv=None):
     p.add_argument("--notes")
     p.add_argument("--artifact", help="path of the gold file, e.g. fixtures/ids/<unit>.ids")
     p.set_defaults(func=cmd_unit_add)
+    from app.rulepack.loader import DEFAULT_PACK
+
+    p = sub.add_parser("review-export", help="write the reviewer sheet (CSV with BOM for Excel, plus Markdown)")
+    p.add_argument("--out", type=Path, default=REPO_ROOT / "docs" / "review" / "review-sheet.csv")
+    p.add_argument("--units-yaml", type=Path, default=DEFAULT_UNITS_YAML)
+    p.add_argument("--pack", type=Path, default=DEFAULT_PACK)
+    p.set_defaults(func=cmd_review_export)
+    p = sub.add_parser("review-import", help="apply a filled review sheet (strict; --force to replace decisions)")
+    p.add_argument("sheet", type=Path)
+    p.add_argument("--units-yaml", type=Path, default=DEFAULT_UNITS_YAML)
+    p.add_argument("--pack", type=Path, default=DEFAULT_PACK)
+    p.add_argument("--force", action="store_true")
+    p.set_defaults(func=cmd_review_import)
     p = sub.add_parser("unit-list")
-    p.add_argument("--status", choices=["pilot", "selected", "rejected"])
+    p.add_argument("--status", choices=["pilot", "selected", "needs_rework", "rejected"])
     p.set_defaults(func=cmd_unit_list)
     p = sub.add_parser("unit-show")
     p.add_argument("unit_id")

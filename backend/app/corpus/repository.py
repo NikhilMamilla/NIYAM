@@ -29,8 +29,11 @@ def init_db(conn: sqlite3.Connection) -> None:
         """CREATE TABLE IF NOT EXISTS rule_units (
             id TEXT PRIMARY KEY, clause_id TEXT NOT NULL REFERENCES clauses(id), text TEXT NOT NULL,
             tier TEXT NOT NULL, status TEXT NOT NULL, expected_artifact TEXT,
-            human_reviewed INTEGER NOT NULL, reviewer TEXT, notes TEXT)"""
+            human_reviewed INTEGER NOT NULL, reviewer TEXT, notes TEXT, reviewed_on TEXT)"""
     )
+    columns = {r[1] for r in conn.execute("PRAGMA table_info(rule_units)")}
+    if "reviewed_on" not in columns:  # databases created before the review workflow
+        conn.execute("ALTER TABLE rule_units ADD COLUMN reviewed_on TEXT")
     conn.commit()
 
 

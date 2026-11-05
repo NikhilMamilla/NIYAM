@@ -34,7 +34,7 @@ def wilson_interval(k: int, n: int, z: float = Z95) -> tuple[float, float] | Non
     denom = 1 + z * z / n
     centre = (p + z * z / (2 * n)) / denom
     half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / denom
-    return max(0.0, centre - half), min(1.0, centre + half)
+    return round(max(0.0, centre - half), 12), round(min(1.0, centre + half), 12)
 
 
 def _mean(values: list[float]) -> float | None:

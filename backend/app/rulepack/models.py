@@ -56,6 +56,8 @@ class Rule(_Strict):
     source_doc: str
     page: int
     human_reviewed: bool = False
+    reviewer: str | None = None  # set by an accepted review (corpus review-import)
+    reviewed_on: str | None = None
     severity: Literal["error", "warning"] = "error"
 
     @model_validator(mode="after")

@@ -25,8 +25,9 @@ class RuleUnit(BaseModel):
     clause_id: str
     text: str
     tier: Tier = "unclassified"
-    status: Literal["pilot", "selected", "rejected"] = "pilot"
+    status: Literal["pilot", "selected", "needs_rework", "rejected"] = "pilot"
     expected_artifact: str | None = None
     human_reviewed: bool = False
     reviewer: str | None = None
     notes: str | None = None
+    reviewed_on: str | None = None  # ISO date of the reviewer's decision
