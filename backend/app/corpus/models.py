@@ -31,3 +31,4 @@ class RuleUnit(BaseModel):
     reviewer: str | None = None
     notes: str | None = None
     reviewed_on: str | None = None  # ISO date of the reviewer's decision
+    duplicate_of: str | None = None  # another unit that encodes the same requirement (a reviewer may reject the claim)

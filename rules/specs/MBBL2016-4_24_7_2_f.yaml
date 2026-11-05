@@ -6,6 +6,7 @@ template: door_operation_forbidden
 params:
   selector: {pset: Pset_DoorCommon, property: FireExit, value: true}
   forbidden_operations: [REVOLVING]
+duplicate_of: "MBBL2016-5.4.2#1"
 notes_for_reviewer: >-
   Exit doors (FireExit = TRUE) must not have OperationType REVOLVING. "Means of fire exit" mapped to the FireExit flag.
   The clause's grammar ("shall not to be") is verbatim. Duplicates MBBL2016-5.4.2#1.

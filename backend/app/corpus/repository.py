@@ -32,8 +32,9 @@ def init_db(conn: sqlite3.Connection) -> None:
             human_reviewed INTEGER NOT NULL, reviewer TEXT, notes TEXT, reviewed_on TEXT)"""
     )
     columns = {r[1] for r in conn.execute("PRAGMA table_info(rule_units)")}
-    if "reviewed_on" not in columns:  # databases created before the review workflow
-        conn.execute("ALTER TABLE rule_units ADD COLUMN reviewed_on TEXT")
+    for column in ("reviewed_on", "duplicate_of"):  # databases created before these fields existed
+        if column not in columns:
+            conn.execute(f"ALTER TABLE rule_units ADD COLUMN {column} TEXT")
     conn.commit()
 
 

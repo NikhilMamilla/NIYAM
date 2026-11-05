@@ -99,6 +99,8 @@ F All other buildings 1.5 m
 
 **Applies to:** IfcDoor where Pset_DoorCommon.FireExit is TRUE; needs Pset_DoorCommon.FireExit, Qto_DoorBaseQuantities.Width; not in a rulepack
 
+**Claimed duplicate of:** MBBL2016-5.4.1#b (confirm or reject in comments)
+
 <details><summary>Full clause text</summary>
 
 ```
@@ -134,6 +136,8 @@ the direction of exit.
 
 **Applies to:** IfcDoor where Pset_DoorCommon.FireExit is TRUE; needs Pset_DoorCommon.FireExit, OperationType; not in a rulepack
 
+**Claimed duplicate of:** MBBL2016-5.4.1#c (confirm or reject in comments)
+
 <details><summary>Full clause text</summary>
 
 ```
@@ -168,6 +172,8 @@ the direction of exit.
 **Threshold:** none (forbidden operations: REVOLVING)
 
 **Applies to:** IfcDoor where Pset_DoorCommon.FireExit is TRUE; needs Pset_DoorCommon.FireExit, OperationType; not in a rulepack
+
+**Claimed duplicate of:** MBBL2016-5.4.2#1 (confirm or reject in comments)
 
 <details><summary>Full clause text</summary>
 

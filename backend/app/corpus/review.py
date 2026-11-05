@@ -19,7 +19,7 @@ from app.rulepack.loader import read_manifest, write_manifest
 from app.rulepack.models import Rule
 
 INFO_COLUMNS = ["unit_id", "clause_id", "page", "tier", "unit_text", "clause_text", "machine_reading", "threshold",
-                "scope"]
+                "scope", "duplicate_of"]
 REVIEW_COLUMNS = ["decision", "corrected_reading", "corrected_threshold", "comments", "reviewer_name", "reviewed_on"]
 COLUMNS = INFO_COLUMNS + REVIEW_COLUMNS
 DECISIONS = ("accept", "modify", "reject")
@@ -88,7 +88,7 @@ def sheet_rows(units: list[RuleUnit], pack: Path) -> list[dict[str, str]]:
             "unit_id": u.id, "clause_id": u.clause_id, "page": page, "tier": u.tier,
             "unit_text": " ".join(u.text.split()), "clause_text": clause_text,
             "machine_reading": " ".join((u.notes or "none").split()), "threshold": threshold,
-            "scope": scope, **{c: "" for c in REVIEW_COLUMNS},
+            "scope": scope, "duplicate_of": u.duplicate_of or "", **{c: "" for c in REVIEW_COLUMNS},
         })
     return rows
 
@@ -140,6 +140,8 @@ def _markdown(rows: list[dict[str, str]]) -> str:
         parts += [f"## {r['unit_id']} ({r['tier']}, page {r['page'] or '?'})\n",
                   f"**Rule text:** {r['unit_text']}\n", f"**Machine reading:** {r['machine_reading']}\n",
                   f"**Threshold:** {r['threshold']}\n", f"**Applies to:** {r['scope']}\n",
+                  *([f"**Claimed duplicate of:** {r['duplicate_of']} (confirm or reject in comments)\n"]
+                    if r["duplicate_of"] else []),
                   "<details><summary>Full clause text</summary>\n\n```\n" + r["clause_text"] + "\n```\n</details>\n"]
     return "\n".join(parts)
 

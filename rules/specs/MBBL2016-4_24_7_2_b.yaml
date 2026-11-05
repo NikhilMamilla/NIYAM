@@ -6,6 +6,7 @@ template: door_width_min
 params:
   selector: {pset: Pset_DoorCommon, property: FireExit, value: true}
 threshold: {value: 1.0, text: "1", unit: m, inclusive: true}
+duplicate_of: "MBBL2016-5.4.1#b"
 notes_for_reviewer: >-
   Exit doors (Pset_DoorCommon.FireExit = TRUE) must have Qto_DoorBaseQuantities.Width of at least 1 m. Inclusive
   ("not less than"). NOT encoded: "except assembly and institutional buildings where Doorway shall not be less than

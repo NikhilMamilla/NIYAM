@@ -62,6 +62,11 @@ def group_metrics(items: list[dict]) -> dict:
     }
 
 
+def distinct_only(items: list[dict], duplicates: dict[str, str]) -> list[dict]:
+    """The items of units that are not tagged duplicate_of another unit."""
+    return [i for i in items if i["unit_id"] not in duplicates]
+
+
 def correct_shipped(item: dict) -> bool:
     return item["shipped"] and item["score"]["heldout_correct"]
 

@@ -69,6 +69,7 @@ class Spec(_Strict):
     params: Params
     threshold: Threshold | None = None
     notes_for_reviewer: str
+    duplicate_of: str | None = None  # another unit encoding the same requirement
 
     @property
     def tier(self) -> str:
@@ -81,6 +82,8 @@ class Spec(_Strict):
     @model_validator(mode="after")
     def _template_fields(self):
         t, p = self.template, self.params
+        if self.duplicate_of == self.unit_id:
+            raise ValueError("duplicate_of names the unit itself")
         if not self.unit_id.startswith(self.clause_id + "#"):
             raise ValueError(f"unit_id {self.unit_id} must be {self.clause_id}#<suffix>")
         if t.startswith("door"):

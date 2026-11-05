@@ -13,7 +13,7 @@ from app.corpus import repository as repo
 from app.corpus.models import RuleUnit
 from app.fixtures import geo_builders as gb
 from app.fixtures.builders import FIXTURES_DIR, REPO_ROOT, FixturePair, _stabilise, add_door, guid, new_model
-from app.fixtures.gold_ids import GOLD_DIR, UNITS_YAML
+from app.fixtures.gold_ids import GOLD_DIR, UNITS_YAML, check_duplicates
 from app.fixtures.heldout import HELDOUT_DIR
 from app.specgen.models import CLAUSES_SNAPSHOT, SPECS_DIR, Spec, load_all, parent_clause, spec_paths
 
@@ -245,7 +245,7 @@ def dryrun_answers(spec: Spec) -> dict[str, str]:
 def rule_unit(spec: Spec, artifact: Path) -> RuleUnit:
     return RuleUnit(id=spec.unit_id, clause_id=spec.clause_id, text=spec.unit_text, tier=spec.tier, status="pilot",
                     expected_artifact=artifact.relative_to(REPO_ROOT).as_posix(), human_reviewed=False,
-                    notes=" ".join(spec.notes_for_reviewer.split()))
+                    notes=" ".join(spec.notes_for_reviewer.split()), duplicate_of=spec.duplicate_of)
 
 
 def build_files(spec: Spec, *, fixtures_dir=FIXTURES_DIR, heldout_dir=HELDOUT_DIR, artifact_dir: Path | None = None,
@@ -286,6 +286,7 @@ def register_units(specs: list[Spec], units_yaml: Path = UNITS_YAML, db: Path | 
     units = {u["id"]: RuleUnit(**u) for u in yaml.safe_load(units_yaml.read_text(encoding="utf-8")) or []}
     for spec in specs:
         units[spec.unit_id] = rule_unit(spec, gold_artifact(spec)[0])
+    check_duplicates(units.values())  # targets must exist, differ, and not be duplicates themselves
     with open(units_yaml, "w", encoding="utf-8") as fh:  # same layout as repository.export_units (sorted by id)
         yaml.safe_dump([units[k].model_dump() for k in sorted(units)], fh, allow_unicode=True, sort_keys=False,
                        width=100)

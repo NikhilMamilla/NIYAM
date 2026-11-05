@@ -13,9 +13,26 @@ UNITS_YAML = REPO_ROOT / "rules" / "corpus" / "rule-units.yaml"
 FIRE_EXIT_SLIDING_OR_OVERHEAD = ["SLIDING_TO_LEFT", "SLIDING_TO_RIGHT", "DOUBLE_DOOR_SLIDING", "ROLLINGUP"]
 
 
+def check_duplicates(units) -> None:
+    """duplicate_of must name another existing unit that is not itself a duplicate (no chains)."""
+    by_id = {u.id: u for u in units}
+    for u in by_id.values():
+        if u.duplicate_of is None:
+            continue
+        if u.duplicate_of == u.id:
+            raise ValueError(f"{u.id}: duplicate_of names the unit itself")
+        target = by_id.get(u.duplicate_of)
+        if target is None:
+            raise ValueError(f"{u.id}: duplicate_of {u.duplicate_of} does not exist")
+        if target.duplicate_of is not None:
+            raise ValueError(f"{u.id}: duplicate_of {u.duplicate_of} is itself a duplicate (no chains)")
+
+
 def load_units(path: Path = UNITS_YAML) -> dict[str, RuleUnit]:
     with open(path, encoding="utf-8") as fh:
-        return {u["id"]: RuleUnit(**u) for u in yaml.safe_load(fh)}
+        units = {u["id"]: RuleUnit(**u) for u in yaml.safe_load(fh)}
+    check_duplicates(units.values())
+    return units
 
 
 def _requirement(unit_id: str):
