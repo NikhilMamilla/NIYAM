@@ -1,0 +1,41 @@
+{
+  "unit_id": "MBBL2016-5.4.2#1",
+  "length_unit": "m",
+  "synthetic": true,
+  "models": {
+    "MBBL2016-5_4_2_1__heldout_pass.ifc": [
+      {
+        "name": "HO exit swing right",
+        "global_id": "1shVhljqDUZATNeW8yFDkS",
+        "expected": "pass"
+      },
+      {
+        "name": "HO exit double swing",
+        "global_id": "3SPQGUT3XTiOIUgbb4yPSz",
+        "expected": "pass"
+      },
+      {
+        "name": "HO revolving lobby door",
+        "global_id": "31f_9KEnzI6uBN1E6RLgsL",
+        "expected": "out_of_scope"
+      }
+    ],
+    "MBBL2016-5_4_2_1__heldout_fail.ifc": [
+      {
+        "name": "HO revolving exit",
+        "global_id": "2lnzuNKOPUsg4ajP_BsM0R",
+        "expected": "fail"
+      },
+      {
+        "name": "HO exit swing left 1.2 m",
+        "global_id": "2Sg4pEqavRZRIf$yhJWNP2",
+        "expected": "pass"
+      },
+      {
+        "name": "HO revolving lobby door",
+        "global_id": "31f_9KEnzI6uBN1E6RLgsL",
+        "expected": "out_of_scope"
+      }
+    ]
+  }
+}

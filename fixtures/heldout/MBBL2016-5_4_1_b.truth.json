@@ -1,0 +1,41 @@
+{
+  "unit_id": "MBBL2016-5.4.1#b",
+  "length_unit": "m",
+  "synthetic": true,
+  "models": {
+    "MBBL2016-5_4_1_b__heldout_pass.ifc": [
+      {
+        "name": "HO exit exactly 1.0 m",
+        "global_id": "2YJ2jTYP9LnhplYWOeuOCo",
+        "expected": "pass"
+      },
+      {
+        "name": "HO exit 1.25 m",
+        "global_id": "1q_4GjeiTIH86jMdBTvznH",
+        "expected": "pass"
+      },
+      {
+        "name": "HO store door 0.6 m",
+        "global_id": "22tFQ38QfVVv0uDLnkIl20",
+        "expected": "out_of_scope"
+      }
+    ],
+    "MBBL2016-5_4_1_b__heldout_fail.ifc": [
+      {
+        "name": "HO exit 0.99 m",
+        "global_id": "09nMkXAM9KdhSL9o0Qi_Af",
+        "expected": "fail"
+      },
+      {
+        "name": "HO exit 1.5 m",
+        "global_id": "1oDk7zxNbVf9IgVZ2yqPPQ",
+        "expected": "pass"
+      },
+      {
+        "name": "HO store door 0.8 m",
+        "global_id": "3R_sH36E5Ou90bgs6O5O3D",
+        "expected": "out_of_scope"
+      }
+    ]
+  }
+}

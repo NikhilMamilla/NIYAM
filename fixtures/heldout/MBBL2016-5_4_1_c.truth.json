@@ -1,0 +1,41 @@
+{
+  "unit_id": "MBBL2016-5.4.1#c",
+  "length_unit": "m",
+  "synthetic": true,
+  "models": {
+    "MBBL2016-5_4_1_c__heldout_pass.ifc": [
+      {
+        "name": "HO exit swing left",
+        "global_id": "1ArucMvC1NvxXib4cUk7aP",
+        "expected": "pass"
+      },
+      {
+        "name": "HO exit double swing",
+        "global_id": "3SPQGUT3XTiOIUgbb4yPSz",
+        "expected": "pass"
+      },
+      {
+        "name": "HO sliding wardrobe door",
+        "global_id": "3vUpd8gEPHvBJSMZIt3Ftb",
+        "expected": "out_of_scope"
+      }
+    ],
+    "MBBL2016-5_4_1_c__heldout_fail.ifc": [
+      {
+        "name": "HO overhead exit",
+        "global_id": "2Z09sBYlnOZv2OWsZ5eJfN",
+        "expected": "fail"
+      },
+      {
+        "name": "HO double sliding exit",
+        "global_id": "1YGmky$KPNFOUPmsDZgaRd",
+        "expected": "fail"
+      },
+      {
+        "name": "HO exit swing left",
+        "global_id": "1ArucMvC1NvxXib4cUk7aP",
+        "expected": "pass"
+      }
+    ]
+  }
+}

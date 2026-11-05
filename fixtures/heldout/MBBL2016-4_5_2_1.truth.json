@@ -1,0 +1,41 @@
+{
+  "unit_id": "MBBL2016-4.5.2#1",
+  "length_unit": "m",
+  "synthetic": true,
+  "models": {
+    "MBBL2016-4_5_2_1__heldout_pass.ifc": [
+      {
+        "name": "HO bath exactly 1.8 m2",
+        "global_id": "1x5Hj0FkDSk9We3lOhmUFi",
+        "expected": "pass"
+      },
+      {
+        "name": "HO bath 2.6 m2",
+        "global_id": "29nDUhI7fQGeCePIgUd9jX",
+        "expected": "pass"
+      },
+      {
+        "name": "HO small habitable 1.0 m2",
+        "global_id": "2EiQo8verNWujm$jNLfzqB",
+        "expected": "out_of_scope"
+      }
+    ],
+    "MBBL2016-4_5_2_1__heldout_fail.ifc": [
+      {
+        "name": "HO bath 1.79 m2",
+        "global_id": "1Sdi8Jp69L89mBk68Fm_r5",
+        "expected": "fail"
+      },
+      {
+        "name": "HO bath 2.0 m2",
+        "global_id": "0j_xaJz9LNohYoW_8I$fw$",
+        "expected": "pass"
+      },
+      {
+        "name": "HO store 0.9 m2",
+        "global_id": "3jvKJzVrrVN9icO4J0RNaJ",
+        "expected": "out_of_scope"
+      }
+    ]
+  }
+}

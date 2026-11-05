@@ -1,0 +1,46 @@
+{
+  "unit_id": "MBBL2016-4.3.1.1#1",
+  "length_unit": "m",
+  "synthetic": true,
+  "models": {
+    "MBBL2016-4_3_1_1_1__heldout_pass.ifc": [
+      {
+        "name": "HO bedroom exactly 2.75 m",
+        "global_id": "3BSHZZH$9Gy89mip5Xsb4U",
+        "expected": "pass"
+      },
+      {
+        "name": "HO hall 3.1 m",
+        "global_id": "0Lf4OB3SzUEwG8NAVuLFHJ",
+        "expected": "pass"
+      },
+      {
+        "name": "HO store 2.2 m",
+        "global_id": "0aLGtP3xHLKwz2J0XhQCUV",
+        "expected": "out_of_scope"
+      },
+      {
+        "name": "HO bath 2.4 m",
+        "global_id": "3RH$xUmA1Q0xAFnoWQ1U$Q",
+        "expected": "out_of_scope"
+      }
+    ],
+    "MBBL2016-4_3_1_1_1__heldout_fail.ifc": [
+      {
+        "name": "HO bedroom 2.74 m",
+        "global_id": "2drdhscdbHKP_AVW_J07Ot",
+        "expected": "fail"
+      },
+      {
+        "name": "HO study 2.9 m",
+        "global_id": "2YZriJkGXN$x3X7qJ8b1AX",
+        "expected": "pass"
+      },
+      {
+        "name": "HO store 2.0 m",
+        "global_id": "3VHiHvzUPMZ8JeVW2kIJwV",
+        "expected": "out_of_scope"
+      }
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "unit_id": "MBBL2016-4.17.2#A",
+  "length_unit": "m",
+  "synthetic": true,
+  "models": {
+    "MBBL2016-4_17_2_A__heldout_pass.ifc": [
+      {
+        "name": "HO flight exactly 1.0 m",
+        "global_id": "2kKMTwdzTVXxIblwrFXUUu",
+        "expected": "pass"
+      },
+      {
+        "name": "HO flight 1.3 m",
+        "global_id": "0l5tR8fUnO1waTJmWtqt2J",
+        "expected": "pass"
+      },
+      {
+        "name": "HO office flight 0.85 m",
+        "global_id": "05jZJakJzK0QhHl2gqXCXa",
+        "expected": "out_of_scope"
+      }
+    ],
+    "MBBL2016-4_17_2_A__heldout_fail.ifc": [
+      {
+        "name": "HO flight 0.99 m",
+        "global_id": "3w3vjWVB5T9wjhaaFsi595",
+        "expected": "fail"
+      },
+      {
+        "name": "HO flight 1.2 m",
+        "global_id": "2PAaDJ_tLVWAQh6xpIjFwD",
+        "expected": "pass"
+      },
+      {
+        "name": "HO office flight 0.7 m",
+        "global_id": "2kCdzV1LLTR9XUw6B5rCgt",
+        "expected": "out_of_scope"
+      }
+    ]
+  }
+}
