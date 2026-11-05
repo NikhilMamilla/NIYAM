@@ -144,3 +144,10 @@ def test_spec_units_appear_in_the_sheet_with_their_clause_and_threshold(work):
     assert (store["page"], store["threshold"]) == ("72", "at least 3 m2 (computed: space_floor_area_m2)")
     assert "4.8.2 Size" in store["clause_text"] and "not in a rulepack" in store["scope"]
     assert "residential building" in store["machine_reading"]
+
+
+def test_reviewer_guide_names_every_known_concern():
+    guide = (REPO_ROOT / "docs" / "review" / "REVIEWER_GUIDE.md").read_text(encoding="utf-8")
+    for unit_id in ("4.24.7.2#b", "4.8.2#1", "4.10.4#a", "4.5.2#2", "4.24.7.2#c", "4.24.7.2#f", "5.4.2#1"):
+        assert unit_id in guide
+    assert len(guide.split()) < 1300  # about two pages
