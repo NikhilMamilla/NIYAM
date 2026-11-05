@@ -45,3 +45,4 @@ frontend/playwright-report/
 # evaluation: real config holds local choices; dry-run results are never results
 eval/config.yaml
 eval/results/dryrun-*/
+dist/
