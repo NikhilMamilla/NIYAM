@@ -2,6 +2,10 @@
 models:
   - name: hosted-default   # a label for reports; the actual model is HOSTED_LLM_MODEL in .env
     role: hosted
+    # optional, copied from the provider's current price list (per million tokens); `plan` then shows a
+    # worst-case cost. Nothing is hard-coded.
+    # price_per_million_input: 0.0
+    # price_per_million_output: 0.0
   - name: open-default     # OPEN_MODEL_NAME at OPEN_MODEL_ENDPOINT in .env
     role: open
 modes: [gated, ungated]
@@ -10,6 +14,7 @@ units:
 repeats: 1
 temperature: 0.0
 max_repairs: 3
+max_tokens: 4096          # per answer; the plan's worst case assumes every answer uses all of it
 budget:                    # hard caps per run: `plan` refuses when the worst case exceeds max_total_calls,
   max_total_calls: 100     # and `run` stops (recorded as stopped_early) at either cap
   max_total_tokens: 600000

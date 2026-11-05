@@ -30,6 +30,8 @@ class _Strict(BaseModel):
 class ModelSpec(_Strict):
     name: str
     role: Literal["hosted", "open"]
+    price_per_million_input: float | None = None  # optional, from the provider's price list; never hard-coded
+    price_per_million_output: float | None = None
 
 
 class UnitSelector(_Strict):
@@ -48,6 +50,7 @@ class EvalConfig(_Strict):
     repeats: int = 1
     temperature: float = 0.0
     max_repairs: int = 3
+    max_tokens: int = 4096  # per answer; also the worst case the plan assumes for every answer
     budget: Budget
 
 
@@ -81,6 +84,48 @@ class Plan:
             "OK: within the call budget" if self.within_budget else
             "REFUSED: the worst case exceeds max_total_calls; lower repeats/units/max_repairs or raise the cap",
         ]
+
+    def estimate_lines(self, config: "EvalConfig") -> list[str]:
+        """Token and cost estimate from the prompts actually built for each unit."""
+        from app.compiler.ids_compiler import build_repair_message, build_user_message
+        from app.eval.preflight import estimate_tokens, worst_case_tokens
+        from app.fixtures.builders import fixture_pair
+        from app.verifier.ids_gate import StageResult
+
+        failure = StageResult("verdict_fail_fixture", False, "must fail the non-compliant model but passed it " * 4)
+        per_unit = []
+        for unit in self.units:
+            base = estimate_tokens(build_system_prompt(unit) + build_user_message(unit, clause_for(unit)))
+            overhead = estimate_tokens(build_repair_message("", failure, fixture_pair(unit.id), tier=unit.tier))
+            gated = worst_case_tokens(base, max_tokens=config.max_tokens, repairs=config.max_repairs,
+                                      repair_overhead=overhead)
+            ungated = worst_case_tokens(base, max_tokens=config.max_tokens, repairs=0, repair_overhead=0)
+            per_unit.append((base, gated, ungated))
+        bases = [b for b, _, _ in per_unit]
+        lines = [f"token estimate (rough estimate: characters / 4; worst case = every answer uses max_tokens="
+                 f"{config.max_tokens} and every gated unit uses all {config.max_repairs} repairs, resending history)",
+                 f"  first-call prompt (system + user) per unit: min {min(bases, default=0)}, max {max(bases, default=0)},"
+                 f" total {sum(bases)} input tokens"]
+        run_total = 0
+        for spec in config.models:
+            inp = out = 0
+            for _, gated, ungated in per_unit:
+                for mode in config.modes:
+                    i, o = gated if mode == "gated" else ungated
+                    inp, out = inp + i * config.repeats, out + o * config.repeats
+            run_total += inp + out
+            line = f"  {spec.name}: worst case input {inp:,}, output {out:,}, total {inp + out:,} tokens"
+            if spec.price_per_million_input is not None and spec.price_per_million_output is not None:
+                cost = inp / 1e6 * spec.price_per_million_input + out / 1e6 * spec.price_per_million_output
+                line += (f"; estimated worst-case cost {cost:,.2f} (at {spec.price_per_million_input}/M input, "
+                         f"{spec.price_per_million_output}/M output, in the currency of the configured price)")
+            else:
+                line += "; no price configured"
+            lines.append(line)
+        cap = config.budget.max_total_tokens
+        lines.append(f"  run worst case {run_total:,} tokens vs max_total_tokens {cap:,}: " +
+                     ("within the cap" if run_total <= cap else "EXCEEDS the cap: the run would stop early at it"))
+        return lines
 
 
 def make_plan(config: EvalConfig) -> Plan:
@@ -171,7 +216,7 @@ def run(config: EvalConfig, providers: dict[str, object], *, dry_run: bool, runs
                     try:
                         result = compile_unit(unit, clause_for(unit), provider, use_gate=mode == "gated",
                                               max_repairs=config.max_repairs, temperature=config.temperature,
-                                              run_dir=attempts_dir)
+                                              max_tokens=config.max_tokens, run_dir=attempts_dir)
                     except BudgetExceeded as e:
                         stopped = str(e)
                         break
