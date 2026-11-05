@@ -20,7 +20,8 @@ def test_existing_fixtures_are_byte_identical_to_phase8():
     for line in lines:
         digest, name = line.split(" ", 1)
         path = REPO_ROOT / name.lstrip("*")
-        assert hashlib.sha256(path.read_bytes()).hexdigest() == digest, path
+        # checksums were taken from LF files; a Windows checkout with core.autocrlf rewrites them to CRLF
+        assert hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest() == digest, path
 
 
 def test_specs_cover_all_four_templates_and_are_registered_as_draft_pilots():
