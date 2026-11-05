@@ -125,7 +125,7 @@ def test_unconfigured_provider_is_a_clear_error(config_path, ids_only, capsys, m
     def boom(role):
         raise ProviderNotConfigured("hosted LLM not configured: set HOSTED_LLM_PROVIDER in .env")
     monkeypatch.setattr(cli, "get_provider", boom)
-    assert cli.main(["--config", str(config_path), "run", "--yes"]) == 2
+    assert cli.main(["--config", str(config_path), "run", "--yes", "--skip-preflight"]) == 2
     assert "dry-a (hosted) is not configured" in capsys.readouterr().out
 
 

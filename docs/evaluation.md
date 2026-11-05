@@ -68,6 +68,30 @@ python -m app.eval.cli report ../eval/runs/<id>/results.json   # eval/results/<i
   API keys are never written.
 - An unconfigured provider stops the run before any call, with the missing setting named.
 
+## The first real run, step by step
+
+1. `cp eval/config.example.yaml eval/config.yaml` (gitignored). Name the models, keep `repeats: 1` and low budget
+   caps for the first run, and optionally add `price_per_million_input` / `price_per_million_output` from the
+   provider's current price list. Keys stay in `.env` (see `.env.example`), never in the config.
+2. `python -m app.eval.cli preflight` makes **one** tiny call per configured model ("Reply with the single word OK.")
+   and never compiles. It lists which variable NAMES are set or missing (never their values), the provider class,
+   the base URL host and the model name, then the call's latency and token counts. Errors are shown as an HTTP status
+   class and a fixed sentence, never the server's text or headers. Exit code 0 only if at least one model is
+   configured and every configured model answered. Unconfigured models are listed as `skipped: not configured`.
+   The result is stamped in `eval/runs/.preflight.json` (model labels, time, success; no keys).
+3. `python -m app.eval.cli plan` prints the worst-case LLM calls and a **rough token estimate (characters / 4)**
+   built from the actual system and user prompts of every unit, assuming every answer uses `max_tokens` and every
+   gated unit needs all repairs with the history resent each time. With prices configured it shows a worst-case
+   cost; otherwise "no price configured". It compares the total with `max_total_tokens`.
+4. `python -m app.eval.cli run --yes` refuses to start unless every selected model passed a preflight on this machine
+   in the last 24 hours (`--skip-preflight` overrides it with a printed warning). Dry runs need no preflight.
+5. `python -m app.eval.cli report ../eval/runs/<id>/results.json` writes `eval/results/<id>/summary.md`.
+
+**Before quoting any number** from a real run, the results table must show: the run id, date and git commit
+(not `-dirty`), the rulepack hash, the model labels and provider classes, temperature, max repairs, repeats, `n` for
+every cell with its Wilson interval, both the all-units and the distinct-rules views, and `dry_run=false`.
+Quote rates only with their n and interval; with n this small, do not claim a difference between models or modes.
+
 ## Dry runs: never quote them
 
 `run --yes --dry-run` replaces every model with `DryRunProvider`, which replays synthetic answers from

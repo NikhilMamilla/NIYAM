@@ -4,7 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from app.eval import report, runner
+from app.eval import preflight, report, runner
 from app.eval.dryrun import DryRunProvider
 from app.fixtures.builders import REPO_ROOT
 from app.llm.base import ProviderNotConfigured
@@ -18,11 +18,13 @@ def main(argv=None) -> int:
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("plan")
+    sub.add_parser("preflight", help="one tiny live call per configured model; never compiles")
     p = sub.add_parser("run")
     p.add_argument("--yes", action="store_true", help="required: confirm the planned LLM calls")
     p.add_argument("--dry-run", action="store_true", help="synthetic DryRunProvider answers; never model results")
     p.add_argument("--runs-dir", type=Path, default=runner.RUNS_DIR)
     p.add_argument("--no-report", action="store_true")
+    p.add_argument("--skip-preflight", action="store_true", help="run without a recent successful preflight")
     p = sub.add_parser("report")
     p.add_argument("results", type=Path)
     p.add_argument("--out", type=Path)
@@ -40,12 +42,16 @@ def main(argv=None) -> int:
     if not args.config.exists():
         sys.exit(f"no config at {args.config}: copy eval/config.example.yaml to eval/config.yaml")
     config = runner.load_config(args.config)
+    if args.command == "preflight":
+        return preflight.run_preflight(config)
     plan = runner.make_plan(config)
     for line in plan.lines(config):
         print(line)
     if not plan.within_budget:
         return 2
     if args.command == "plan":
+        for line in plan.estimate_lines(config):
+            print(line)
         return 0
     if not args.yes:
         print("not running: pass --yes to confirm the LLM calls above")
@@ -54,6 +60,13 @@ def main(argv=None) -> int:
         factory = lambda name, mode: DryRunProvider(seed=name)  # noqa: E731 - fresh per model and mode
         providers = None
     else:
+        if args.skip_preflight:
+            print("WARNING: skipping the preflight: provider problems will only show up after calls are spent")
+        else:
+            ok, reason = preflight.check_stamp(config)
+            print(reason)
+            if not ok:
+                return 2
         factory, providers = None, {}
         for spec in config.models:
             try:
