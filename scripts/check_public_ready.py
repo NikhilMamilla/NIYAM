@@ -5,6 +5,7 @@ over 5 MB. Matched secret values are never printed in full: only the first 4 cha
 Usage (from the repository root):  python scripts/check_public_ready.py [--no-history]
 Exit code 1 if any secret is found (in the tree or in history); 0 otherwise. Other findings are warnings."""
 
+import hashlib
 import math
 import re
 import subprocess
@@ -24,6 +25,14 @@ KEY_PATTERNS = [
 ASSIGNED = re.compile(r"(?i)(?:key|token|secret|passw(?:or)?d)[\w-]*\s*[:=]\s*['\"]?([A-Za-z0-9_\-+/=.]{20,})")
 PERSONAL = re.compile(r"(?i)(?:[A-Z]:[\\/]+Users[\\/]+(?!<)[^\\/\s'\"]+|[A-Z]:[\\/]+Desktop|/home/(?!<)[a-z][\w.-]+|"
                       r"/Users/(?!<|Shared)[A-Za-z][\w.-]+)")
+# The scanner's own test inputs, committed once in history (2fe241c) before they were built at run time. Matched by
+# exact SHA-256 of file path and value, so the same value anywhere else (e.g. a real key's header) is still reported.
+SYNTHETIC_SHA256 = {  # sha256(path + NUL + value)
+    "46e204fd96cbb30847543091db5520a7aa105d17cd373914aea450f1934b22d2",
+    "7906690b7a3ac2f2c6dbc8cc35adbe4802b12413930acd1f859bdc945f536c4a",
+    "a1f83fd54d2d61c641458356a2160d279a9c069f088dd05171c3624aeef08b03",
+    "b30c581eee10bf800720cbc6dedde8f553937565eac603f05d0199209eacbabc",
+}
 # deliberately fake keys in tests say so in the value; they are listed, but are not secrets
 PLACEHOLDER = re.compile(r"(?i)test|fake|dummy|example|placeholder")
 CODE_EXPRESSION = re.compile(r"[a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*)+")
@@ -58,10 +67,12 @@ def scan_text(path: str, text: str, where: str = "tree") -> list[Finding]:
         for value in dict.fromkeys(hits):
             if CODE_EXPRESSION.fullmatch(value):
                 continue  # e.g. api_key=s.hosted_llm_api_key: a variable, not a value
-            kind = "test_placeholder" if PLACEHOLDER.search(value) else "secret"
+            synthetic = hashlib.sha256(f"{path}\0{value}".encode()).hexdigest() in SYNTHETIC_SHA256
+            kind = "test_placeholder" if PLACEHOLDER.search(value) or synthetic else "secret"
             findings.append(Finding(kind, path, n, mask(value), where))
         for m in PERSONAL.finditer(line):
-            findings.append(Finding("personal_path", path, n, m.group(0), where))
+            if hashlib.sha256(f"{path}\0{m.group(0)}".encode()).hexdigest() not in SYNTHETIC_SHA256:
+                findings.append(Finding("personal_path", path, n, m.group(0), where))
     return findings
 
 

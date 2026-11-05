@@ -20,15 +20,16 @@ def test_known_key_prefixes_are_found_and_masked():
 
 
 def test_high_entropy_values_next_to_secret_words():
-    assert kinds("token = 'q8Zr2Lm9Xp4Vt7Kc1Nw6Hy3Bd5Fs0Ja'\n") == [("secret", 1)]
+    value = "q8Zr2Lm9" + "Xp4Vt7Kc1Nw6Hy3Bd5Fs0Jb"  # built at run time: no secret-shaped literal in this file
+    assert kinds(f"token = '{value}'\n") == [("secret", 1)]
     assert kinds("token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'\n") == []  # low entropy is not a secret
     assert kinds("max_tokens = 4096\napi_key=\n") == []  # placeholders and numbers are fine
 
 
 def test_private_keys_and_personal_paths():
-    assert kinds("-----BEGIN RSA PRIVATE KEY-----\n") == [("secret", 1)]
-    assert kinds(r"see C:\Users\Someone\notes.txt" + "\n") == [("personal_path", 1)]
-    assert kinds("open D:/Desktop (Copy)/x\n") == [("personal_path", 1)]
+    assert kinds("-----BEGIN EC " + "PRIVATE KEY-----\n") == [("secret", 1)]
+    assert kinds("see C:\\Users" + "\\Anyone\\notes.txt\n") == [("personal_path", 1)]
+    assert kinds("open E:/Desk" + "top/x\n") == [("personal_path", 1)]
     assert kinds("C:/Users/<user>/AppData is an example\n") == []  # an explicit placeholder
 
 
@@ -45,3 +46,13 @@ def test_code_expressions_and_marked_test_keys_are_not_secrets():
     assert kinds("    api_key=s.hosted_llm_api_key, **common)\n") == []
     fake = "sk-test-" + "FAKE" + "0123456789abcdef"
     assert kinds(f"KEY = '{fake}'\n") == [("test_placeholder", 1)]
+
+
+def test_the_scanners_own_historic_test_inputs_are_recognised_exactly():
+    old_token = "q8Zr2Lm9" + "Xp4Vt7Kc1Nw6Hy3Bd5Fs0Ja"  # committed once as a literal in 2fe241c
+    own = "backend/tests/test_public_ready.py"
+    assert kinds(f"token = '{old_token}'\n", own) == [("test_placeholder", 1)]
+    assert kinds("-----BEGIN RSA " + "PRIVATE KEY-----\n", own) == [("test_placeholder", 1)]
+    # the same values anywhere else are still secrets: a real RSA key starts with exactly that header
+    assert kinds("-----BEGIN RSA " + "PRIVATE KEY-----\n", "deploy/id_rsa") == [("secret", 1)]
+    assert kinds(f"token = '{old_token}'\n", "app/settings.py") == [("secret", 1)]
