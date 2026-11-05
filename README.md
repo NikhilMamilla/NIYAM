@@ -138,6 +138,13 @@ python -m app.verifier.cli check-geo "MBBL2016-4.5.2#1" ../fixtures/checks/MBBL2
 python -m app.rulepack.cli add "MBBL2016-4.5.2#1" ../fixtures/checks/MBBL2016-4_5_2_1.py --gate
 ```
 
+## Evaluation (gated vs ungated, held-out scoring) and human review
+
+See `docs/evaluation.md`. `python -m app.eval.cli plan | run --yes [--dry-run] | report` compiles the pilot
+units per configured model with and without the gate and scores the shipped rule on held-out fixtures
+(`fixtures/heldout/`, never seen by the gate or a prompt). Dry-run numbers are synthetic and must never be quoted.
+Reviewers fill `docs/review/review-sheet.csv` (Excel); `python -m app.corpus.cli review-import <csv>` applies it.
+
 ## Configuration
 
 Copy `.env.example` to `.env` and fill in values. No secrets are committed.
