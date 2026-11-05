@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/1.0/ids.xsd">
+    <info>
+        <title>NIYAM gold IDS MBBL2016-5.4.2#1</title>
+        <version>0.1</version>
+        <description>DRAFT gold IDS for a pilot rule unit; human_reviewed=false.</description>
+    </info>
+    <specifications>
+        <specification name="MBBL2016-5.4.2#1 fire-exit doors" ifcVersion="IFC4" identifier="MBBL2016-5.4.2#1" description="Revolving door shall not be provided as a means of fire exit." instructions="Source: MBBL-2016 clause MBBL2016-5.4.2. Draft encoding, not human-reviewed.">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCWINDOW</simpleValue>
+                    </name>
+                </entity>
+                <property dataType="IFCBOOLEAN">
+                    <propertySet>
+                        <simpleValue>Pset_DoorCommon</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>FireExit</simpleValue>
+                    </baseName>
+                    <value>
+                        <simpleValue>TRUE</simpleValue>
+                    </value>
+                </property>
+            </applicability>
+            <requirements>
+                <attribute cardinality="prohibited">
+                    <name>
+                        <simpleValue>OperationType</simpleValue>
+                    </name>
+                    <value>
+                        <simpleValue>REVOLVING</simpleValue>
+                    </value>
+                </attribute>
+            </requirements>
+        </specification>
+    </specifications>
+</ids>

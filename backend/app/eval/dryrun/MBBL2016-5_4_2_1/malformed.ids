@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/1.0/ids.xsd">
+    <info>
+        <title>NIYAM gold IDS MBBL2016-5.4.2#1</title>
+        <version>0.1</version>
+        <description>DRAFT gold IDS for a pilo

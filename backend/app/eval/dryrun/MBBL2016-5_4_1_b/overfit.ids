@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/1.0/ids.xsd">
+    <info>
+        <title>NIYAM gold IDS MBBL2016-5.4.1#b</title>
+        <version>0.1</version>
+        <description>DRAFT gold IDS for a pilot rule unit; human_reviewed=false.</description>
+    </info>
+    <specifications>
+        <specification name="MBBL2016-5.4.1#b fire-exit doors" ifcVersion="IFC4" identifier="MBBL2016-5.4.1#b" description="No exit doorway shall be less than 1m in width." instructions="Source: MBBL-2016 clause MBBL2016-5.4.1. Draft encoding, not human-reviewed.">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCDOOR</simpleValue>
+                    </name>
+                </entity>
+                <property dataType="IFCBOOLEAN">
+                    <propertySet>
+                        <simpleValue>Pset_DoorCommon</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>FireExit</simpleValue>
+                    </baseName>
+                    <value>
+                        <simpleValue>TRUE</simpleValue>
+                    </value>
+                </property>
+            </applicability>
+            <requirements>
+                <property dataType="IFCLENGTHMEASURE" cardinality="required">
+                    <propertySet>
+                        <simpleValue>Qto_DoorBaseQuantities</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>Width</simpleValue>
+                    </baseName>
+                    <value>
+                        <xs:restriction base="xs:double">
+                            <xs:minInclusive value="0.95" fixed="false" />
+                        </xs:restriction>
+                    </value>
+                </property>
+            </requirements>
+        </specification>
+    </specifications>
+</ids>
