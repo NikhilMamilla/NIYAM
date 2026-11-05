@@ -139,6 +139,13 @@ def fixture_pair(unit_id: str, fixtures_dir: Path = FIXTURES_DIR, length_unit: s
 
     if unit_id in geo_builders.VALUES:
         return geo_builders.pair_paths(unit_id, fixtures_dir, length_unit)
+    if unit_id not in PILOTS and (REPO_ROOT / "rules" / "specs" / f"{safe_name(unit_id)}.yaml").exists():
+        from app.specgen.generator import dev_pair  # units generated from a rule spec
+        from app.specgen.models import SPECS_DIR, Spec
+
+        import yaml
+        return dev_pair(Spec(**yaml.safe_load((SPECS_DIR / f"{safe_name(unit_id)}.yaml").read_text(encoding="utf-8"))),
+                        fixtures_dir)
     if unit_id not in PILOTS:
         raise KeyError(f"no fixtures defined for {unit_id}")
     name = safe_name(unit_id)

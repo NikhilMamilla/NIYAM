@@ -103,6 +103,11 @@ def _model(unit_id: str, kind: str):
     return f, rows
 
 
+def all_units(root: Path = HELDOUT_DIR) -> list[str]:
+    """Every unit with a held-out set: the six hand-written ones and all spec-generated ones."""
+    return sorted(json.loads(p.read_text(encoding="utf-8"))["unit_id"] for p in root.glob("*.truth.json"))
+
+
 def paths(unit_id: str, root: Path = HELDOUT_DIR) -> dict[str, Path]:
     name = safe_name(unit_id)
     return {"pass": root / f"{name}__heldout_pass.ifc", "fail": root / f"{name}__heldout_fail.ifc",

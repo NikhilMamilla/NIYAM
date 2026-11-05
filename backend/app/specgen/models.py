@@ -105,6 +105,10 @@ class Spec(_Strict):
                 raise ValueError(f"{t} threshold unit must be {want}, not {self.threshold.unit}")
             if p.forbidden_operations is not None:
                 raise ValueError(f"{t} takes no forbidden_operations")
+            if t == "door_width_min" and not self.threshold.inclusive:
+                # IDS compares the unit-converted quantity: 900 mm reads 0.9000000000000001 m, so "> 0.9" would pass
+                raise ValueError("door_width_min supports inclusive thresholds only (exclusive IDS bounds are unsafe "
+                                 "on unit-converted values)")
         return self
 
 
@@ -150,7 +154,7 @@ def check_against_clause(spec: Spec, clause: Clause) -> None:
 def load_spec(path: Path, db: Path | None = None) -> Spec:
     try:
         spec = Spec(**(yaml.safe_load(path.read_text(encoding="utf-8")) or {}))
-    except ValueError as e:  # pydantic.ValidationError is a ValueError
+    except (ValueError, yaml.YAMLError) as e:  # pydantic.ValidationError is a ValueError
         raise SpecError(f"{path.name}: {e}") from e
     if path.stem != spec.safe:
         raise SpecError(f"{path.name}: file name must be {spec.safe}.yaml")
