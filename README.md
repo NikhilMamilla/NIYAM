@@ -1,150 +1,114 @@
 # NIYAM
 
-**Status: work in progress — foundation only.**
+NIYAM turns sentences from Indian building bye-laws (currently the MoHUA Model Building Bye-Laws 2016) into
+machine checks: buildingSMART [IDS 1.0](https://github.com/buildingSMART/IDS) files for declared data and small
+sandboxed Python checks for values computed from geometry. Every candidate rule, whether written by a person or
+an LLM, must pass a verifier gate on test models before it can be used. It then audits IFC building models, shows
+the results beside the model in 3D, and exports HTML reports and BCF issues.
 
-NIYAM is an open-source tool that uses an LLM to compile Indian building rules into
-[buildingSMART IDS 1.0](https://github.com/buildingSMART/IDS) specifications and Python geometric
-checks, validates every draft against open-standard tools, audits IFC models, and exports BCF
-issues.
+**Status: research prototype.** Every rule is a draft that no domain expert has reviewed yet, and all test
+buildings are synthetic.
 
-Current state: an MBBL 2016 rule corpus, a verifier-gated IDS compiler and a sandbox-gated geometric (Python)
-compiler, rulepack v0 (six draft, not human-reviewed rules: three door rules as IDS, three room/stair rules as
-Python checks), an audit engine with HTML and BCF export, an upload API, and a web
-app that shows the audit beside the model in 3D. All sample buildings are synthetic.
+## Pipeline
 
-## Layout
+```
+ MBBL 2016 PDF ──> corpus (445 clauses) ──> rule units (verbatim sentences)
+                                                │
+                    hand-written spec ──────────┤──── or LLM compiler (gated / ungated)
+                                                ▼
+                     candidate IDS / Python check
+                                                │
+       verifier gate on dev fixtures: schema, sandbox, pass model must pass, fail model must fail
+                                                │ accepted
+                                                ▼
+          draft rulepack ──> human review sheet ──> reviewed rulepack (none reviewed yet)
+                                                │
+   IFC model ──> audit engine ──> JSON, HTML report, BCF, web app with 3D viewer
 
-- `backend/` — FastAPI app: corpus, verifier gate, LLM compiler, rulepack, audit engine, API.
-- `frontend/` — Vite + React + TypeScript web app with a That Open Engine 3D viewer.
-- `rules/` — rule corpus units and `rulepack/v0`; `fixtures/` — IFC fixtures, gold IDS, samples.
-- `docs/` — design notes, the modelling profile, `frontend.md`, and `screenshots/`.
-
-## Run the web app (two terminals)
-
-```bash
-# terminal 1: API on http://127.0.0.1:8000
-cd backend && source .venv/Scripts/activate && uvicorn app.main:app --host 127.0.0.1 --port 8000
-
-# terminal 2: web app on http://localhost:5173 (proxies /api to the API)
-./scripts/dev-frontend.sh            # or: cd frontend && npm ci && npm run dev
+   evaluation: compile per model x mode, score on held-out fixtures the gate never sees
 ```
 
-Open http://localhost:5173, then upload an IFC4 file or click "Try sample A (mm)". On macOS/Linux
-activate the venv with `source .venv/bin/activate`. Frontend checks, from `frontend/`:
-`npm test` (Vitest), `npm run build` (tsc + Vite), `npx playwright test` (starts both servers).
+## Status
 
-## Setup (verified on Windows, Git Bash, Python 3.11.4)
+| Area | State |
+|---|---|
+| Corpus: MBBL 2016, 445 clauses, search and curation CLI | works |
+| Rule units: 20 verbatim units (6 hand-written pilots, 14 from rule specs) | works; **drafts, not human-reviewed** |
+| IDS gate and sandboxed geometric gate | works (the sandbox is defence in depth, not a hard security boundary) |
+| LLM compiler, both tiers, with gated repair loop | works with scripted test providers; **no real LLM results yet** |
+| Rulepack v0: 6 rules (3 door IDS, 3 room/stair Python) | works; **drafts, not reviewed** |
+| Audit engine, HTML and BCF export, upload API, web app with 3D viewer | works on synthetic IFC4 models |
+| Evaluation harness: held-out scoring, Wilson intervals, dry run, live-run preflight | works; dry-run numbers are synthetic and must never be quoted |
+| Review sheet for domain experts | exported; **no decisions returned yet** |
+| Real buildings, other states' bye-laws (e.g. Telangana), more rule templates | not built |
 
-```bash
-cd backend
-python -m venv .venv
-source .venv/Scripts/activate   # Windows cmd/PowerShell: .venv\Scripts\activate
-pip install -e ".[dev]"
+## Quickstart
+
+Requirements: Python 3.11, Node.js 20+, git.
+
+**Windows (PowerShell)**
+
+```powershell
+cd backend; python -m venv .venv; .venv\Scripts\Activate.ps1; pip install -e ".[dev]"; pytest -q; cd ..
+cd frontend; npm ci; npm test; cd ..
+.\scripts\demo.ps1          # starts API + web app, opens http://localhost:5173, Ctrl+C stops both
 ```
 
-## Running the tests
+**Linux / macOS**
 
 ```bash
-cd backend
-source .venv/Scripts/activate
-pytest
+cd backend && python3 -m venv .venv && source .venv/bin/activate && pip install -e ".[dev]" && pytest -q && cd ..
+cd frontend && npm ci && npm test && cd ..
+./scripts/demo.sh           # starts API + web app, opens http://localhost:5173, Ctrl+C stops both
 ```
 
-## Running the API
+No API key is needed for anything except the LLM compiler and a real evaluation run.
+
+### Audit demo without any API key
 
 ```bash
-./scripts/dev-backend.sh
+cd backend && source .venv/bin/activate      # Windows: .venv\Scripts\Activate.ps1
+python -m app.audit.cli run ../fixtures/samples/sample_a_mm.ifc --out ../eval/runs/audit-demo
 ```
 
-On Windows cmd/PowerShell, or any other OS, run the equivalent manually instead:
+It prints a per-rule table and writes `report.json`, `report.html` and `issues.bcf`. In the web app, click
+"Try sample A" (doors) or "Try sample D" (rooms and stairs).
+
+### Reproduce the dry run (synthetic answers, no key)
 
 ```bash
-cd backend
-source .venv/Scripts/activate   # macOS/Linux: source .venv/bin/activate
-uvicorn app.main:app --reload
+cd backend                                    # with the venv active
+python -m app.eval.cli --config ../eval/config.dryrun.yaml plan
+python -m app.eval.cli --config ../eval/config.dryrun.yaml run --yes --dry-run
 ```
 
-`GET /health` returns `{"status": "ok"}`.
+The report in `eval/results/dryrun-*/summary.md` starts with **"DRY RUN: synthetic responses, not model results"**.
+Its numbers only show that the pipeline works; never quote them. For a real run see `docs/evaluation.md`
+(preflight, plan with token estimate, then run).
 
-## Rule corpus (MBBL 2016)
+## Limitations
 
-Place the source PDF at `rules/source/mbbl-2016.pdf` (see `rules/source/README.md`), then from
-`backend/` with the venv active:
+- **Synthetic fixtures.** Dev, held-out and sample models are small generated boxes, not real buildings or
+  authoring-tool exports.
+- **Drafts.** Every rule encodes one reading of a clause and none is human-reviewed yet
+  (`docs/review/REVIEWER_GUIDE.md`).
+- **Single-element thresholds.** The templates check one value of one element (a door width, a room's area or
+  height). Ratios, counts, distances and relations between elements are not encoded (`docs/spec-backlog.md`).
+- **Ignored conditions.** Building-type exceptions (e.g. 2 m doorways in assembly buildings), room-use conditions
+  and second thresholds in the same sentence are dropped and only noted for the reviewer.
+- **Thresholds are checked against the text, not its meaning** (`docs/specgen.md`).
+- **Small n.** With 20 units every evaluation interval is wide (`docs/evaluation.md`).
 
-```bash
-python -m app.corpus.cli ingest          # PDF -> backend/data/corpus.db (gitignored)
-python -m app.corpus.cli stats
-python -m app.corpus.cli search "stair"
-python -m app.corpus.cli show MBBL2016-5.4.3
-python -m app.corpus.cli mark MBBL2016-5.4.3 --tier geometric --topic stairs --status selected
-python -m app.corpus.cli export-selected  # -> rules/corpus/mbbl-2016.selected.yaml (tracked)
-python -m app.corpus.cli import-selected
-python -m app.corpus.cli suggest          # keyword shortlist -> docs/corpus-candidates.md
-```
+## More
 
-`page` is the 1-based page of the PDF file (printed page number = PDF page - 18).
+- `docs/evaluation.md`: metrics, held-out fixtures, the first real run.
+- `docs/specgen.md` and `docs/spec-backlog.md`: rule specs and what they cannot express.
+- `docs/geometric-gate.md`: the Python sandbox and what it does not enforce.
+- `docs/modelling-profile.md`: what an IFC model must contain to be checkable.
+- `docs/review/`: the review sheet and the reviewer guide.
+- `python scripts/check_public_ready.py`: scans the tree and history for secrets and personal paths.
 
-## Rule units, fixtures and the IDS gate
+## License
 
-A rule unit is one verbatim sentence or sub-item of a clause (`unit-add`, `unit-list`,
-`unit-show`, `unit-export` -> `rules/corpus/rule-units.yaml`). Pilot units have committed
-fixture pairs in `fixtures/ifc/` and draft gold IDS in `fixtures/ids/`
-(`python ../scripts/build_fixtures.py`, `python ../scripts/build_gold_ids.py`).
-
-```bash
-python -m app.verifier.cli check "MBBL2016-5.4.2#1" ../fixtures/ids/MBBL2016-5_4_2_1.ids
-```
-
-The gate accepts a candidate IDS only if it is well-formed, valid IDS 1.0, loads in ifctester,
-applies to something in both fixtures, passes the `__pass` fixture and fails the `__fail`
-fixture on exactly the expected element.
-
-## IDS compiler (LLM)
-
-Configure a hosted and/or open model in `.env` (see `.env.example`), then from `backend/`:
-
-```bash
-python -m app.compiler.cli compile "MBBL2016-5.4.2#1" --role hosted            # gated repair loop
-python -m app.compiler.cli compile "MBBL2016-5.4.2#1" --role open --no-gate    # ablation baseline
-python -m app.compiler.cli compile-all-pilots --role hosted --max-repairs 3
-python ../scripts/live_smoke.py   # gated run of all pilots; prints "skipped" if not configured
-```
-
-The prompt contains the IDS authoring rules, `docs/modelling-profile.md` and two synthetic
-examples; it never contains the pilot units' gold IDS or fixtures. Results are written to
-`eval/runs/<run_id>/` (gitignored).
-
-## Audit (no LLM)
-
-```bash
-python -m app.audit.cli run ../fixtures/samples/sample_a_mm.ifc --out ../eval/audit-demo
-```
-
-API (`uvicorn app.main:app`): `POST /api/audit` (multipart `file`, `.ifc`, max `MAX_UPLOAD_MB`),
-`GET /api/audit/{id}`, `GET /api/audit/{id}/report.html`, `GET /api/audit/{id}/issues.bcf`,
-`GET /api/rulepack`, `GET /api/samples`, `GET /api/samples/{name}`, `POST /api/samples/{name}/audit`.
-Only IFC4 models are audited. Uploads are stored under `backend/data/audits/<uuid>/` (gitignored). See
-`docs/audit.md` for verdicts and export limitations, and `docs/samples.md` for the synthetic models.
-
-## Geometric rules (Python checks)
-
-Rules whose value is computed from geometry (room area, room height, stair width) are small Python functions
-run only through a sandboxed gate; see `docs/geometric-gate.md` (it is defence in depth, not a hard security
-boundary) and `docs/notes-geometric-spike.md`.
-
-```bash
-cd backend && source .venv/Scripts/activate
-python -m app.verifier.cli check-geo "MBBL2016-4.5.2#1" ../fixtures/checks/MBBL2016-4_5_2_1.py
-python -m app.rulepack.cli add "MBBL2016-4.5.2#1" ../fixtures/checks/MBBL2016-4_5_2_1.py --gate
-```
-
-## Evaluation (gated vs ungated, held-out scoring) and human review
-
-See `docs/evaluation.md`. `python -m app.eval.cli plan | run --yes [--dry-run] | report` compiles the pilot
-units per configured model with and without the gate and scores the shipped rule on held-out fixtures
-(`fixtures/heldout/`, never seen by the gate or a prompt). Dry-run numbers are synthetic and must never be quoted.
-Reviewers fill `docs/review/review-sheet.csv` (Excel); `python -m app.corpus.cli review-import <csv>` applies it.
-
-## Configuration
-
-Copy `.env.example` to `.env` and fill in values. No secrets are committed.
+MIT (see `LICENSE`). Clause text is quoted from the publicly available MoHUA Model Building Bye-Laws 2016 for
+research purposes; the source PDF is not redistributed (`rules/source/` is ignored).

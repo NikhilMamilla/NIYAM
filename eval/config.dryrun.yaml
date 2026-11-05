@@ -1,0 +1,16 @@
+# Pipeline check only: `run --yes --dry-run` answers every unit from synthetic data, never from a model.
+# Dry-run numbers must never be quoted. For real runs copy config.example.yaml to config.yaml instead.
+models:
+  - name: dry-a
+    role: hosted
+  - name: dry-b
+    role: open
+modes: [gated, ungated]
+units:
+  status: [pilot]
+repeats: 1
+temperature: 0.0
+max_repairs: 3
+budget:
+  max_total_calls: 250
+  max_total_tokens: 4000000
