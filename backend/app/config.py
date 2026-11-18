@@ -15,6 +15,15 @@ class Settings(BaseSettings):
     hosted_llm_base_url: str = ""  # only for hosted openai_compat, e.g. https://api.openai.com/v1
     open_model_endpoint: str = ""  # OpenAI-compatible base URL, e.g. http://localhost:11434/v1
     open_model_name: str = ""
+    open_model_api_key: str = ""  # Bearer token; empty for keyless local servers (Ollama)
+    # JSON merged into every request body, e.g. {"thinking": {"type": "disabled"}} (Z.ai) or
+    # {"reasoning_effort": "none"} (NVIDIA), to stop hidden reasoning from spending the token budget
+    hosted_llm_extra_body: dict = {}
+    open_model_extra_body: dict = {}
+    # free-tier limits: minimum seconds between the starts of two calls, per slot (NVIDIA free tier ~40 RPM)
+    hosted_llm_min_interval_s: float = 0.0
+    open_model_min_interval_s: float = 1.6
+    llm_rate_limit_retries: int = 8  # HTTP 429 only; other retryable errors use llm_max_retries
     llm_max_retries: int = 3
     llm_timeout_s: float = 120.0
 

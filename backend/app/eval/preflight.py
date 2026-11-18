@@ -19,7 +19,7 @@ STAMP_MAX_AGE = timedelta(hours=24)
 PING = "Reply with the single word OK."
 ENV_NAMES = {
     "hosted": ["HOSTED_LLM_PROVIDER", "HOSTED_LLM_MODEL", "HOSTED_LLM_API_KEY", "HOSTED_LLM_BASE_URL"],
-    "open": ["OPEN_MODEL_ENDPOINT", "OPEN_MODEL_NAME"],
+    "open": ["OPEN_MODEL_ENDPOINT", "OPEN_MODEL_NAME", "OPEN_MODEL_API_KEY"],
 }
 STATUS_MESSAGES = {401: "authentication failed: check the API key variable", 403: "authentication failed: the key "
                    "is not allowed to use this model", 404: "model or endpoint not found: check the model name and "
@@ -84,7 +84,7 @@ def run_preflight(config, *, settings: Settings | None = None, provider_factory=
         host = urlparse(getattr(provider, "base_url", "") or "").hostname or "(none)"
         out(f"    provider {type(provider).__name__}, host {host}, model {provider.model}")
         if hasattr(provider, "max_retries"):
-            provider.max_retries = 0  # one call means one call
+            provider.max_retries = provider.rate_limit_retries = 0  # one call means one call
         try:
             r = provider.complete("Connectivity check.", [Message("user", PING)], temperature=0.0, max_tokens=8)
         except LLMError as e:

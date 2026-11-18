@@ -67,6 +67,17 @@ python -m app.eval.cli report ../eval/runs/<id>/results.json   # eval/results/<i
   model labels and provider classes, temperature, max repairs, system-prompt hashes, budget and usage, `dry_run`.
   API keys are never written.
 - An unconfigured provider stops the run before any call, with the missing setting named.
+- **Free-tier limits.** Each model slot keeps a minimum interval between calls (`OPEN_MODEL_MIN_INTERVAL_S`, default
+  1.6 s for NVIDIA's ~40 requests per minute; `HOSTED_LLM_MIN_INTERVAL_S`, default 0). Calls are always one at a time:
+  the runner is sequential. On HTTP 429 or 5xx the provider waits for `Retry-After` when the server sends one (up to
+  600 s), otherwise backs off exponentially up to 60 s; 429 gets `LLM_RATE_LIMIT_RETRIES` (default 8) attempts, other
+  errors `LLM_MAX_RETRIES`. The run pauses and resumes with the same model. If retries run out, the run **stops**:
+  the items so far are written, `stopped_early` names the model, mode and unit, and no unit is skipped.
+- **Only `wait` is implemented, not `on_limit: switch`.** Switching models mid-run would mix two models' answers in
+  one gated repair loop and need a separate fallback path through scoring and reports; every item is answered by the
+  model it names, so the fallback count is always 0.
+- **Hidden reasoning.** `HOSTED_LLM_EXTRA_BODY` / `OPEN_MODEL_EXTRA_BODY` (JSON) are merged into every request, e.g.
+  to turn off thinking; they are recorded in `results.json` as `request_extras`.
 
 ## The first real run, step by step
 

@@ -164,3 +164,119 @@ def test_get_provider_builds_configured_providers():
     opened = get_provider("open", s)
     assert isinstance(opened, OpenAICompatProvider) and opened.model == "qwen"
     assert KEY not in repr(hosted)
+
+
+# --- free-tier limits (Phase 12) ------------------------------------------------------------------------------
+
+
+class FakeClock:
+    """Injected clock + sleep: sleeping advances time, so interval waits are exact and instant."""
+
+    def __init__(self):
+        self.now, self.slept = 100.0, []
+
+    def __call__(self):
+        return self.now
+
+    def sleep(self, seconds):
+        self.slept.append(seconds)
+        self.now += seconds
+
+
+def openai(recorder, **kw):
+    clock = kw.pop("clock", None) or FakeClock()
+    return OpenAICompatProvider(base_url="http://h/v1", model="x", api_key=KEY, transport=httpx.MockTransport(recorder),
+                                sleep=clock.sleep, clock=clock, **kw), clock
+
+
+def rate_limited(retry_after=None):
+    headers = {"Retry-After": str(retry_after)} if retry_after is not None else {}
+    return lambda r: httpx.Response(429, headers=headers, json={"error": {"message": "slow down"}})
+
+
+def test_429_waits_for_the_retry_after_header():
+    provider, clock = openai(Recorder(rate_limited(7), openai_ok))
+    assert provider.complete("S", MSGS, temperature=0, max_tokens=10).text == "hi"
+    assert clock.slept == [7.0]
+
+
+def test_429_without_retry_after_backs_off_exponentially_up_to_60_s():
+    rec = Recorder(*[rate_limited()] * 4, openai_ok)
+    provider, clock = openai(rec, backoff_s=16)
+    assert provider.complete("S", MSGS, temperature=0, max_tokens=10).text == "hi"
+    assert clock.slept == [16, 32, 60, 60]
+
+
+def test_429_gets_more_retries_than_other_errors():
+    rec = Recorder(*[rate_limited(1)] * 5, openai_ok)
+    provider, _ = openai(rec, max_retries=2, rate_limit_retries=5)
+    assert provider.complete("S", MSGS, temperature=0, max_tokens=10).text == "hi"
+    assert len(rec.requests) == 6
+    rec = Recorder(lambda r: httpx.Response(503, text="down"))
+    with pytest.raises(LLMError, match="503"):
+        openai(rec, max_retries=2, rate_limit_retries=5)[0].complete("S", MSGS, temperature=0, max_tokens=10)
+    assert len(rec.requests) == 3
+
+
+def test_429_exhausted_raises_without_the_key():
+    rec = Recorder(lambda r: httpx.Response(429, json={"error": {"message": f"quota for {KEY}"}}))
+    with pytest.raises(LLMError, match="429") as exc:
+        openai(rec, rate_limit_retries=2)[0].complete("S", MSGS, temperature=0, max_tokens=10)
+    assert len(rec.requests) == 3 and KEY not in str(exc.value)
+
+
+def test_5xx_then_success_honours_retry_after():
+    provider, clock = openai(Recorder(lambda r: httpx.Response(502, headers={"Retry-After": "3"}), openai_ok))
+    assert provider.complete("S", MSGS, temperature=0, max_tokens=10).text == "hi"
+    assert clock.slept == [3.0]
+
+
+def test_min_interval_spaces_calls_using_the_injected_clock():
+    provider, clock = openai(Recorder(openai_ok), min_interval_s=1.6)
+    for _ in range(3):
+        provider.complete("S", MSGS, temperature=0, max_tokens=10)
+    assert clock.slept == [pytest.approx(1.6), pytest.approx(1.6)]  # none before the first call
+    clock.now += 5  # enough time has passed: no wait
+    provider.complete("S", MSGS, temperature=0, max_tokens=10)
+    assert len(clock.slept) == 2
+
+
+def test_extra_body_is_merged_into_the_request():
+    rec = Recorder(openai_ok)
+    provider, _ = openai(rec, extra_body={"thinking": {"type": "disabled"}})
+    provider.complete("S", MSGS, temperature=0, max_tokens=10)
+    body = json.loads(rec.requests[0].content)
+    assert body["thinking"] == {"type": "disabled"} and body["model"] == "x"
+
+
+def test_open_slot_sends_its_key_as_bearer_and_redacts_it():
+    s = Settings(_env_file=None, open_model_endpoint="http://h/v1", open_model_name="nemo", open_model_api_key=KEY,
+                 open_model_extra_body={"reasoning_effort": "none"}, open_model_min_interval_s=0)
+    provider = get_provider("open", s)
+    rec = Recorder(lambda r: httpx.Response(401, json={"error": {"message": f"bad key {KEY}"}}))
+    provider._client = httpx.Client(transport=httpx.MockTransport(rec))
+    with pytest.raises(LLMError) as exc:
+        provider.complete("S", MSGS, temperature=0, max_tokens=10)
+    assert rec.requests[0].headers["authorization"] == f"Bearer {KEY}"
+    assert json.loads(rec.requests[0].content)["reasoning_effort"] == "none"
+    assert KEY not in str(exc.value) and KEY not in repr(provider)
+
+
+def test_open_slot_without_a_key_sends_no_auth_header():
+    s = Settings(_env_file=None, open_model_endpoint="http://localhost:11434/v1", open_model_name="qwen")
+    provider = get_provider("open", s)
+    rec = Recorder(openai_ok)
+    provider._client = httpx.Client(transport=httpx.MockTransport(rec))
+    provider.complete("S", MSGS, temperature=0, max_tokens=10)
+    assert "authorization" not in rec.requests[0].headers
+
+
+def test_slot_settings_defaults():
+    s = Settings(_env_file=None)
+    assert (s.open_model_min_interval_s, s.hosted_llm_min_interval_s) == (1.6, 0.0)
+    assert s.llm_rate_limit_retries > s.llm_max_retries
+
+
+def test_tests_cannot_reach_the_network():
+    with pytest.raises(RuntimeError, match="network"):
+        httpx.get("https://example.invalid/")

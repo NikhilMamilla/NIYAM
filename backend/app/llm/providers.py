@@ -10,6 +10,8 @@ from app.llm.base import LLMError, LLMResponse, Message
 
 log = logging.getLogger(__name__)
 RETRYABLE_STATUS = {429, 500, 502, 503, 504, 529}
+MAX_BACKOFF_S = 60.0
+MAX_RETRY_AFTER_S = 600.0  # a longer Retry-After is a quota stop, not a pause: give up and let the run stop early
 ANTHROPIC_VERSION = "2023-06-01"
 
 
@@ -18,11 +20,15 @@ class _HttpProvider:
 
     def __init__(self, *, api_key: str | None, model: str, base_url: str, timeout_s: float = 120.0,
                  max_retries: int = 3, backoff_s: float = 1.0, transport: httpx.BaseTransport | None = None,
-                 sleep: Callable[[float], None] = time.sleep):
+                 sleep: Callable[[float], None] = time.sleep, clock: Callable[[], float] = time.monotonic,
+                 rate_limit_retries: int = 8, min_interval_s: float = 0.0, extra_body: dict | None = None):
         self._api_key = api_key or None
         self.model = model
         self.base_url = base_url.rstrip("/")
-        self.max_retries, self.backoff_s, self._sleep = max_retries, backoff_s, sleep
+        self.max_retries, self.backoff_s, self._sleep, self._clock = max_retries, backoff_s, sleep, clock
+        self.rate_limit_retries, self.min_interval_s = rate_limit_retries, min_interval_s
+        self.extra_body = dict(extra_body or {})  # provider-specific request fields, e.g. turning off thinking
+        self._last_call: float | None = None
         self._client = httpx.Client(timeout=timeout_s, transport=transport)
 
     def __repr__(self):
@@ -31,10 +37,27 @@ class _HttpProvider:
     def _redact(self, text: str) -> str:
         return text.replace(self._api_key, "***") if self._api_key else text
 
+    def _wait_for_slot(self):
+        """Free-tier rate limits: at least min_interval_s between the starts of two requests."""
+        if self._last_call is not None and (wait := self._last_call + self.min_interval_s - self._clock()) > 0:
+            self._sleep(wait)
+        self._last_call = self._clock()
+
+    @staticmethod
+    def _retry_after(resp: httpx.Response | None) -> float | None:
+        try:
+            value = float(resp.headers["Retry-After"])
+        except (AttributeError, KeyError, ValueError):  # no response, no header, or an HTTP date
+            return None
+        return value if 0 <= value <= MAX_RETRY_AFTER_S else None
+
     def _post(self, path: str, headers: dict, body: dict) -> tuple[dict, float]:
         url = f"{self.base_url}{path}"
-        for attempt in range(self.max_retries + 1):
-            started = time.perf_counter()
+        body = {**body, **self.extra_body}
+        attempt = 0
+        while True:
+            self._wait_for_slot()
+            started, resp = time.perf_counter(), None
             try:
                 resp = self._client.post(url, headers=headers, json=body)
             except httpx.TransportError as e:  # timeouts and connection errors
@@ -44,13 +67,16 @@ class _HttpProvider:
                     return resp.json(), time.perf_counter() - started
                 problem = f"HTTP {resp.status_code}: {self._error_text(resp)}"
                 retryable = resp.status_code in RETRYABLE_STATUS
-            if not retryable or attempt == self.max_retries:
+            limit = self.rate_limit_retries if resp is not None and resp.status_code == 429 else self.max_retries
+            if not retryable or attempt >= limit:
                 raise LLMError(self._redact(f"{self.name} request failed after {attempt + 1} attempt(s): {problem}"))
-            delay = self.backoff_s * 2**attempt
+            delay = self._retry_after(resp)
+            if delay is None:
+                delay = min(self.backoff_s * 2**attempt, MAX_BACKOFF_S)
             log.warning("%s: %s, retry %d/%d in %.1fs", self.name, self._redact(problem.split(":")[0]),
-                        attempt + 1, self.max_retries, delay)
+                        attempt + 1, limit, delay)
             self._sleep(delay)
-        raise AssertionError("unreachable")
+            attempt += 1
 
     @staticmethod
     def _error_text(resp: httpx.Response) -> str:
