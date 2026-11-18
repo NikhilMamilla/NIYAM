@@ -78,6 +78,16 @@ def cmd_validate(args) -> int:
     return 0
 
 
+def cmd_readiness(args) -> int:
+    from app.rulepack import readiness
+
+    out = args.out or readiness.DEFAULT_OUT
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(readiness.build_ids(), encoding="utf-8")
+    print(f"wrote {out}")
+    return 0
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="python -m app.rulepack.cli")
     parser.add_argument("--db", type=Path, default=repo.DEFAULT_DB)
@@ -91,6 +101,9 @@ def main(argv=None) -> int:
     p.set_defaults(func=cmd_add)
     sub.add_parser("list").set_defaults(func=cmd_list)
     sub.add_parser("validate").set_defaults(func=cmd_validate)
+    p = sub.add_parser("readiness", help="write one IDS listing the data a model needs for the rules to be checkable")
+    p.add_argument("--out", type=Path, default=None)
+    p.set_defaults(func=cmd_readiness)
     args = parser.parse_args(argv)
     return args.func(args)
 
