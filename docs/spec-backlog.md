@@ -33,3 +33,16 @@ corpus searches ("height", "area", "door", "clear opening", "headroom"). Nothing
 | 7.2 (119) | 3.0 m clear height under balconies or girders; 2.75 m head room under beams | needs beam geometry |
 | 11.9.2 b (144) | fire lift floor area 1.4 sq m | a lift car is not an IfcSpace |
 | 11.29 j, 4.24.7.1 (157, 79) | aisle and ramp widths | no aisle or ramp template |
+
+## Reading-dependent units (found in evaluation run 20261118T140452Z-5b7edb)
+
+These units are encoded, but their spec reading departs from the literal clause text. They are listed first in the
+review sheet (`reading_dependent` column). Their status and truth files are unchanged until a reviewer decides.
+
+| Unit | Literal text | Spec reading | What the run showed |
+|---|---|---|---|
+| 4.8.2#1 | store room 3 m2 "where provided in a residential building" | every store room, any building type | all 12 final candidates (both models, both modes, 3 repeats) kept the residential condition; the test buildings declare no OccupancyType, so the rule never applied (gate: applicable_on_fixtures) |
+| 5.4.1#b2 | "Doorways shall be not less than 2 m in height" | exit doors only (FireExit = TRUE) | the large model's 6 final candidates checked every IfcDoor and failed the compliant test building, which has a lower non-exit door (gate: verdict_pass_fixture); the small model's 6 all used FireExit |
+
+The report's POST-HOC sensitivity table shows the headline numbers without these two units. It was added after
+seeing the results and is not a pre-registered analysis.

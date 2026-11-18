@@ -41,7 +41,9 @@ def test_export_is_excel_friendly_with_empty_reviewer_columns(work):
     units, pack, sheet = work
     assert sheet.read_bytes().startswith(b"\xef\xbb\xbf")  # UTF-8 BOM for Excel
     rows = rows_of(sheet)
-    assert [r["unit_id"] for r in rows] == [u.id for u in review.load_units_yaml(units)]
+    ids = [u.id for u in review.load_units_yaml(units)]
+    first = list(review.READING_DEPENDENT)  # reading-dependent units lead; the rest keep the units.yaml order
+    assert [r["unit_id"] for r in rows] == first + [i for i in ids if i not in first]
     assert list(rows[0]) == review.COLUMNS
     assert all(r[c] == "" for r in rows for c in review.REVIEW_COLUMNS)
     by_id = {r["unit_id"]: r for r in rows}
@@ -151,3 +153,17 @@ def test_reviewer_guide_names_every_known_concern():
     for unit_id in ("4.24.7.2#b", "4.8.2#1", "4.10.4#a", "4.5.2#2", "4.24.7.2#c", "4.24.7.2#f", "5.4.2#1"):
         assert unit_id in guide
     assert len(guide.split()) < 1300  # about two pages
+
+
+def test_reading_dependent_units_come_first_with_a_note(work):
+    rows = rows_of(work[2])
+    assert [r["unit_id"] for r in rows[:2]] == ["MBBL2016-4.8.2#1", "MBBL2016-5.4.1#b2"]
+    assert "residential" in rows[0]["reading_dependent"] and "FireExit" in rows[1]["reading_dependent"]
+    assert all(r["reading_dependent"] == "" for r in rows[2:])
+    md = (work[2].with_suffix(".md")).read_text(encoding="utf-8") if work[2].with_suffix(".md").exists() else ""
+    assert not md or "Reading-dependent" in md
+
+
+def test_committed_sheet_lists_reading_dependent_units_first():
+    rows = rows_of(REPO_ROOT / "docs" / "review" / "review-sheet.csv")
+    assert [r["unit_id"] for r in rows[:2]] == ["MBBL2016-4.8.2#1", "MBBL2016-5.4.1#b2"]

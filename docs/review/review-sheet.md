@@ -2,6 +2,62 @@
 
 Fill in the empty columns of `review-sheet.csv` (it opens in Excel): **decision** is `accept`, `modify` or `reject`; give your name and the date. For `modify`, write the corrected reading and/or threshold. Every rule below is a draft machine encoding of the quoted clause.
 
+## MBBL2016-4.8.2#1 (geometric, page 72)
+
+**Rule text:** The size of a store room, where provided in a residential building, shall be not less than 3 m2.
+
+**Machine reading:** Store rooms (Category Store) must have a floor area of at least 3 m2. "Size" is read as floor area. NOT encoded: the condition "where provided in a residential building"; store rooms in other building types are checked too.
+
+**Threshold:** at least 3 m2 (computed: space_floor_area_m2)
+
+**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Store; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
+
+**Reading-dependent:** The clause says 'where provided in a residential building'; the spec drops that condition and checks store rooms in every building. Both models' candidates kept the residential condition, which never applies to the test buildings (they declare no OccupancyType). Decide which reading is intended.
+
+<details><summary>Full clause text</summary>
+
+```
+4.8.2 Size
+The size of a store room, where provided in a residential building, shall be not less
+than 3 m2.
+```
+</details>
+
+## MBBL2016-5.4.1#b2 (ids, page 100)
+
+**Rule text:** Doorways shall be not less than 2 m in height.
+
+**Machine reading:** Exit doors (Pset_DoorCommon.FireExit = TRUE) must have Qto_DoorBaseQuantities.Height of at least 2 m. Inclusive. AMBIGUITY: the sentence says "Doorways", read as exit doorways because clause 5.4.1 is about exits; non-exit doors are not checked. Clear opening vs leaf vs frame height is not specified.
+
+**Threshold:** at least 2 m
+
+**Applies to:** IfcDoor where Pset_DoorCommon.FireExit is TRUE; needs Pset_DoorCommon.FireExit, Qto_DoorBaseQuantities.Height; not in a rulepack
+
+**Reading-dependent:** The sentence says 'Doorways' (all doors); the spec reads it as exit doors only (Pset_DoorCommon.FireExit = TRUE) because clause 5.4.1 is about exits. Candidates that applied the 2 m height to every door failed the test buildings, which contain a lower non-exit door. Decide which reading is intended.
+
+<details><summary>Full clause text</summary>
+
+```
+5.4.1 Doorways
+a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
+or passageway providing continuous and protected means of egress.
+b. No exit doorway shall be less than 1m in width. Doorways shall be not less than 2
+m in height. Doorways for bathrooms, water closet, stores etc. shall be not less than
+0.75m wide.
+c. Exit doorways shall open outwards, that is, away from the room but shall not
+obstruct the travel along any exit. No door, when opened, shall reduce the required
+width of stairway or landing to less than 0.9m, overhead or sliding doors shall not
+be installed.
+d. Exit door shall not open immediately upon a flight or stairs, a landing equal to at
+least the width of the door shall be provided in the stairway at each doorway, level
+of landing shall be the same as that of the floor which it serves.
+e. Exit doorways shall be openable from the side which they serve without the use of a
+key.
+f. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
+the direction of exit.
+```
+</details>
+
 ## MBBL2016-3.16.1#a (geometric, page 67)
 
 **Rule text:** The height of the rooms shall be not less than 3.6 metres from the floor to soffit
@@ -439,25 +495,6 @@ The height of a store room shall be not less than 2.2 m.
 ```
 </details>
 
-## MBBL2016-4.8.2#1 (geometric, page 72)
-
-**Rule text:** The size of a store room, where provided in a residential building, shall be not less than 3 m2.
-
-**Machine reading:** Store rooms (Category Store) must have a floor area of at least 3 m2. "Size" is read as floor area. NOT encoded: the condition "where provided in a residential building"; store rooms in other building types are checked too.
-
-**Threshold:** at least 3 m2 (computed: space_floor_area_m2)
-
-**Applies to:** IfcSpace where Pset_SpaceCommon.Category is Store; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack
-
-<details><summary>Full clause text</summary>
-
-```
-4.8.2 Size
-The size of a store room, where provided in a residential building, shall be not less
-than 3 m2.
-```
-</details>
-
 ## MBBL2016-4.9.1#1 (geometric, page 72)
 
 **Rule text:** The height of a garage shall be not less than 2.4 m.
@@ -485,39 +522,6 @@ The height of a garage shall be not less than 2.4 m.
 **Threshold:** at least 1.0 m
 
 **Applies to:** IfcDoor where Pset_DoorCommon.FireExit is TRUE; needs Pset_DoorCommon.FireExit, Qto_DoorBaseQuantities.Width
-
-<details><summary>Full clause text</summary>
-
-```
-5.4.1 Doorways
-a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
-or passageway providing continuous and protected means of egress.
-b. No exit doorway shall be less than 1m in width. Doorways shall be not less than 2
-m in height. Doorways for bathrooms, water closet, stores etc. shall be not less than
-0.75m wide.
-c. Exit doorways shall open outwards, that is, away from the room but shall not
-obstruct the travel along any exit. No door, when opened, shall reduce the required
-width of stairway or landing to less than 0.9m, overhead or sliding doors shall not
-be installed.
-d. Exit door shall not open immediately upon a flight or stairs, a landing equal to at
-least the width of the door shall be provided in the stairway at each doorway, level
-of landing shall be the same as that of the floor which it serves.
-e. Exit doorways shall be openable from the side which they serve without the use of a
-key.
-f. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
-the direction of exit.
-```
-</details>
-
-## MBBL2016-5.4.1#b2 (ids, page 100)
-
-**Rule text:** Doorways shall be not less than 2 m in height.
-
-**Machine reading:** Exit doors (Pset_DoorCommon.FireExit = TRUE) must have Qto_DoorBaseQuantities.Height of at least 2 m. Inclusive. AMBIGUITY: the sentence says "Doorways", read as exit doorways because clause 5.4.1 is about exits; non-exit doors are not checked. Clear opening vs leaf vs frame height is not specified.
-
-**Threshold:** at least 2 m
-
-**Applies to:** IfcDoor where Pset_DoorCommon.FireExit is TRUE; needs Pset_DoorCommon.FireExit, Qto_DoorBaseQuantities.Height; not in a rulepack
 
 <details><summary>Full clause text</summary>
 

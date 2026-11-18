@@ -19,7 +19,19 @@ from app.rulepack.loader import read_manifest, write_manifest
 from app.rulepack.models import Rule
 
 INFO_COLUMNS = ["unit_id", "clause_id", "page", "tier", "unit_text", "clause_text", "machine_reading", "threshold",
-                "scope", "duplicate_of"]
+                "scope", "duplicate_of", "reading_dependent"]
+# Units whose spec reading departs from the literal clause text (found in evaluation run 20261118T140452Z-5b7edb).
+# They are listed first so a reviewer settles the reading before anything is scored against it.
+READING_DEPENDENT = {
+    "MBBL2016-4.8.2#1": "The clause says 'where provided in a residential building'; the spec drops that condition and "
+                        "checks store rooms in every building. Both models' candidates kept the residential "
+                        "condition, which never applies to the test buildings (they declare no OccupancyType). "
+                        "Decide which reading is intended.",
+    "MBBL2016-5.4.1#b2": "The sentence says 'Doorways' (all doors); the spec reads it as exit doors only "
+                         "(Pset_DoorCommon.FireExit = TRUE) because clause 5.4.1 is about exits. Candidates that "
+                         "applied the 2 m height to every door failed the test buildings, which contain a lower "
+                         "non-exit door. Decide which reading is intended.",
+}
 REVIEW_COLUMNS = ["decision", "corrected_reading", "corrected_threshold", "comments", "reviewer_name", "reviewed_on"]
 COLUMNS = INFO_COLUMNS + REVIEW_COLUMNS
 DECISIONS = ("accept", "modify", "reject")
@@ -88,9 +100,11 @@ def sheet_rows(units: list[RuleUnit], pack: Path) -> list[dict[str, str]]:
             "unit_id": u.id, "clause_id": u.clause_id, "page": page, "tier": u.tier,
             "unit_text": " ".join(u.text.split()), "clause_text": clause_text,
             "machine_reading": " ".join((u.notes or "none").split()), "threshold": threshold,
-            "scope": scope, "duplicate_of": u.duplicate_of or "", **{c: "" for c in REVIEW_COLUMNS},
+            "scope": scope, "duplicate_of": u.duplicate_of or "", "reading_dependent": READING_DEPENDENT.get(u.id, ""),
+            **{c: "" for c in REVIEW_COLUMNS},
         })
-    return rows
+    order = list(READING_DEPENDENT)
+    return sorted(rows, key=lambda r: order.index(r["unit_id"]) if r["unit_id"] in order else len(order))
 
 
 def _spec(unit_id: str):
@@ -143,6 +157,7 @@ def _markdown(rows: list[dict[str, str]]) -> str:
                   f"**Threshold:** {r['threshold']}\n", f"**Applies to:** {r['scope']}\n",
                   *([f"**Claimed duplicate of:** {r['duplicate_of']} (confirm or reject in comments)\n"]
                     if r["duplicate_of"] else []),
+                  *([f"**Reading-dependent:** {r['reading_dependent']}\n"] if r["reading_dependent"] else []),
                   "<details><summary>Full clause text</summary>\n\n```\n" + r["clause_text"] + "\n```\n</details>\n"]
     return "\n".join(parts)
 
