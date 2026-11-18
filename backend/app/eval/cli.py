@@ -46,6 +46,10 @@ def main(argv=None) -> int:
     if not args.config.exists():
         sys.exit(f"no config at {args.config}: copy eval/config.example.yaml to eval/config.yaml")
     config = runner.load_config(args.config)
+    excluded = {m.name: m.skip for m in config.models if m.skip}
+    config = config.model_copy(update={"models": [m for m in config.models if not m.skip]})
+    for name in excluded:
+        print(f"excluded: {name} ({excluded[name]})")
     if args.command == "preflight":
         return preflight.run_preflight(config)
     plan = runner.make_plan(config)
@@ -60,7 +64,7 @@ def main(argv=None) -> int:
     if not args.yes:
         print("not running: pass --yes to confirm the LLM calls above")
         return 2
-    skipped = {}
+    skipped = dict(excluded)
     if args.dry_run:
         factory = lambda name, mode: DryRunProvider(seed=name)  # noqa: E731 - fresh per model and mode
         providers = None
@@ -68,12 +72,13 @@ def main(argv=None) -> int:
         if args.skip_preflight:
             print("WARNING: skipping the preflight: provider problems will only show up after calls are spent")
         else:
-            ok, reason, skipped = preflight.check_stamp(config)
+            ok, reason, failed_optional = preflight.check_stamp(config)
             print(reason)
             if not ok:
                 return 2
-            for name, why in skipped.items():
+            for name, why in failed_optional.items():
                 print(f"skipping optional model {name}: {why}")
+            skipped |= failed_optional
             config = config.model_copy(update={"models": [m for m in config.models if m.name not in skipped]})
         factory, providers = None, {}
         for spec in config.models:

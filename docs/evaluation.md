@@ -80,6 +80,13 @@ python -m app.eval.cli report ../eval/runs/<id>/results.json   # eval/results/<i
   endpoint, with the same key and limits) and `optional: true`. An optional model that fails the preflight is skipped
   by `run` and recorded in `results.json` as `skipped_models` (and in summary.md and slides-data.md); a required one
   blocks the run, and so does having no model left.
+- **Excluding a model.** `skip: "<reason>"` on a config model keeps it out of plan, preflight and run; the reason is
+  recorded in `skipped_models`.
+- **Repeats are correlated.** The item-level tables are labelled "items, correlated across repeats": with
+  repeats > 1 their Wilson intervals overstate precision. summary.md and slides-data.md therefore add a unit-level
+  view per model x mode: wrong_shipped per unit (a unit is wrong if any repeat shipped a held-out-wrong rule; n =
+  units that shipped at least once), a stability table (units whose (shipped, held-out correct) outcome is identical in
+  every repeat vs varied), and each unit's share of repeats that shipped a held-out-correct rule.
 - **Hidden reasoning.** `HOSTED_LLM_EXTRA_BODY` / `OPEN_MODEL_EXTRA_BODY` (JSON) are merged into every request, e.g.
   to turn off thinking; they are recorded in `results.json` as `request_extras`.
 

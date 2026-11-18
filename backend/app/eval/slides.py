@@ -5,7 +5,7 @@ import csv
 import json
 from pathlib import Path
 
-from app.eval.metrics import distinct_only, group_metrics
+from app.eval.metrics import distinct_only, group_metrics, unit_metrics
 from app.eval.report import COLUMNS, RESULTS_DIR, RefusedOutput, _by, _tables
 from app.fixtures.gold_ids import load_units
 
@@ -26,6 +26,14 @@ def _csv_rows(run_id: str, view: str, items: list[dict]) -> list[list]:
                 lo, hi = r.wilson or ("", "")
                 rows.append([run_id, view, key[0], key[1], group_key, key[2] if len(key) > 2 else "", metric,
                              r.k, r.n, "" if r.rate is None else r.rate, lo, hi])
+    for (model, mode), group in sorted(_by(items, "model", "mode").items()):
+        u = unit_metrics(group)
+        r = u["wrong_shipped_units"]
+        lo, hi = r.wilson or ("", "")
+        rows.append([run_id, view, model, mode, "unit_wrong_shipped", "", "wrong_shipped_units", r.k, r.n,
+                     "" if r.rate is None else r.rate, lo, hi])
+        rows.append([run_id, view, model, mode, "stability", "", "units_identical_every_repeat", u["stable"],
+                     u["n_units"], u["stable"] / u["n_units"] if u["n_units"] else "", "", ""])
     return rows
 
 

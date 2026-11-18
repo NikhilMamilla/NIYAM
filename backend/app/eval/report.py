@@ -6,7 +6,7 @@ import csv
 import json
 from pathlib import Path
 
-from app.eval.metrics import distinct_only, group_metrics, paired, review_share
+from app.eval.metrics import distinct_only, group_metrics, paired, review_share, unit_metrics
 from app.fixtures.builders import REPO_ROOT
 from app.fixtures.gold_ids import load_units
 
@@ -35,7 +35,10 @@ def _by(items: list[dict], *keys) -> dict[tuple, list[dict]]:
 
 def _tables(items: list[dict], level: str) -> list[str]:
     metrics = {k: group_metrics(v) for k, v in _by(items, "model", "mode").items()}
-    lines = ["| model | mode | n | valid | dev_correct | heldout_correct | shipped | wrong_shipped | needs_human | "
+    lines = [f"{level} Items, correlated across repeats\n",
+             "Each row of this table is one compilation; repeats of the same unit are correlated, so these intervals "
+             "overstate precision when repeats > 1. The unit-level tables below count units.\n",
+             "| model | mode | n | valid | dev_correct | heldout_correct | shipped | wrong_shipped | needs_human | "
              "mean repairs | mean tokens | mean wall s |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for (model, mode), m in sorted(metrics.items()):
         cells = [str(m[c]) if m[c] is not None else "-" for c in COLUMNS]
@@ -54,6 +57,28 @@ def _tables(items: list[dict], level: str) -> list[str]:
             m = group_metrics(group)
             lines.append(f"| {model} | {mode} | {value} | {m['n']} | {m['heldout_correct']} | {m['shipped']} | "
                          f"{m['wrong_shipped']} |")
+    return lines + _unit_tables(items, level)
+
+
+def _unit_tables(items: list[dict], level: str) -> list[str]:
+    """Unit level: per unit across repeats, stability of outcomes, and wrong_shipped with n = units."""
+    cells = {k: unit_metrics(v) for k, v in sorted(_by(items, "model", "mode").items())}
+    lines = [f"\n{level} Unit level: wrong_shipped per unit\n",
+             "A unit counts as wrong if any repeat shipped a rule that is wrong on the held-out fixtures; n = units "
+             "that shipped in at least one repeat. k/n = rate [Wilson 95% interval].\n",
+             "| model | mode | units | wrong_shipped per unit |", "|---|---|---|---|"]
+    lines += [f"| {model} | {mode} | {m['n_units']} | {m['wrong_shipped_units']} |" for (model, mode), m in cells.items()]
+    lines += [f"\n{level} Stability across repeats\n",
+              "Outcome = (shipped, held-out correct) of each repeat.\n",
+              "| model | mode | units | identical in every repeat | varied |", "|---|---|---|---|---|"]
+    lines += [f"| {model} | {mode} | {m['n_units']} | {m['stable']} | {m['varied']} |" for (model, mode), m in cells.items()]
+    lines += [f"\n{level} Unit level: held-out-correct share per unit\n",
+              "Repeats that shipped a held-out-correct rule / repeats.\n",
+              "| unit | " + " | ".join(f"{model} {mode}" for model, mode in cells) + " |",
+              "|---|" + "---|" * len(cells)]
+    for unit in sorted({u for m in cells.values() for u in m["shares"]}):
+        shares = [m["shares"].get(unit) for m in cells.values()]
+        lines.append(f"| {unit} | " + " | ".join(f"{k}/{n}" if n else "-" for k, n in (s or (0, 0) for s in shares)) + " |")
     return lines
 
 

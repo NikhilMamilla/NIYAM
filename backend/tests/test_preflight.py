@@ -241,3 +241,30 @@ def test_the_run_executes_only_passed_models_and_records_the_skipped(config_path
     assert built == ["open"] and {i["model"] for i in data["items"]} == {"open-b"}
     assert list(data["meta"]["skipped_models"]) == ["hosted-a"]
     assert "skipping optional model hosted-a" in capsys.readouterr().out
+
+
+def test_an_excluded_model_is_never_called_planned_or_preflighted_but_is_recorded(config_path, stamp, capsys,
+                                                                                    monkeypatch, tmp_path):
+    from app.eval.dryrun import DryRunProvider
+    from app.fixtures.gold_ids import load_units
+
+    data = yaml.safe_load(config_path.read_text())
+    data["models"][0]["skip"] = "excluded by the operator for this run"  # hosted-a
+    config_path.write_text(yaml.safe_dump(data))
+    monkeypatch.setattr(runner, "select_units", lambda c: [load_units()["MBBL2016-5.4.2#1"]])
+    assert cli.main(["--config", str(config_path), "plan"]) == 0
+    out = capsys.readouterr().out
+    assert "models: open-b" in out and "hosted-a" not in out.split("models:")[1].splitlines()[0]
+    assert "LLM calls worst case: 5" in out  # one unit, one model: 1 + 3 repairs + 1
+
+    calls = []
+    monkeypatch.setattr(preflight, "get_provider", lambda role, s, model=None: calls.append(role) or DryRunProvider("x"))
+    cli.main(["--config", str(config_path), "preflight"])
+    assert calls == ["open"] and "excluded: hosted-a" in capsys.readouterr().out
+
+    write_stamp(stamp, {"open-b": {"ok": True}})
+    monkeypatch.setattr(cli, "get_provider", lambda role, model=None: DryRunProvider("x"))
+    assert cli.main(["--config", str(config_path), "run", "--yes", "--runs-dir", str(tmp_path / "r"), "--no-report"]) == 0
+    [results] = (tmp_path / "r").glob("*/results.json")
+    meta = json.loads(results.read_text())["meta"]
+    assert meta["skipped_models"] == {"hosted-a": "excluded by the operator for this run"}

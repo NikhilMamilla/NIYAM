@@ -92,3 +92,23 @@ def review_share(units) -> Rate | None:
     if not reviewed:
         return None
     return Rate(sum(u.status in ("needs_rework", "rejected") for u in reviewed), len(reviewed))
+
+
+def unit_metrics(items: list[dict]) -> dict:
+    """Unit-level view of one model x mode. Repeats of a unit are correlated, so these count units, not items.
+    shares: unit -> (repeats that shipped a held-out-correct rule, repeats); stable: units whose (shipped,
+    held-out correct) outcome is identical in every repeat; wrong_shipped_units: units where any repeat shipped a
+    wrong rule, over units that shipped in at least one repeat."""
+    units: dict[str, list[dict]] = {}
+    for i in items:
+        units.setdefault(i["unit_id"], []).append(i)
+    stable = sum(len({(i["shipped"], i["score"]["heldout_correct"]) for i in group}) == 1 for group in units.values())
+    shipped = [group for group in units.values() if any(i["shipped"] for i in group)]
+    return {
+        "n_units": len(units),
+        "shares": {u: (sum(correct_shipped(i) for i in group), len(group)) for u, group in units.items()},
+        "stable": stable,
+        "varied": len(units) - stable,
+        "wrong_shipped_units": Rate(sum(any(i["shipped"] and not i["score"]["heldout_correct"] for i in group)
+                                        for group in shipped), len(shipped)),
+    }

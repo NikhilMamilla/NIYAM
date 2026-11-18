@@ -32,6 +32,7 @@ class ModelSpec(_Strict):
     role: Literal["hosted", "open"]
     model: str | None = None  # model id on the role's endpoint; default: HOSTED_LLM_MODEL / OPEN_MODEL_NAME
     optional: bool = False  # a failed preflight skips this model (recorded) instead of blocking the run
+    skip: str | None = None  # a reason: the model is never planned, preflighted or called, and the reason is recorded
     price_per_million_input: float | None = None  # optional, from the provider's price list; never hard-coded
     price_per_million_output: float | None = None
 

@@ -230,3 +230,57 @@ def test_slides_data_has_provenance_headline_breakdowns_and_caution(real_like_re
     assert rows[0][:4] == ["run_id", "view", "model", "mode"]
     assert {r[1] for r in rows[1:]} == {"all_units", "distinct_rules"}
     assert all(r[0] == "20261118T000000Z-test" for r in rows[1:])
+
+
+# --- unit-level view across repeats (Phase 12b) -------------------------------------------------------------
+
+
+def rep_item(unit, repeat, shipped, correct, model="m", mode="gated"):
+    return {"model": model, "mode": mode, "unit_id": unit, "repeat": repeat, "tier": "ids", "template": "t",
+            "shipped": shipped, "outcome": "accepted" if shipped else "needs_human",
+            "score": {"valid": True, "dev_correct": True, "heldout_correct": correct}}
+
+
+def test_unit_metrics_shares_stability_and_unit_wrong_shipped():
+    from app.eval.metrics import unit_metrics
+
+    items = [rep_item("a", r, True, True) for r in range(3)]                       # stable, always right
+    items += [rep_item("b", 0, True, False), rep_item("b", 1, True, True), rep_item("b", 2, True, True)]  # varied
+    items += [rep_item("c", r, False, False) for r in range(3)]                    # stable, never shipped
+    m = unit_metrics(items)
+    assert m["shares"] == {"a": (3, 3), "b": (2, 3), "c": (0, 3)}
+    assert (m["n_units"], m["stable"], m["varied"]) == (3, 2, 1)
+    w = m["wrong_shipped_units"]
+    assert (w.k, w.n) == (1, 2)  # b shipped a wrong rule once; c never shipped, so it is not in n
+    assert w.wilson == wilson_interval(1, 2)
+
+
+@pytest.fixture
+def repeated_results(config_path, ids_only, tmp_path):
+    data = yaml.safe_load(config_path.read_text())
+    data["repeats"] = 2
+    config_path.write_text(yaml.safe_dump(data))
+    run_dir = runner.run(runner.load_config(config_path), None, dry_run=True, runs_dir=tmp_path / "runs",
+                         provider_factory=lambda name, mode: DryRunProvider(name))
+    path = run_dir / "results.json"
+    data = json.loads(path.read_text())
+    data["meta"].update(dry_run=False, git_commit="abc123", run_id="20261118T000000Z-rep")
+    path.write_text(json.dumps(data))
+    return path
+
+
+UNIT_LEVEL_NEEDLES = ("Items, correlated across repeats", "Unit level", "Stability across repeats",
+                      "identical in every repeat", "varied", "wrong_shipped per unit", "held-out-correct share per unit")
+
+
+def test_report_and_slides_have_the_unit_level_view(repeated_results, tmp_path):
+    from app.eval import slides
+
+    summary = report.write_report(repeated_results, tmp_path / "r")[0].read_text(encoding="utf-8")
+    md, csv_path = slides.write_slides(repeated_results, tmp_path / "s")
+    text = md.read_text(encoding="utf-8")
+    for needle in UNIT_LEVEL_NEEDLES:
+        assert needle in summary and needle in text, needle
+    assert f"| {IDS_UNITS[0]} |" in summary  # one row per unit
+    rows = list(csv.reader(csv_path.open(encoding="utf-8")))
+    assert {"unit_wrong_shipped", "stability"} <= {r[4] for r in rows[1:]}
