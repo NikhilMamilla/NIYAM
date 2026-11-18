@@ -11,7 +11,7 @@
 - Skipped models: glm-4.7-flash (Z.ai) (excluded by the operator: failed preflight with HTTP 429 (overloaded) on 2026-11-18)
 - Fallback items: 0 (only on_limit=wait is implemented; each item was answered by its model)
 
-**Caution: n is small (25 draft units, 3 repeats per unit; repeats of a unit are correlated), so every interval is wide; no model difference may be claimed, and no mode difference beyond what the intervals show.**
+**Caution: n is small (TGBR2012: 2 draft units; 3 repeats per unit; repeats of a unit are correlated), so every interval is wide; no model difference may be claimed, and no mode difference beyond what the intervals show.**
 
 # Source: TGBR2012 (Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied))
 
@@ -28,4 +28,4 @@
 | TGBR2012-5#fxi | nemotron-3.5-lightning-30b-a3b (NVIDIA) | gated | 3 | 2 | 2 | accepted x2, needs_human x1 |
 | TGBR2012-5#fxi | nemotron-3.5-lightning-30b-a3b (NVIDIA) | ungated | 3 | 3 | 0 | baseline_scored x3 |
 
-Caution: n is small (25 draft units, 3 repeats per unit; repeats of a unit are correlated), so every interval is wide; no model difference may be claimed, and no mode difference beyond what the intervals show.
+Caution: n is small (TGBR2012: 2 draft units; 3 repeats per unit; repeats of a unit are correlated), so every interval is wide; no model difference may be claimed, and no mode difference beyond what the intervals show.

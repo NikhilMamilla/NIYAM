@@ -11,7 +11,7 @@
 - Skipped models: glm-4.7-flash (Z.ai) (excluded by the operator: failed preflight with HTTP 429 (overloaded) on 2026-11-18; kept out of run 2)
 - Fallback items: 0 (only on_limit=wait is implemented; each item was answered by its model)
 
-**Caution: n is small (25 draft units, 3 repeats per unit; repeats of a unit are correlated), so every interval is wide; no model difference may be claimed, and no mode difference beyond what the intervals show.**
+**Caution: n is small (MBBL2016: 25 draft units; 3 repeats per unit; repeats of a unit are correlated), so every interval is wide; no model difference may be claimed, and no mode difference beyond what the intervals show.**
 
 ## Headline: wrong_shipped, gated vs ungated
 
@@ -268,4 +268,4 @@ Repeats that shipped a held-out-correct rule / repeats.
 | distinct rules | nemotron-3.5-lightning-30b-a3b (NVIDIA) | gated | 60 | 44/60 = 73% [61%, 83%] | 0/44 = 0% [0%, 8%] | 0/15 = 0% [0%, 20%] |
 | distinct rules | nemotron-3.5-lightning-30b-a3b (NVIDIA) | ungated | 60 | 40/60 = 67% [54%, 77%] | 20/60 = 33% [23%, 46%] | 9/20 = 45% [26%, 66%] |
 
-Caution: n is small (25 draft units, 3 repeats per unit; repeats of a unit are correlated), so every interval is wide; no model difference may be claimed, and no mode difference beyond what the intervals show.
+Caution: n is small (MBBL2016: 25 draft units; 3 repeats per unit; repeats of a unit are correlated), so every interval is wide; no model difference may be claimed, and no mode difference beyond what the intervals show.

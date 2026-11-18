@@ -387,3 +387,16 @@ def test_a_source_with_fewer_than_5_units_is_a_case_study_without_rates(repeated
         tg = [r for r in rows[1:] if r[-1] == "TGBR2012"]
         cols = rate_cols or [j for j, h in enumerate(rows[0]) if h.endswith(("_rate", "_lo", "_hi"))]
         assert tg and all(r[j] == "" for r in tg for j in cols)
+
+
+def test_caution_states_units_per_source_and_repeats(repeated_results, tmp_path):
+    from app.eval import slides
+
+    data = json.loads(repeated_results.read_text())
+    for i in data["items"]:
+        if i["unit_id"] == IDS_UNITS[1]:
+            i["unit_id"] = "TGBR2012-99#1"
+    repeated_results.write_text(json.dumps(data))
+    text = slides.write_slides(repeated_results, tmp_path / "s")[0].read_text(encoding="utf-8")
+    line = "Caution: n is small (MBBL2016: 1 draft unit; TGBR2012: 1 draft unit; 2 repeats per unit;"
+    assert text.count(line) == 2 and "25 draft units" not in text

@@ -15,10 +15,14 @@ SLIDES_HEADER = ["run_id", "view", "model", "mode", "group", "group_value", "met
                  "wilson_hi", "source"]
 
 
-def caution(repeats: int) -> str:
-    return (f"Caution: n is small (25 draft units, {repeats} repeat{'s' if repeats != 1 else ''} per unit; repeats of a "
-            "unit are correlated), so every interval is wide; no model difference may be claimed, and no mode "
-            "difference beyond what the intervals show.")
+def caution(items: list[dict], repeats: int) -> str:
+    """The caution line, with the run's actual unit count per source and its repeats."""
+    plural = lambda n, word: f"{n} {word}{'s' if n != 1 else ''}"  # noqa: E731
+    units = "; ".join(f"{source}: {plural(len({i['unit_id'] for i in block}), 'draft unit')}"
+                      for source, block in by_source(items))
+    return (f"Caution: n is small ({units}; {plural(repeats, 'repeat')} per unit; repeats of a unit are correlated), "
+            "so every interval is wide; no model difference may be claimed, and no mode difference beyond what the "
+            "intervals show.")
 
 
 def _csv_rows(run_id: str, view: str, items: list[dict]) -> list[list]:
@@ -66,7 +70,7 @@ def write_slides(results_path: Path, out_dir: Path | None = None) -> list[Path]:
              f"- Stopped early: {meta['stopped_early'] or 'no'}",
              "- Skipped models: " + ("; ".join(f"{k} ({v})" for k, v in meta.get("skipped_models", {}).items()) or "none"),
              f"- Fallback items: {fallback} (only on_limit=wait is implemented; each item was answered by its model)",
-             "", f"**{caution(meta['repeats'])}**", ""]
+             "", f"**{caution(items, meta['repeats'])}**", ""]
     csv_rows = []
     for source, block in by_source(items):
         small = is_case_study(block)
@@ -76,7 +80,7 @@ def write_slides(results_path: Path, out_dir: Path | None = None) -> list[Path]:
         rows = [[*r, source] for r in _csv_rows(meta["run_id"], "all_units", block)
                 + _csv_rows(meta["run_id"], "distinct_rules", distinct)]
         csv_rows += [blank_rates(r, SLIDES_HEADER) for r in rows] if small else rows
-    lines += ["", caution(meta["repeats"])]
+    lines += ["", caution(items, meta["repeats"])]
 
     out_dir = out_dir or RESULTS_DIR / meta["run_id"]
     out_dir.mkdir(parents=True, exist_ok=True)
