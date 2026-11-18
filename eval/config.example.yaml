@@ -8,6 +8,8 @@ models:
     # price_per_million_output: 0.0
   - name: open-default     # OPEN_MODEL_NAME at OPEN_MODEL_ENDPOINT in .env
     role: open
+    # model: some/other-model   # optional: another model id on the same endpoint (default OPEN_MODEL_NAME)
+    # optional: true            # a failed preflight skips this model instead of blocking the run
 modes: [gated, ungated]
 units:
   status: [pilot]          # pilot | selected

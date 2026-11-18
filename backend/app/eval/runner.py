@@ -30,6 +30,8 @@ class _Strict(BaseModel):
 class ModelSpec(_Strict):
     name: str
     role: Literal["hosted", "open"]
+    model: str | None = None  # model id on the role's endpoint; default: HOSTED_LLM_MODEL / OPEN_MODEL_NAME
+    optional: bool = False  # a failed preflight skips this model (recorded) instead of blocking the run
     price_per_million_input: float | None = None  # optional, from the provider's price list; never hard-coded
     price_per_million_output: float | None = None
 
@@ -191,7 +193,7 @@ def rulepack_hash(root: Path = DEFAULT_PACK) -> str:
 
 
 def run(config: EvalConfig, providers: dict[str, object], *, dry_run: bool, runs_dir: Path = RUNS_DIR,
-        provider_factory=None) -> Path:
+        provider_factory=None, skipped: dict[str, str] | None = None) -> Path:
     """Compile and score every (model, mode, unit, repeat). `provider_factory(name, mode)` builds a fresh provider
     per model and mode (so modes see the same first answers); `providers` is used when it is None."""
     plan = make_plan(config)
@@ -242,6 +244,7 @@ def run(config: EvalConfig, providers: dict[str, object], *, dry_run: bool, runs
         "provider_classes": provider_classes, "request_extras": request_extras, "modes": config.modes, "repeats": config.repeats,
         "temperature": config.temperature, "max_repairs": config.max_repairs,
         "budget": config.budget.model_dump(), "used": counter, "stopped_early": stopped,
+        "skipped_models": skipped or {},
         "system_prompt_hashes": {t: hashlib.sha256(build_system_prompt(u).encode()).hexdigest()
                                  for t, u in {u.tier: u for u in plan.units}.items()},
     }

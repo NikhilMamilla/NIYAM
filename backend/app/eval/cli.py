@@ -60,6 +60,7 @@ def main(argv=None) -> int:
     if not args.yes:
         print("not running: pass --yes to confirm the LLM calls above")
         return 2
+    skipped = {}
     if args.dry_run:
         factory = lambda name, mode: DryRunProvider(seed=name)  # noqa: E731 - fresh per model and mode
         providers = None
@@ -67,18 +68,22 @@ def main(argv=None) -> int:
         if args.skip_preflight:
             print("WARNING: skipping the preflight: provider problems will only show up after calls are spent")
         else:
-            ok, reason = preflight.check_stamp(config)
+            ok, reason, skipped = preflight.check_stamp(config)
             print(reason)
             if not ok:
                 return 2
+            for name, why in skipped.items():
+                print(f"skipping optional model {name}: {why}")
+            config = config.model_copy(update={"models": [m for m in config.models if m.name not in skipped]})
         factory, providers = None, {}
         for spec in config.models:
             try:
-                providers[spec.name] = get_provider(spec.role)
+                providers[spec.name] = get_provider(spec.role, model=spec.model)
             except ProviderNotConfigured as e:
                 print(f"model {spec.name} ({spec.role}) is not configured: {e}")
                 return 2
-    run_dir = runner.run(config, providers, dry_run=args.dry_run, runs_dir=args.runs_dir, provider_factory=factory)
+    run_dir = runner.run(config, providers, dry_run=args.dry_run, runs_dir=args.runs_dir, provider_factory=factory,
+                         skipped=skipped)
     print(f"results: {run_dir / 'results.json'}")
     if not args.no_report:
         for path in report.write_report(run_dir / "results.json"):

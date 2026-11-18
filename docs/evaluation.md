@@ -76,6 +76,10 @@ python -m app.eval.cli report ../eval/runs/<id>/results.json   # eval/results/<i
 - **Only `wait` is implemented, not `on_limit: switch`.** Switching models mid-run would mix two models' answers in
   one gated repair loop and need a separate fallback path through scoring and reports; every item is answered by the
   model it names, so the fallback count is always 0.
+- **Several models per provider, optional models.** A config model may set `model:` (a model id on its role's
+  endpoint, with the same key and limits) and `optional: true`. An optional model that fails the preflight is skipped
+  by `run` and recorded in `results.json` as `skipped_models` (and in summary.md and slides-data.md); a required one
+  blocks the run, and so does having no model left.
 - **Hidden reasoning.** `HOSTED_LLM_EXTRA_BODY` / `OPEN_MODEL_EXTRA_BODY` (JSON) are merged into every request, e.g.
   to turn off thinking; they are recorded in `results.json` as `request_extras`.
 

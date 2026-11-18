@@ -127,7 +127,7 @@ def test_run_refuses_without_a_recent_successful_preflight(config_path, stamp, c
 
 def test_a_good_stamp_lets_the_run_reach_the_provider_check(config_path, stamp, capsys, monkeypatch):
     write_stamp(stamp, {"hosted-a": {"ok": True}, "open-b": {"ok": True}})
-    monkeypatch.setattr(cli, "get_provider", lambda role: (_ for _ in ()).throw(
+    monkeypatch.setattr(cli, "get_provider", lambda role, model=None: (_ for _ in ()).throw(
         cli.ProviderNotConfigured("not configured in this test")))
     assert cli.main(["--config", str(config_path), "run", "--yes"]) == 2
     out = capsys.readouterr().out
@@ -135,7 +135,7 @@ def test_a_good_stamp_lets_the_run_reach_the_provider_check(config_path, stamp, 
 
 
 def test_skip_preflight_prints_a_warning(config_path, stamp, capsys, monkeypatch):
-    monkeypatch.setattr(cli, "get_provider", lambda role: (_ for _ in ()).throw(
+    monkeypatch.setattr(cli, "get_provider", lambda role, model=None: (_ for _ in ()).throw(
         cli.ProviderNotConfigured("not configured in this test")))
     cli.main(["--config", str(config_path), "run", "--yes", "--skip-preflight"])
     assert "WARNING: skipping the preflight" in capsys.readouterr().out
@@ -174,3 +174,70 @@ def test_plan_shows_estimates_caps_and_prices(config_path, capsys):
     assert "hosted-a: worst case" in out and "estimated worst-case cost" in out
     assert "open-b: worst case" in out and "no price configured" in out
     assert "max_total_tokens" in out
+
+
+# --- per-model ids and optional models (Phase 12) -----------------------------------------------------------
+
+
+def test_a_config_model_id_overrides_the_slot_model_on_the_same_endpoint():
+    s = Settings(_env_file=None, open_model_endpoint="http://h/v1", open_model_name="big", open_model_api_key=FAKE_KEY)
+    small = get_provider("open", s, model="small")
+    assert small.model == "small" and small.base_url == "http://h/v1" and small._api_key == FAKE_KEY
+    assert get_provider("open", s).model == "big"
+    assert get_provider("open", Settings(_env_file=None, open_model_endpoint="http://h/v1"), model="only").model == "only"
+
+
+def optional_config(path):
+    data = yaml.safe_load(path.read_text())
+    data["models"][0]["optional"] = True  # hosted-a
+    path.write_text(yaml.safe_dump(data))
+    return runner.load_config(path)
+
+
+def test_a_failed_optional_model_is_skipped_not_blocking(config_path, stamp):
+    config = optional_config(config_path)
+    write_stamp(stamp, {"hosted-a": {"ok": False}, "open-b": {"ok": True}})
+    ok, reason, skipped = preflight.check_stamp(config)
+    assert ok and list(skipped) == ["hosted-a"] and "preflight" in skipped["hosted-a"]
+    write_stamp(stamp, {"hosted-a": {"ok": True}, "open-b": {"ok": False}})  # a required model still blocks
+    ok, reason, _ = preflight.check_stamp(config)
+    assert not ok and "open-b did not pass" in reason
+
+
+def test_no_model_left_after_skipping_is_a_refusal(config_path, stamp):
+    data = yaml.safe_load(config_path.read_text())
+    for m in data["models"]:
+        m["optional"] = True
+    config_path.write_text(yaml.safe_dump(data))
+    write_stamp(stamp, {"hosted-a": {"ok": False}, "open-b": {"ok": False}})
+    ok, reason, _ = preflight.check_stamp(runner.load_config(config_path))
+    assert not ok and "no model passed" in reason
+
+
+def test_preflight_exit_code_ignores_a_failed_optional_model(config_path, stamp, capsys):
+    optional_config(config_path)
+    s = settings(open_model_endpoint="http://h/v1", open_model_name="qwen")
+
+    def handler(request):
+        if "anthropic" in str(request.url):
+            return httpx.Response(429, json={"error": {"message": "overloaded"}})
+        return httpx.Response(200, json={"choices": [{"message": {"content": "OK"}}], "usage": {}})
+    code, out = run(config_path, s, handler, capsys)
+    assert code == 0 and "optional, will be skipped: hosted-a" in out
+
+
+def test_the_run_executes_only_passed_models_and_records_the_skipped(config_path, stamp, capsys, monkeypatch, tmp_path):
+    from app.eval.dryrun import DryRunProvider
+    from app.fixtures.gold_ids import load_units
+
+    optional_config(config_path)
+    write_stamp(stamp, {"hosted-a": {"ok": False}, "open-b": {"ok": True}})
+    monkeypatch.setattr(runner, "select_units", lambda c: [load_units()["MBBL2016-5.4.2#1"]])
+    built = []
+    monkeypatch.setattr(cli, "get_provider", lambda role, model=None: built.append(role) or DryRunProvider("x"))
+    assert cli.main(["--config", str(config_path), "run", "--yes", "--runs-dir", str(tmp_path / "r"), "--no-report"]) == 0
+    [results] = (tmp_path / "r").glob("*/results.json")
+    data = json.loads(results.read_text())
+    assert built == ["open"] and {i["model"] for i in data["items"]} == {"open-b"}
+    assert list(data["meta"]["skipped_models"]) == ["hosted-a"]
+    assert "skipping optional model hosted-a" in capsys.readouterr().out

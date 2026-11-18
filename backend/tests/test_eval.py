@@ -123,7 +123,7 @@ def test_run_requires_yes(config_path, ids_only, capsys):
 
 
 def test_unconfigured_provider_is_a_clear_error(config_path, ids_only, capsys, monkeypatch):
-    def boom(role):
+    def boom(role, model=None):
         raise ProviderNotConfigured("hosted LLM not configured: set HOSTED_LLM_PROVIDER in .env")
     monkeypatch.setattr(cli, "get_provider", boom)
     assert cli.main(["--config", str(config_path), "run", "--yes", "--skip-preflight"]) == 2
@@ -223,7 +223,7 @@ def test_slides_data_has_provenance_headline_breakdowns_and_caution(real_like_re
     text = md.read_text(encoding="utf-8")
     for needle in ("20261118T000000Z-test", "abc123", "Rulepack hash", "dry-a (hosted)", "wrong_shipped",
                    "gated", "ungated", "Paired", "Breakdown by tier", "Breakdown by template", "All units",
-                   "Distinct rules only", "Fallback items: 0", "n is small", "no model difference may be claimed"):
+                   "Distinct rules only", "Fallback items: 0", "Skipped models: none", "n is small", "no model difference may be claimed"):
         assert needle in text, needle
     assert "[" in text and "%" in text  # Wilson intervals
     rows = list(csv.reader(csv_path.open(encoding="utf-8")))

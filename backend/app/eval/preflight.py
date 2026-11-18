@@ -69,7 +69,7 @@ def config_lines(role: str, settings: Settings) -> list[str]:
 
 def run_preflight(config, *, settings: Settings | None = None, provider_factory=None, out=print) -> int:
     settings = settings or default_settings()
-    make = provider_factory or (lambda spec: get_provider(spec.role, settings))
+    make = provider_factory or (lambda spec: get_provider(spec.role, settings, model=spec.model))
     results, configured = {}, 0
     for spec in config.models:
         out(f"{spec.name} ({spec.role})")
@@ -105,21 +105,34 @@ def run_preflight(config, *, settings: Settings | None = None, provider_factory=
     if not configured:
         out("FAILED: no model is configured (see .env.example)")
         return 2
-    failed = [name for name, r in results.items() if not r["ok"]]
-    out("preflight OK" if not failed else f"preflight FAILED for: {', '.join(failed)}")
-    return 0 if not failed else 1
+    optional = {spec.name for spec in config.models if spec.optional}
+    failed = [name for name, r in results.items() if not r["ok"] and name not in optional]
+    skipped = [name for name, r in results.items() if not r["ok"] and name in optional]
+    if skipped:
+        out(f"optional, will be skipped: {', '.join(skipped)}")
+    if not failed and any(r["ok"] for r in results.values()):
+        out("preflight OK")
+        return 0
+    out(f"preflight FAILED for: {', '.join(failed) or 'every model'}")
+    return 1
 
 
-def check_stamp(config, now: datetime | None = None) -> tuple[bool, str]:
-    """A real run needs a successful preflight of every selected model in the last 24 hours on this machine."""
+def check_stamp(config, now: datetime | None = None) -> tuple[bool, str, dict[str, str]]:
+    """A real run needs a successful preflight in the last 24 hours on this machine of every selected model, except
+    optional ones: those are returned as skipped {name: reason}. At least one model must remain."""
     path = _stamp_path()
     if not path.exists():
-        return False, "no preflight found: run `python -m app.eval.cli preflight` first"
+        return False, "no preflight found: run `python -m app.eval.cli preflight` first", {}
     data = json.loads(path.read_text(encoding="utf-8"))
     when = datetime.fromisoformat(data["timestamp"])
     if (now or datetime.now(timezone.utc)) - when > STAMP_MAX_AGE:
-        return False, f"the last preflight ({data['timestamp']}) is older than 24 hours: run preflight again"
+        return False, f"the last preflight ({data['timestamp']}) is older than 24 hours: run preflight again", {}
+    skipped = {}
     for spec in config.models:
         if not data["results"].get(spec.name, {}).get("ok"):
-            return False, f"{spec.name} did not pass the last preflight: fix it and run preflight again"
-    return True, f"preflight OK at {data['timestamp']}"
+            if not spec.optional:
+                return False, f"{spec.name} did not pass the last preflight: fix it and run preflight again", {}
+            skipped[spec.name] = f"optional model did not pass the preflight at {data['timestamp']}"
+    if len(skipped) == len(config.models):
+        return False, "no model passed the last preflight", skipped
+    return True, f"preflight OK at {data['timestamp']}", skipped

@@ -49,6 +49,7 @@ def write_slides(results_path: Path, out_dir: Path | None = None) -> list[Path]:
              f"dry_run=false",
              f"- Calls used: {meta['used']['calls']}, tokens used: {meta['used']['tokens']}",
              f"- Stopped early: {meta['stopped_early'] or 'no'}",
+             "- Skipped models: " + ("; ".join(f"{k} ({v})" for k, v in meta.get("skipped_models", {}).items()) or "none"),
              f"- Fallback items: {fallback} (only on_limit=wait is implemented; each item was answered by its model)",
              "", f"**{CAUTION}**", "",
              "## Headline: wrong_shipped, gated vs ungated\n",

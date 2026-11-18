@@ -86,6 +86,8 @@ def write_report(results_path: Path, out_dir: Path | None = None) -> list[Path]:
               f"Date {meta['date']} · commit `{meta['git_commit']}` · rulepack `{meta['rulepack_hash'][:12]}` · "
               f"temperature {meta['temperature']} · max repairs {meta['max_repairs']} · repeats {meta['repeats']} · "
               f"providers {meta['provider_classes']} · dry_run={str(meta['dry_run']).lower()}\n"]
+    for name, why in meta.get("skipped_models", {}).items():
+        lines.append(f"**Skipped model:** {name}: {why}\n")
     if meta.get("stopped_early"):
         lines.append(f"**Stopped early:** {meta['stopped_early']}\n")
     n_max = max((len(g) for g in _by(items, "model", "mode").values()), default=0)
