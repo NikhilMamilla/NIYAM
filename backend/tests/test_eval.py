@@ -1,3 +1,4 @@
+import csv
 import json
 
 import pytest
@@ -165,3 +166,67 @@ def test_budget_caps_stop_a_run_and_are_recorded(config_path, ids_only, tmp_path
                          provider_factory=lambda name, mode: DryRunProvider(name))
     meta = json.loads((run_dir / "results.json").read_text())["meta"]
     assert meta["stopped_early"].startswith("budget exhausted") and meta["used"]["calls"] == 1
+
+
+def test_provider_error_stops_the_run_with_partial_results_and_no_skipped_unit(config_path, ids_only, tmp_path):
+    from app.llm.base import LLMError
+
+    class FailsSecondCall(DryRunProvider):
+        calls = 0
+
+        def complete(self, *a, **kw):
+            FailsSecondCall.calls += 1
+            if FailsSecondCall.calls == 2:
+                raise LLMError("openai_compat request failed after 9 attempt(s): HTTP 429: quota for sk-SECRET")
+            return super().complete(*a, **kw)
+
+    data = yaml.safe_load(config_path.read_text())
+    data["modes"] = ["ungated"]
+    config_path.write_text(yaml.safe_dump(data))
+    run_dir = runner.run(runner.load_config(config_path), None, dry_run=True, runs_dir=tmp_path,
+                         provider_factory=lambda name, mode: FailsSecondCall(name))
+    result = json.loads((run_dir / "results.json").read_text())
+    stopped = result["meta"]["stopped_early"]
+    assert [i["unit_id"] for i in result["items"]] == [IDS_UNITS[0]]  # nothing after the failure, nothing skipped
+    assert IDS_UNITS[1] in stopped and "429" in stopped and "sk-SECRET" not in stopped
+
+
+@pytest.fixture
+def real_like_results(config_path, ids_only, tmp_path):
+    """A results.json shaped like a real run (dry-run answers, relabelled): slides must treat it as real."""
+    run_dir = runner.run(runner.load_config(config_path), None, dry_run=True, runs_dir=tmp_path / "runs",
+                         provider_factory=lambda name, mode: DryRunProvider(name))
+    path = run_dir / "results.json"
+    data = json.loads(path.read_text())
+    data["meta"].update(dry_run=False, git_commit="abc123", run_id="20261118T000000Z-test")
+    path.write_text(json.dumps(data))
+    return path
+
+
+def test_slides_refuse_dry_runs_and_dirty_commits(real_like_results, tmp_path, capsys):
+    from app.eval import slides
+
+    data = json.loads(real_like_results.read_text())
+    for change in ({"dry_run": True}, {"git_commit": "abc123-dirty"}):
+        bad = tmp_path / "bad.json"
+        bad.write_text(json.dumps({**data, "meta": {**data["meta"], **change}}))
+        with pytest.raises(report.RefusedOutput):
+            slides.write_slides(bad, tmp_path / "out")
+        assert cli.main(["slides", str(bad), "--out", str(tmp_path / "out")]) == 2
+    assert not (tmp_path / "out").exists()
+
+
+def test_slides_data_has_provenance_headline_breakdowns_and_caution(real_like_results, tmp_path):
+    from app.eval import slides
+
+    md, csv_path = slides.write_slides(real_like_results, tmp_path / "out")
+    text = md.read_text(encoding="utf-8")
+    for needle in ("20261118T000000Z-test", "abc123", "Rulepack hash", "dry-a (hosted)", "wrong_shipped",
+                   "gated", "ungated", "Paired", "Breakdown by tier", "Breakdown by template", "All units",
+                   "Distinct rules only", "Fallback items: 0", "n is small", "no model difference may be claimed"):
+        assert needle in text, needle
+    assert "[" in text and "%" in text  # Wilson intervals
+    rows = list(csv.reader(csv_path.open(encoding="utf-8")))
+    assert rows[0][:4] == ["run_id", "view", "model", "mode"]
+    assert {r[1] for r in rows[1:]} == {"all_units", "distinct_rules"}
+    assert all(r[0] == "20261118T000000Z-test" for r in rows[1:])

@@ -1,10 +1,10 @@
-"""python -m app.eval.cli plan | run --yes [--dry-run] | report <results.json>"""
+"""python -m app.eval.cli plan | preflight | run --yes [--dry-run] | report <results.json> | slides <results.json>"""
 
 import argparse
 import sys
 from pathlib import Path
 
-from app.eval import preflight, report, runner
+from app.eval import preflight, report, runner, slides
 from app.eval.dryrun import DryRunProvider
 from app.fixtures.builders import REPO_ROOT
 from app.llm.base import ProviderNotConfigured
@@ -28,11 +28,15 @@ def main(argv=None) -> int:
     p = sub.add_parser("report")
     p.add_argument("results", type=Path)
     p.add_argument("--out", type=Path)
+    p = sub.add_parser("slides", help="slide data (md + csv) for a real, committed run; refuses dry runs")
+    p.add_argument("results", type=Path)
+    p.add_argument("--out", type=Path)
     args = parser.parse_args(argv)
 
-    if args.command == "report":
+    if args.command in ("report", "slides"):
+        write = report.write_report if args.command == "report" else slides.write_slides
         try:
-            for path in report.write_report(args.results, args.out):
+            for path in write(args.results, args.out):
                 print(f"wrote {path}")
         except report.RefusedOutput as e:
             print(f"REFUSED: {e}")

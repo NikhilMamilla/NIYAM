@@ -202,11 +202,12 @@ def run(config: EvalConfig, providers: dict[str, object], *, dry_run: bool, runs
     run_dir = runs_dir / run_id
     counter = {"calls": 0, "tokens": 0}
     items, stopped = [], None
-    provider_classes = {}
+    provider_classes, request_extras = {}, {}
     for spec in config.models:
         for mode in config.modes:
             inner = provider_factory(spec.name, mode) if provider_factory else providers[spec.name]
             provider_classes[spec.name] = type(inner).__name__
+            request_extras[spec.name] = getattr(inner, "extra_body", {})
             provider = BudgetedProvider(inner, config.budget, counter)
             for repeat in range(config.repeats):
                 for unit in plan.units:
@@ -219,6 +220,11 @@ def run(config: EvalConfig, providers: dict[str, object], *, dry_run: bool, runs
                                               max_tokens=config.max_tokens, run_dir=attempts_dir)
                     except BudgetExceeded as e:
                         stopped = str(e)
+                        break
+                    except LLMError as e:  # retries exhausted: stop the whole run, never skip this unit
+                        from app.eval.preflight import safe_error
+
+                        stopped = f"provider error on {spec.name} / {mode} / {unit.id}: {safe_error(e)}"
                         break
                     final = result.attempts[-1].extracted_xml if result.attempts else None
                     shipped = result.outcome == "accepted" if mode == "gated" else final is not None
@@ -233,7 +239,7 @@ def run(config: EvalConfig, providers: dict[str, object], *, dry_run: bool, runs
     meta = {
         "run_id": run_id, "date": started.isoformat(), "dry_run": dry_run, "git_commit": _git_commit(),
         "rulepack_hash": rulepack_hash(), "models": [m.model_dump() for m in config.models],
-        "provider_classes": provider_classes, "modes": config.modes, "repeats": config.repeats,
+        "provider_classes": provider_classes, "request_extras": request_extras, "modes": config.modes, "repeats": config.repeats,
         "temperature": config.temperature, "max_repairs": config.max_repairs,
         "budget": config.budget.model_dump(), "used": counter, "stopped_early": stopped,
         "system_prompt_hashes": {t: hashlib.sha256(build_system_prompt(u).encode()).hexdigest()
