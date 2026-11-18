@@ -1,0 +1,13 @@
+unit_id: "MBBL2016-4.22#1"
+clause_id: MBBL2016-4.22
+unit_text: The minimum area for office room/shop or any other space to be used as workspace shall not be less than 6.0 sq m.
+topic: room area
+template: space_area_min
+dev_length_unit: mm
+params:
+  categories: [Office, Shop, Workspace]
+threshold: {value: 6.0, text: "6.0", unit: m2, inclusive: true}
+notes_for_reviewer: >-
+  Offices, shops and other workspaces (Category Office, Shop or Workspace) must have a floor area of at least
+  6.0 m2. NOT encoded: "with a minimum width of 2.1 m" and the clause heading's condition "Non-residential
+  buildings" (the building type is not checked; the room categories are assumed to imply it).

@@ -1,3 +1,56 @@
+- id: MBBL2016-3.16.1
+  source_doc: MBBL-2016
+  clause_number: 3.16.1
+  title: Creche/Day Care facilities
+  text: '3.16.1 Creche/Day Care facilities
+
+    As per factories Act, 1948 a Creche/Day care facility has to be provided for any
+
+    organization/establishment employing more than 15 women for their kids upto the age
+
+    of 5.
+
+    a) The height of the rooms shall be not less than 3.6 metres from the floor to soffit
+
+    and there shall not be less than 1.86 sqm of floor area / child to be accommodated
+
+    and maintaining adequate ventilation by the circulation of fresh air.
+
+    b) There is a minimum of one toilet and one wash hand basin for every 10 children
+
+    over the age of two years. (refer notes under Table 4.21)
+
+    c) The minimum staffing ratios for care shall be 1:4 children
+
+    d) Monitoring- There is a necessity of minimum two supervisor on continuous duty.
+
+    Chapter Note:
+
+    For projects proposed within the Prohibited and Regulated areas as defined by AMASR Act
+
+    2010, the Development regulations of Height, FAR, Coverage and any other controls stipulated
+
+    in Chapter-3 and Chapter-5 of MBBL shall be superseded by site specific Heritage Bye-Laws
+
+    prepared and notified by the Competent Authority (NMA) under the AMASR Act. NOC shall
+
+    have to be obtained as per the Rules framed under the said Act by submission of required
+
+    documents as may be necessary vide rules, including “Heritage Impact Assessment” report, if
+
+    so necessitated by the NMA.
+
+    4. GENERAL BUILDING REQUIREMENTS
+
+    AND SERVICES'
+  page: 67
+  section_path:
+  - Chapter 3
+  - Development Codes
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
 - id: MBBL2016-4.10.4
   source_doc: MBBL-2016
   clause_number: 4.10.4
@@ -69,6 +122,23 @@
 
     any open spaces/ mechanical means, the maximum height of the cabin shall be 2.2 m.'
   page: 73
+  section_path:
+  - Chapter 4
+  - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-4.22
+  source_doc: MBBL-2016
+  clause_number: '4.22'
+  title: Non-residential buildings
+  text: '4.22 Non-residential buildings
+
+    The minimum area for office room/shop or any other space to be used as workspace
+
+    shall not be less than 6.0 sq m. with a minimum width of 2.1 m.'
+  page: 76
   section_path:
   - Chapter 4
   - General Building Requirements and Secrvices
@@ -261,6 +331,177 @@
   section_path:
   - Chapter 4
   - General Building Requirements and Secrvices
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-5.4.1
+  source_doc: MBBL-2016
+  clause_number: 5.4.1
+  title: Doorways
+  text: '5.4.1 Doorways
+
+    a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
+
+    or passageway providing continuous and protected means of egress.
+
+    b. No exit doorway shall be less than 1m in width. Doorways shall be not less than 2
+
+    m in height. Doorways for bathrooms, water closet, stores etc. shall be not less than
+
+    0.75m wide.
+
+    c. Exit doorways shall open outwards, that is, away from the room but shall not
+
+    obstruct the travel along any exit. No door, when opened, shall reduce the required
+
+    width of stairway or landing to less than 0.9m, overhead or sliding doors shall not
+
+    be installed.
+
+    d. Exit door shall not open immediately upon a flight or stairs, a landing equal to at
+
+    least the width of the door shall be provided in the stairway at each doorway, level
+
+    of landing shall be the same as that of the floor which it serves.
+
+    e. Exit doorways shall be openable from the side which they serve without the use of a
+
+    key.
+
+    f. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
+
+    the direction of exit.'
+  page: 100
+  section_path:
+  - Chapter 5
+  - Provisions for High-rise Development
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-7.1
+  source_doc: MBBL-2016
+  clause_number: '7.1'
+  title: Industrial Buildings (Factories, Workshops, etc.)
+  text: '7.1 Industrial Buildings (Factories, Workshops, etc.)
+
+    1. The relevant provisions contained in the Factory Act. 1948 shall apply for the
+
+    construction of factory buildings. The minimum internal height of workrooms shall not
+
+    be less than 4.5 m. measured from the floor level to the lowest point in the ceiling
+
+    provided that this bye-laws shall not apply to room intended for storage, godowns and
+
+    the like purposes but only in rooms occupied by workers for purposes of manufacture.
+
+    In case of small factories, employing less than 50 workers for purposes of
+
+    manufacturing and carrying on a class of manufacturing covered under the flatted
+
+    factories and service industries, as given in the Master Plan/Development Plan, the
+
+    Authority may allow minimum height upto 3.66 m.
+
+    2. Parking space provisions as provide in development code of Master Plan/Development
+
+    Plan.
+
+    3. Requirements of water supply, drainage and sanitary installation shall be as per Table
+
+    4.6, 4.7 and 4.21, but in no case less than 1 W.C. and one urinal shall be permitted.
+
+    a) Notwithstanding the provision of exits requirements as per Bye-law section
+
+    11.8 each working room shall be provided with adequate number of exits not
+
+    less than two in number.
+
+    b) No exit shall be less than 1.2 m. in width and 2.1 m. in height and doors of
+
+    such exit shall be so arranged that it can be opened easily from inside.
+
+    c) No staircase, lobby corridors or passage shall be less than 1.2 m. in width.
+
+    In addition to the requirement in this part, provisions contained in chapter-3 will be
+
+    followed.
+
+    4. There shall be provided at all time for each person employed in any room of factory at
+
+    least 3.5 sq m. of floor space exclusive to that occupied by the machinery and a
+
+    breathing space of at least 15 cum. (Further the provision of part VIII section 1
+
+    lighting and ventilation of National Building code of India shall be followed).
+
+    5. The effluent from industries (industrial and biological in nature) shall be treated and
+
+    shall be of quality to the satisfaction of the concerned local bodies before letting out
+
+    the same into a watercourse or municipal drain.'
+  page: 119
+  section_path:
+  - Chapter 7
+  - Special Requirements for Occupancy/Land Development and Other
+  tier: unclassified
+  topic: null
+  status: candidate
+  notes: null
+- id: MBBL2016-7.2
+  source_doc: MBBL-2016
+  clause_number: '7.2'
+  title: Educational Building (School/Colleges)
+  text: '7.2 Educational Building (School/Colleges)
+
+    1. No basement or cellar room shall be designed, constructed, altered, converted or used
+
+    for the purpose of study or instruction.
+
+    2. Every such building, exceeding two storeys in height shall be constructed of fire
+
+    resisting material throughout.
+
+    3. The minimum size of a cellar room, study room or room used for purposes of
+
+    instruction shall be 5.5 m. x 4.5 m. and no part of such room shall be distant more than
+
+    7.5 m. from an external wall abutting on the requisite open space. Every such room
+
+    shall have minimum ventilation to the extent of 1/5th of its floor area.
+
+    4. A minimum of 1.0 sq m. of net floor space per student shall be provided. A central hall
+
+    will not be counted in the accommodation, nor will a class room for cookery, laundry,
+
+    manual instruction, drawing or science. The number of students in such building shall
+
+    be calculated on this basis for the purpose of this section.
+
+    5. Every assembly room, gymnasium shall have a clear height of 3.6 m. except under a
+
+    girder which may project 0.6 m. below the required ceiling height.
+
+    A clear internal height under balcony or a girder shall not be less than 3.0 m.
+
+    A minimum room height for classroom in all schools and other institutions shall not be
+
+    less than 3.0 m. The minimum head room under beams shall be 2.75 m.
+
+    6. Exit requirements shall conform to bye-laws section 11.7 and 11.8 (Chapter-11). No
+
+    door shall be less than 1.2 m. in width and 2.20 m. in height.
+
+    7. Requirement of water supply, drainage and sanitary installation shall conform to Table
+
+    4.6, 4.7, 4.11, 4.12 and 4.13 of Chapter-4.
+
+    8. A playground shall be provided as per norms.'
+  page: 119
+  section_path:
+  - Chapter 7
+  - Special Requirements for Occupancy/Land Development and Other
   tier: unclassified
   topic: null
   status: candidate

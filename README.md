@@ -33,7 +33,7 @@ buildings are synthetic.
 | Area | State |
 |---|---|
 | Corpus: MBBL 2016, 445 clauses, search and curation CLI | works |
-| Rule units: 20 verbatim units (6 hand-written pilots, 14 from rule specs) | works; **drafts, not human-reviewed** |
+| Rule units: 25 verbatim units (6 hand-written pilots, 19 from rule specs; 3 tagged as duplicates) | works; **drafts, not human-reviewed**; each is a single-element threshold, conditions in the clause are not encoded |
 | IDS gate and sandboxed geometric gate | works (the sandbox is defence in depth, not a hard security boundary) |
 | LLM compiler, both tiers, with gated repair loop | works with scripted test providers; **no real LLM results yet** |
 | Rulepack v0: 6 rules (3 door IDS, 3 room/stair Python) | works; **drafts, not reviewed** |
@@ -92,12 +92,13 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
   authoring-tool exports.
 - **Drafts.** Every rule encodes one reading of a clause and none is human-reviewed yet
   (`docs/review/REVIEWER_GUIDE.md`).
+- **Coverage.** The 25 units are every MBBL 2016 sentence found so far that fits a single-element template cleanly; the Stage 1 target of 40 to 60 clauses is not met (see `docs/spec-backlog.md` for why the rest do not fit).
 - **Single-element thresholds.** The templates check one value of one element (a door width, a room's area or
   height). Ratios, counts, distances and relations between elements are not encoded (`docs/spec-backlog.md`).
 - **Ignored conditions.** Building-type exceptions (e.g. 2 m doorways in assembly buildings), room-use conditions
   and second thresholds in the same sentence are dropped and only noted for the reviewer.
 - **Thresholds are checked against the text, not its meaning** (`docs/specgen.md`).
-- **Small n.** With 20 units every evaluation interval is wide (`docs/evaluation.md`).
+- **Small n.** With 25 units (22 distinct) every evaluation interval is wide (`docs/evaluation.md`).
 
 ## More
 

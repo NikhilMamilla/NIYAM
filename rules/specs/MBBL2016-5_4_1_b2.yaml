@@ -1,0 +1,13 @@
+unit_id: "MBBL2016-5.4.1#b2"
+clause_id: MBBL2016-5.4.1
+unit_text: Doorways shall be not less than 2 m in height.
+topic: door height
+template: door_height_min
+dev_length_unit: m
+params:
+  selector: {pset: Pset_DoorCommon, property: FireExit, value: true}
+threshold: {value: 2.0, text: "2", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  Exit doors (Pset_DoorCommon.FireExit = TRUE) must have Qto_DoorBaseQuantities.Height of at least 2 m. Inclusive.
+  AMBIGUITY: the sentence says "Doorways", read as exit doorways because clause 5.4.1 is about exits; non-exit
+  doors are not checked. Clear opening vs leaf vs frame height is not specified.

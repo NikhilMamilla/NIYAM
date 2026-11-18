@@ -47,7 +47,7 @@ def prompts_for(unit_id: str) -> list[str]:
 
 @pytest.mark.parametrize("unit_id", heldout.all_units())
 def test_no_heldout_detail_in_any_compiler_prompt(unit_id):
-    assert len(heldout.all_units()) == 20 and len(TOKENS) > 50  # the guard covers real content: names, ids, entity lines, file names
+    assert len(heldout.all_units()) == 25 and len(TOKENS) > 50  # the guard covers real content: names, ids, entity lines, file names
     for prompt in prompts_for(unit_id):
         assert not leaks(prompt), leaks(prompt)
 

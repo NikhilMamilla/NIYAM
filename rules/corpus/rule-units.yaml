@@ -1,3 +1,17 @@
+- id: MBBL2016-3.16.1#a
+  clause_id: MBBL2016-3.16.1
+  text: The height of the rooms shall be not less than 3.6 metres from the floor to soffit
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-3_16_1_a.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Rooms of a creche or day-care facility (Category Creche) must be at least 3.6 m high (vertical
+    extent of the space geometry, floor to soffit). NOT encoded: the 1.86 sqm of floor area per child
+    in the same sentence (needs an occupant count). AMBIGUITY: "the rooms" is read as every room of the
+    creche.'
+  reviewed_on: null
+  duplicate_of: null
 - id: MBBL2016-4.10.4#a
   clause_id: MBBL2016-4.10.4
   text: Every basement shall be in every part at least 2.4 m in height from the floor to the underside
@@ -38,6 +52,21 @@
     width (local Y extent of the flight geometry) >= 1.0 m. Ambiguity: ''width of staircase'' taken as
     flight width, not clear width between handrails; other building types (1.5 m, 2.0 m) and the row-housing
     note (0.75 m) are not encoded; flights in other occupancy types are out of scope.'
+  reviewed_on: null
+  duplicate_of: null
+- id: MBBL2016-4.22#1
+  clause_id: MBBL2016-4.22
+  text: The minimum area for office room/shop or any other space to be used as workspace shall not be
+    less than 6.0 sq m.
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-4_22_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Offices, shops and other workspaces (Category Office, Shop or Workspace) must have a floor area
+    of at least 6.0 m2. NOT encoded: "with a minimum width of 2.1 m" and the clause heading''s condition
+    "Non-residential buildings" (the building type is not checked; the room categories are assumed to
+    imply it).'
   reviewed_on: null
   duplicate_of: null
 - id: MBBL2016-4.24.7.2#b
@@ -247,6 +276,19 @@
     vs leaf vs overall width not specified.'
   reviewed_on: null
   duplicate_of: null
+- id: MBBL2016-5.4.1#b2
+  clause_id: MBBL2016-5.4.1
+  text: Doorways shall be not less than 2 m in height.
+  tier: ids
+  status: pilot
+  expected_artifact: fixtures/ids/MBBL2016-5_4_1_b2.ids
+  human_reviewed: false
+  reviewer: null
+  notes: 'Exit doors (Pset_DoorCommon.FireExit = TRUE) must have Qto_DoorBaseQuantities.Height of at least
+    2 m. Inclusive. AMBIGUITY: the sentence says "Doorways", read as exit doorways because clause 5.4.1
+    is about exits; non-exit doors are not checked. Clear opening vs leaf vs frame height is not specified.'
+  reviewed_on: null
+  duplicate_of: null
 - id: MBBL2016-5.4.1#c
   clause_id: MBBL2016-5.4.1
   text: overhead or sliding doors shall not be installed
@@ -270,5 +312,31 @@
   reviewer: null
   notes: 'IfcDoor with Pset_DoorCommon.FireExit=TRUE: OperationType must not be REVOLVING. Ambiguity:
     ''means of fire exit'' is mapped to the FireExit flag.'
+  reviewed_on: null
+  duplicate_of: null
+- id: MBBL2016-7.1#1
+  clause_id: MBBL2016-7.1
+  text: The minimum internal height of workrooms shall not be less than 4.5 m.
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-7_1_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Factory workrooms (Category Workroom) must be at least 4.5 m high. NOT encoded: the clause is
+    about industrial buildings (7.1); the building type is not checked, only the room category. Clear
+    internal height vs floor-to-slab is not distinguished.'
+  reviewed_on: null
+  duplicate_of: null
+- id: MBBL2016-7.2#1
+  clause_id: MBBL2016-7.2
+  text: A minimum room height for classroom in all schools and other institutions shall not be less than
+    3.0 m.
+  tier: geometric
+  status: pilot
+  expected_artifact: fixtures/checks/MBBL2016-7_2_1.py
+  human_reviewed: false
+  reviewer: null
+  notes: 'Classrooms (Category Classroom) must be at least 3.0 m high. NOT encoded: the 3.0 m clear height
+    under balconies or girders and the 2.75 m head room under beams in the same clause (need beam geometry).'
   reviewed_on: null
   duplicate_of: null

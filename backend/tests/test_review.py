@@ -126,7 +126,7 @@ def test_validation_errors_name_the_line_and_change_nothing(work, capsys):
 
 def test_committed_review_sheet_is_current():
     rows = rows_of(REPO_ROOT / "docs" / "review" / "review-sheet.csv")
-    assert len(rows) == 20 and all(r["decision"] == "" for r in rows)  # 6 hand-written + 14 spec units
+    assert len(rows) == 25 and all(r["decision"] == "" for r in rows)  # 6 hand-written + 19 spec units
 
 
 def test_review_import_reminds_that_the_corpus_db_needs_unit_import(work, capsys):

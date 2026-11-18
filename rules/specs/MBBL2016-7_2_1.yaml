@@ -1,0 +1,12 @@
+unit_id: "MBBL2016-7.2#1"
+clause_id: MBBL2016-7.2
+unit_text: A minimum room height for classroom in all schools and other institutions shall not be less than 3.0 m.
+topic: room height
+template: space_height_min
+dev_length_unit: m
+params:
+  categories: [Classroom]
+threshold: {value: 3.0, text: "3.0", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  Classrooms (Category Classroom) must be at least 3.0 m high. NOT encoded: the 3.0 m clear height under balconies
+  or girders and the 2.75 m head room under beams in the same clause (need beam geometry).

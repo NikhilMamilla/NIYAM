@@ -1,6 +1,6 @@
 # Rule specs and the generator
 
-Adding a rule unit that fits one of four templates costs one small YAML file in `rules/specs/`. From it,
+Adding a rule unit that fits one of five templates costs one small YAML file in `rules/specs/`. From it,
 `python -m app.specgen.cli build <spec>|--all` writes, deterministically:
 
 - the rule unit (status `pilot`, `human_reviewed: false`, notes = the spec's `notes_for_reviewer`) in
@@ -45,18 +45,19 @@ The loader rejects:
 - a unit other than `m` (widths, heights) or `m2` (areas), and a missing `inclusive`;
 - door selectors the modelling profile does not define, and door operations outside `IfcDoorTypeOperationEnum`.
 
-Write the spec file by hand: it is input, never derived from running anything.
+Write the spec file by hand: it is input, never derived from running anything. A spec may pin `dev_length_unit: mm|m`; new specs do, so adding one never changes which unit older specs' fixtures use.
 
 ## Templates
 
 | Template | Tier | Checks | Gold |
 |---|---|---|---|
 | `door_width_min` | IDS | `IfcDoor` with the selector (`Pset_DoorCommon.FireExit = TRUE`): `Qto_DoorBaseQuantities.Width >= threshold` | IDS property facet with `minInclusive` |
+| `door_height_min` | IDS | the same selection: `Qto_DoorBaseQuantities.Height >= threshold` | IDS property facet with `minInclusive` |
 | `door_operation_forbidden` | IDS | selected doors: `OperationType` not in the listed values | IDS prohibited attribute |
 | `space_area_min` | geometric | `IfcSpace` with a listed Category: `space_floor_area_m2 >= threshold` (or `>`) | Python check using existing helpers only |
 | `space_height_min` | geometric | same selection: `element_height_m >= threshold` (or `>`) | Python check using existing helpers only |
 
-`door_width_min` accepts inclusive thresholds only. IDS compares unit-converted quantities and 900 mm reads as
+`door_width_min` and `door_height_min` accept inclusive thresholds only. IDS compares unit-converted quantities and 900 mm reads as
 0.9000000000000001 m, so an exclusive bound would pass a door that sits exactly on it.
 
 **What each template guarantees** (`tests/test_specgen.py`): the generated gold is accepted by the full gate, scores

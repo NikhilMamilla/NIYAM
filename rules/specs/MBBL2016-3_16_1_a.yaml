@@ -1,0 +1,13 @@
+unit_id: "MBBL2016-3.16.1#a"
+clause_id: MBBL2016-3.16.1
+unit_text: The height of the rooms shall be not less than 3.6 metres from the floor to soffit
+topic: room height
+template: space_height_min
+dev_length_unit: m
+params:
+  categories: [Creche]
+threshold: {value: 3.6, text: "3.6", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  Rooms of a creche or day-care facility (Category Creche) must be at least 3.6 m high (vertical extent of the
+  space geometry, floor to soffit). NOT encoded: the 1.86 sqm of floor area per child in the same sentence (needs
+  an occupant count). AMBIGUITY: "the rooms" is read as every room of the creche.

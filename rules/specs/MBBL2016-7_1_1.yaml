@@ -1,0 +1,13 @@
+unit_id: "MBBL2016-7.1#1"
+clause_id: MBBL2016-7.1
+unit_text: The minimum internal height of workrooms shall not be less than 4.5 m.
+topic: room height
+template: space_height_min
+dev_length_unit: mm
+params:
+  categories: [Workroom]
+threshold: {value: 4.5, text: "4.5", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  Factory workrooms (Category Workroom) must be at least 4.5 m high. NOT encoded: the clause is about industrial
+  buildings (7.1); the building type is not checked, only the room category. Clear internal height vs floor-to-slab
+  is not distinguished.
