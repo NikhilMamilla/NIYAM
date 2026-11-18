@@ -108,6 +108,7 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 
 - `docs/evaluation.md`: metrics, held-out fixtures, the first real run.
 - `docs/specgen.md` and `docs/spec-backlog.md`: rule specs and what they cannot express.
+- `docs/real-models.md`: two real IFC4 exports run through the audit, and what they lack.
 - `docs/geometric-gate.md`: the Python sandbox and what it does not enforce.
 - `docs/modelling-profile.md`: what an IFC model must contain to be checkable.
 - `docs/review/`: the review sheet and the reviewer guide.
