@@ -19,5 +19,5 @@ temperature: 0.0
 max_repairs: 3
 max_tokens: 4096
 budget:
-  max_total_calls: 0
+  max_total_calls: 60
   max_total_tokens: 4500000

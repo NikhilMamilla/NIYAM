@@ -52,13 +52,13 @@ seeing the results and is not a pre-registered analysis.
 Searched every page outside the locality lists (pages 1-30 and 280-373) for doors, rooms, heights and areas. The rules
 defer room sizes to the NBC: Rule 15(a)(vi), "the requirements of parts of the building like size and area requirements
 of habitable rooms, kitchen, bathrooms and Water closets ... shall conform to the National Building Code of India".
-No sentence fits a template without dropping a condition, so there are no Telangana units.
+A second, full-text read of Rules 5, 7 and 13 (applying the MBBL standard: conditions in headings or other sentences are dropped and written into the notes) gave two units: `TGBR2012-5#c` (stilt floor height at least 2.5m) and `TGBR2012-5#fxi` (chowk / courtyard area at least 9sq.m). The rows below are what remains rejected.
 
 | Clause (page) | Text (verbatim or abridged) | Why it is not a unit |
 |---|---|---|
-| TGBR2012-5 (10) | "Height of stilt floor shall not be less than 2.5m." | Rule 5 covers non-high-rise buildings only ("Buildings below 18m in height"): depends on building height; a stilt floor is a storey, not a room |
-| TGBR2012-5 (10) | parking floors with mechanical system and lift: not less than 4.5m | a second condition (mechanical parking) |
-| TGBR2012-7 (14) | chowk / inner courtyard at least 25 sq.m, no side less than 3m | an open space, not a room; a second dimension |
+| TGBR2012-5 (10) | parking floors "where mechanical system and lift are provided": not less than 4.5m | the condition is in the same sentence; a Category for it would bake the condition into a name |
+| TGBR2012-13 (19) | cellar ventilation not less than 2.5% of each cellar floor area | a ratio |
+| TGBR2012-7 (14) | chowk / inner courtyard at least 25 sq.m, no side less than 3m (high-rise) | it differs from TGBR2012-5#fxi only by its heading; with the heading dropped it would fail every non-high-rise chowk of 9-25 sq.m, while the 9 sq.m unit holds for all buildings |
 | TGBR2012-13 (19) | watchman room and toilets in a stilt floor, maximum 25 sq.m | a maximum; conditional on a stilt floor |
 | TGBR2012-AnnexureIII (284) | "clear height of 2100 MM in the passage/escape path" | fire provisions for vertical openings; a passage, not a room |
 | TGBR2012-AnnexureIV (296, 298, 305) | egress height 2.4 m, door clear widths 2.0 / 1.2 m, a room of at least 9 m2 | the annexure's 'Building' means a hospital above 30 m: building type and height |

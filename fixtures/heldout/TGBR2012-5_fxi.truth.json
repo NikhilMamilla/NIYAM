@@ -1,0 +1,42 @@
+{
+  "unit_id": "TGBR2012-5#fxi",
+  "length_unit": "mm",
+  "synthetic": true,
+  "generated_from": "rules/specs/TGBR2012-5_fxi.yaml",
+  "models": {
+    "TGBR2012-5_fxi__heldout_pass.ifc": [
+      {
+        "name": "HO TGBR2012-5_fxi at the bound 9",
+        "global_id": "22knkA$NPGtA6uASJSX_vq",
+        "expected": "pass"
+      },
+      {
+        "name": "HO TGBR2012-5_fxi ample 11.7",
+        "global_id": "0h_EebjQ5TxPzsb59LmJa5",
+        "expected": "pass"
+      },
+      {
+        "name": "HO TGBR2012-5_fxi out of scope 5.4",
+        "global_id": "2yzcCr_TPS8ASMnJX7y8le",
+        "expected": "out_of_scope"
+      }
+    ],
+    "TGBR2012-5_fxi__heldout_fail.ifc": [
+      {
+        "name": "HO TGBR2012-5_fxi just failing 8.99",
+        "global_id": "0L6rk0AdPKL88szFVkYAb8",
+        "expected": "fail"
+      },
+      {
+        "name": "HO TGBR2012-5_fxi comfortable 10.8",
+        "global_id": "24lXT_ISLVSQmQwBudZwG6",
+        "expected": "pass"
+      },
+      {
+        "name": "HO TGBR2012-5_fxi out of scope 3.6",
+        "global_id": "0cAuiP39DTCvbn9P8y6pSU",
+        "expected": "out_of_scope"
+      }
+    ]
+  }
+}

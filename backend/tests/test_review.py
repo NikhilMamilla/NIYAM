@@ -128,7 +128,7 @@ def test_validation_errors_name_the_line_and_change_nothing(work, capsys):
 
 def test_committed_review_sheet_is_current():
     rows = rows_of(REPO_ROOT / "docs" / "review" / "review-sheet.csv")
-    assert len(rows) == 25 and all(r["decision"] == "" for r in rows)  # 6 hand-written + 19 spec units
+    assert len(rows) == 27 and all(r["decision"] == "" for r in rows)  # 6 hand-written + 19 MBBL spec + 2 TGBR spec units
 
 
 def test_review_import_reminds_that_the_corpus_db_needs_unit_import(work, capsys):
@@ -171,5 +171,6 @@ def test_committed_sheet_lists_reading_dependent_units_first():
 
 def test_sheet_has_a_source_column(work):
     rows = rows_of(work[2])
-    assert {r["source"] for r in rows} == {"MoHUA Model Building Bye-Laws 2016"}  # no Telangana unit exists yet
+    assert {r["source"] for r in rows} == {"MoHUA Model Building Bye-Laws 2016",
+                                           "Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied)"}
     assert list(rows[0])[:2] == ["unit_id", "source"]

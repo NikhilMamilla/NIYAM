@@ -268,3 +268,453 @@ door shall be less than 1.2 m. in width and 2.20 m. in height.
 7. Requirement of water supply, drainage and sanitary installation shall conform to Table
 4.6, 4.7, 4.11, 4.12 and 4.13 of Chapter-4.
 8. A playground shall be provided as per norms.",Classrooms (Category Classroom) must be at least 3.0 m high. NOT encoded: the 3.0 m clear height under balconies or girders and the 2.75 m head room under beams in the same clause (need beam geometry).,at least 3.0 m (computed: element_height_m),IfcSpace where Pset_SpaceCommon.Category is Classroom; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack,,,,,,,,
+TGBR2012-5#c,"Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied)",TGBR2012-5,9,geometric,Height of stilt floor shall not be less than 2.5m.,"5. PERMISSIBLE SETBACKS & HEIGHT STIPULATIONS FOR ALL TYPES
+OF NON-HIGH RISE BUILDINGS
+(Buildings below 18m in height inclusive of Stilt / Parking Floor):
+(a) The height of buildings permissible in a given site / plot shall be subject
+to restrictions given in Annexure - I to II.
+(b) The minimum setbacks and permissible height as per Table - III and
+other conditions stipulated below shall be followed.
+TABLE – III
+Building Line or Minimum Front Setback
+Minimum
+Height to be left (in m)
+Plot Size setbacks
+(in m) Abutting Road Width
+Sl. (in Sqm) Parking on
+Permissi Up Above Above Above
+No. Above – provision remaining
+ble to 12m & 18m & 24m & Above
+Up to sides
+Up to 12 up to up to up to 30m
+(in m)
+m 18m 24 m 30m
+1 2 3 4 5 6 7 8 9 10
+Less than
+1 7 1.5 1.5 3 3 3 -
+50
+7 1.5 1.5 3 3 3 -
+2 50-100 -
+10 1.5 1.5 3 3 3 0.5
+100 -
+3 - 10 1.5 1.5 3 3 3 1.0
+200
+7
+2 3 3 4 5 1.0
+200 - Stilt
+4
+300 floor 10
+2 3 3 5 6 1.5
+7
+3 4 5 6 7.5 1.5
+300 - Stilt
+5
+400 floor 12
+3 4 5 6 7.5 2.0
+7
+3 4 5 6 7.5 2.0
+400 - Stilt
+6
+500 floor 12
+3 4 5 6 7.5 2.5
+7
+3 4 5 6 7.5 2.5
+Stilt
+* 500 -
+12
+7 floor 3 4 5 6 7.5 3.0
+750
+15
+3 4 5 6 7.5 3.5
+7
+Stilt + 3 4 5 6 7.5 3.0
+750 - One
+12
+8 3 4 5 6 7.5 3.5
+1000 Cellar
+floor 15 3 4 5 6 7.5 4.0
+7
+3 4 5 6 7.5 3.5
+Stilt + 12
+3 4 5 6 7.5 4.0
+1000 -
+9 2 Cellar
+1500 15
+3 4 5 6 7.5 5.0
+floors
+18**
+3 4 5 6 7.5 6.0
+7
+3 4 5 6 7.5 4.0
+Stilt +
+1500 -
+15
+10 2 Cellar 3 4 5 6 7.5 5.0
+2500
+floors
+18**
+3 4 5 6 7.5 6.0
+Stilt + 7
+3 4 5 6 7.5 5.0
+2 or
+Above 15
+11 more 3 4 5 6 7.5 6.0
+2500
+Cellar
+18**
+3 4 5 6 7.5 7.0
+floors
+(c) Stilt Floor meant for parking is excluded from the permissible height in
+the above Table. Height of stilt floor shall not be less than 2.5m. In case
+of parking floors where mechanical system and lift are provided, height
+of such parking floor shall not be less than 4.5m.
+(d) *In case of commercial buildings proposed in plots having an extent of
+500-750sq.m cellar floor for parking may be considered subject to
+condition that required parking shall be fulfilled as per Table-V of rule-13
+and feasibility on ground.
+(e) **Buildings of height above 15m and below 18m in Sl.Nos.9, 10 and 11
+above, shall be permitted only if such plots abut minimum 12m wide
+roads only.
+(f) Other conditions:
+(i) The setbacks are to be left after leaving the affected area of the plot
+/ site, if any, for road widening.
+(ii) Where a site abuts more than one road, then the front setback
+should be insisted towards the bigger road width and for the
+remaining side or sides, the setback as at Column-10 shall be
+insisted. In case of individual residential buildings the option is given
+to the applicant to propose front setback on one of the roads. In
+such case he shall not have access from the other side / sides. On
+the other side / sides the applicant can leave the setback either as
+per the required front setback based on the road width or to provide
+the side setback as given in Column-10.
+(iii) A strip of at least 1m greenery / lawn along the frontage of the site
+within the front setback shall be developed and maintained with
+greenery.
+(iv) For Plots above 300sq.m in addition to (iii) above, a minimum 1m
+wide continuous green planting strip in the periphery on remaining
+sides are required to be developed and maintained within the
+setback.
+(v) For all residential / institutional / industrial plots above 750sq.m, in
+addition to (iii) and (iv) above, 5% of the site area to be developed
+as organized open space and be utilized as greenery, tot lot or soft
+landscaping etc., and shall be provided over and above the
+mandatory setbacks. Such organized open space could be in more
+than one location and shall be of a minimum width of 3m with a
+minimum area of 15sq.m at each location.
+(vi) If the strip of greenery / lawn and the organized open space (tot lot)
+are not maintained, 10% of additional Property Tax every year
+would be imposed as penalty by the Sanctioning Authority till the
+condition is fulfilled.
+(vii) In all plots 750sq.m and above, provision shall be made for
+earmarking an area of 3m X 3m for the purpose of setting of public
+utilities like distribution transformer, etc. within the owner’s site
+subject to mandated public safety requirements.
+(viii) In case of plots 300 - 750sq.m, it is permitted to transfer up to 1m
+of setback from any one side to any other side without exceeding
+overall permissible plinth area. The transfer of setback from front
+setback is not allowed.
+(ix) In case of plots above 750sq.m, it is permitted to transfer up to 2m
+of setback from any one side to any other side without exceeding
+overall permissible plinth area, subject to maintaining of a minimum
+2.5m setback on other side and a minimum building line. The
+transfer of setback from front setback is not allowed.
+(x) For narrow plots having extent not more than 400sq.m and where
+the length is 4 times of the width of the plot, the setbacks on sides
+may be compensated in front and rear setbacks so as to ensure that
+the overall aggregate setbacks are maintained in the site, subject to
+maintaining a minimum of side setback of 1m in case of buildings of
+height up to 10m and minimum of 2m in case of buildings of height
+above 10m and up to 15m without exceeding overall permissible
+plinth area. (This Rule shall not be applicable for made-up plots).
+(xi) Where the lighting and ventilation of a building is through the means
+of a chowk or inner courtyard or interior open space / duct, such
+open space shall be open to sky and of area at least 9sq.m and no
+side shall be less than 2m. Such open spaces / ducts may be
+allowed above stilt floor.
+(xii) The space between 2 blocks shall not be less than the side setback
+of the tallest block as mentioned in Table - III and this shall not be
+considered for organised open space (tot lot).
+(xiii) Where all the owners of sites along an abutting road come forward
+for widening of the road by undertaking preparation of a Road
+Development Plan which would improve circulation in the area and
+duly approved by the competent authority, and by leaving the area
+affected in the widening of such road free of cost and implement it
+within one year, then higher height of the corresponding widened
+road width would be considered for such sites.
+(xiv) Splay at road junctions, including ‘Y’ junctions shall be provided as
+follows. The area of such splay would be deemed to form part of
+the road junction.
+Sl.No Road Width (in m) Splay / Offset (in m)
+1 Less than 12 3 X 3
+2 Above 12 up to 24 4.5 X 4.5
+3 Above 24 6 X 6
+(xv) As per the provisions of the Andhra Pradesh Fire Service Act, 1999,
+Residential buildings of height more than 18 m, Commercial
+buildings of height 15m and above and buildings of public
+congregation like Educational Buildings, Cinema Theatres, Function
+Halls and other Assembly Buildings on plot area of 500Sq.m. and
+above or of height above 6m are required to obtain prior clearance
+from Andhra Pradesh State Disasters Response & Fire Services
+Department from fire safety point of view.
+(xvi) Stepped type buildings or incremental type buildings may be
+allowed only in respect of individual residential or educational /
+institutional buildings and such incremental development would be
+considered only after a minimum time period of 5 years.
+(xvii) For the purpose of these Rules, the following conversion from
+M.K.S. and F.P.S. system shall be reckoned for the road widths
+only:
+(1) 3m = 10ft (2) 6m = 20ft (3) 7.5m = 25ft (4) 9m = 30ft
+(5) 12m = 40ft (6) 15m = 50ft (7) 18m = 60ft (8) 24m = 80ft
+(9) 30m = 100ft (10) 45m = 150ft (11) 60m = 200ft.
+(xviii) All building applications for sanction of building permission for
+construction of above 10m height shall be accompanied with the
+following details:
+(a) Report of Soil Test / Geo-technical Investigation Report issued
+after personal inspection by Institution / Consultant
+empanelled with / licenced by the local authority.
+(b) Structural designs and drawings prepared duly taking the soil
+bearing capacity into consideration and certified by qualified
+Structural Engineer / Consultant Firm empanelled with / licenced
+by the local authority. The Structural Engineer / Consultant Firm
+is held responsible for defect in the design.
+(c) Building Plan and Application shall be invariably signed by the
+owner of the property, builder if any, the Architect and the
+Structural Engineer who designed the structure. They shall give
+their present and permanent addresses.
+(d) If the construction is being taken up by a builder, an attested
+copy of the registered agreement entered between the owner of
+the property and the builder shall be submitted. In case of any
+changes in the agreement at a later date, a copy of the same
+shall also be submitted to the local authority.
+(e) An undertaking on a Stamp Paper of Rs.100/-duly signed by the
+owner and builder specifying that no flat or built-up area shall be
+given possession to the purchaser / tenant unless they obtain the
+occupancy certificate from the local authority and provide all
+regular service connections.
+(f) Contractor / Builders / Developer / Owner shall submit All Risks
+Insurance Policy for the construction period.","Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied), Rule 5(c). Stilt floor spaces (Pset_SpaceCommon.Category Stilt, an assumed name) must be at least 2.5 m high; ""not less than"" read as inclusive. The stilt floor is modelled as an IfcSpace, like MBBL basements; a stilt floor that is only an IfcBuildingStorey is not checked. NOT encoded: (1) Rule 5's heading limits it to non-high-rise buildings (""Buildings below 18m in height inclusive of Stilt / Parking Floor""); the building height is not checked. (2) The preceding sentence describes the stilt floor as ""meant for parking""; its use is not checked. (3) The next sentence sets 4.5m for parking floors ""where mechanical system and lift are provided""; such a floor passes this unit at 2.5m. (4) Height is the space's vertical extent, floor to slab, not a clear height under beams.",at least 2.5 m (computed: element_height_m),IfcSpace where Pset_SpaceCommon.Category is Stilt; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack,,,,,,,,
+TGBR2012-5#fxi,"Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied)",TGBR2012-5,9,geometric,"Where the lighting and ventilation of a building is through the means of a chowk or inner courtyard or interior open space / duct, such open space shall be open to sky and of area at least 9sq.m and no side shall be less than 2m.","5. PERMISSIBLE SETBACKS & HEIGHT STIPULATIONS FOR ALL TYPES
+OF NON-HIGH RISE BUILDINGS
+(Buildings below 18m in height inclusive of Stilt / Parking Floor):
+(a) The height of buildings permissible in a given site / plot shall be subject
+to restrictions given in Annexure - I to II.
+(b) The minimum setbacks and permissible height as per Table - III and
+other conditions stipulated below shall be followed.
+TABLE – III
+Building Line or Minimum Front Setback
+Minimum
+Height to be left (in m)
+Plot Size setbacks
+(in m) Abutting Road Width
+Sl. (in Sqm) Parking on
+Permissi Up Above Above Above
+No. Above – provision remaining
+ble to 12m & 18m & 24m & Above
+Up to sides
+Up to 12 up to up to up to 30m
+(in m)
+m 18m 24 m 30m
+1 2 3 4 5 6 7 8 9 10
+Less than
+1 7 1.5 1.5 3 3 3 -
+50
+7 1.5 1.5 3 3 3 -
+2 50-100 -
+10 1.5 1.5 3 3 3 0.5
+100 -
+3 - 10 1.5 1.5 3 3 3 1.0
+200
+7
+2 3 3 4 5 1.0
+200 - Stilt
+4
+300 floor 10
+2 3 3 5 6 1.5
+7
+3 4 5 6 7.5 1.5
+300 - Stilt
+5
+400 floor 12
+3 4 5 6 7.5 2.0
+7
+3 4 5 6 7.5 2.0
+400 - Stilt
+6
+500 floor 12
+3 4 5 6 7.5 2.5
+7
+3 4 5 6 7.5 2.5
+Stilt
+* 500 -
+12
+7 floor 3 4 5 6 7.5 3.0
+750
+15
+3 4 5 6 7.5 3.5
+7
+Stilt + 3 4 5 6 7.5 3.0
+750 - One
+12
+8 3 4 5 6 7.5 3.5
+1000 Cellar
+floor 15 3 4 5 6 7.5 4.0
+7
+3 4 5 6 7.5 3.5
+Stilt + 12
+3 4 5 6 7.5 4.0
+1000 -
+9 2 Cellar
+1500 15
+3 4 5 6 7.5 5.0
+floors
+18**
+3 4 5 6 7.5 6.0
+7
+3 4 5 6 7.5 4.0
+Stilt +
+1500 -
+15
+10 2 Cellar 3 4 5 6 7.5 5.0
+2500
+floors
+18**
+3 4 5 6 7.5 6.0
+Stilt + 7
+3 4 5 6 7.5 5.0
+2 or
+Above 15
+11 more 3 4 5 6 7.5 6.0
+2500
+Cellar
+18**
+3 4 5 6 7.5 7.0
+floors
+(c) Stilt Floor meant for parking is excluded from the permissible height in
+the above Table. Height of stilt floor shall not be less than 2.5m. In case
+of parking floors where mechanical system and lift are provided, height
+of such parking floor shall not be less than 4.5m.
+(d) *In case of commercial buildings proposed in plots having an extent of
+500-750sq.m cellar floor for parking may be considered subject to
+condition that required parking shall be fulfilled as per Table-V of rule-13
+and feasibility on ground.
+(e) **Buildings of height above 15m and below 18m in Sl.Nos.9, 10 and 11
+above, shall be permitted only if such plots abut minimum 12m wide
+roads only.
+(f) Other conditions:
+(i) The setbacks are to be left after leaving the affected area of the plot
+/ site, if any, for road widening.
+(ii) Where a site abuts more than one road, then the front setback
+should be insisted towards the bigger road width and for the
+remaining side or sides, the setback as at Column-10 shall be
+insisted. In case of individual residential buildings the option is given
+to the applicant to propose front setback on one of the roads. In
+such case he shall not have access from the other side / sides. On
+the other side / sides the applicant can leave the setback either as
+per the required front setback based on the road width or to provide
+the side setback as given in Column-10.
+(iii) A strip of at least 1m greenery / lawn along the frontage of the site
+within the front setback shall be developed and maintained with
+greenery.
+(iv) For Plots above 300sq.m in addition to (iii) above, a minimum 1m
+wide continuous green planting strip in the periphery on remaining
+sides are required to be developed and maintained within the
+setback.
+(v) For all residential / institutional / industrial plots above 750sq.m, in
+addition to (iii) and (iv) above, 5% of the site area to be developed
+as organized open space and be utilized as greenery, tot lot or soft
+landscaping etc., and shall be provided over and above the
+mandatory setbacks. Such organized open space could be in more
+than one location and shall be of a minimum width of 3m with a
+minimum area of 15sq.m at each location.
+(vi) If the strip of greenery / lawn and the organized open space (tot lot)
+are not maintained, 10% of additional Property Tax every year
+would be imposed as penalty by the Sanctioning Authority till the
+condition is fulfilled.
+(vii) In all plots 750sq.m and above, provision shall be made for
+earmarking an area of 3m X 3m for the purpose of setting of public
+utilities like distribution transformer, etc. within the owner’s site
+subject to mandated public safety requirements.
+(viii) In case of plots 300 - 750sq.m, it is permitted to transfer up to 1m
+of setback from any one side to any other side without exceeding
+overall permissible plinth area. The transfer of setback from front
+setback is not allowed.
+(ix) In case of plots above 750sq.m, it is permitted to transfer up to 2m
+of setback from any one side to any other side without exceeding
+overall permissible plinth area, subject to maintaining of a minimum
+2.5m setback on other side and a minimum building line. The
+transfer of setback from front setback is not allowed.
+(x) For narrow plots having extent not more than 400sq.m and where
+the length is 4 times of the width of the plot, the setbacks on sides
+may be compensated in front and rear setbacks so as to ensure that
+the overall aggregate setbacks are maintained in the site, subject to
+maintaining a minimum of side setback of 1m in case of buildings of
+height up to 10m and minimum of 2m in case of buildings of height
+above 10m and up to 15m without exceeding overall permissible
+plinth area. (This Rule shall not be applicable for made-up plots).
+(xi) Where the lighting and ventilation of a building is through the means
+of a chowk or inner courtyard or interior open space / duct, such
+open space shall be open to sky and of area at least 9sq.m and no
+side shall be less than 2m. Such open spaces / ducts may be
+allowed above stilt floor.
+(xii) The space between 2 blocks shall not be less than the side setback
+of the tallest block as mentioned in Table - III and this shall not be
+considered for organised open space (tot lot).
+(xiii) Where all the owners of sites along an abutting road come forward
+for widening of the road by undertaking preparation of a Road
+Development Plan which would improve circulation in the area and
+duly approved by the competent authority, and by leaving the area
+affected in the widening of such road free of cost and implement it
+within one year, then higher height of the corresponding widened
+road width would be considered for such sites.
+(xiv) Splay at road junctions, including ‘Y’ junctions shall be provided as
+follows. The area of such splay would be deemed to form part of
+the road junction.
+Sl.No Road Width (in m) Splay / Offset (in m)
+1 Less than 12 3 X 3
+2 Above 12 up to 24 4.5 X 4.5
+3 Above 24 6 X 6
+(xv) As per the provisions of the Andhra Pradesh Fire Service Act, 1999,
+Residential buildings of height more than 18 m, Commercial
+buildings of height 15m and above and buildings of public
+congregation like Educational Buildings, Cinema Theatres, Function
+Halls and other Assembly Buildings on plot area of 500Sq.m. and
+above or of height above 6m are required to obtain prior clearance
+from Andhra Pradesh State Disasters Response & Fire Services
+Department from fire safety point of view.
+(xvi) Stepped type buildings or incremental type buildings may be
+allowed only in respect of individual residential or educational /
+institutional buildings and such incremental development would be
+considered only after a minimum time period of 5 years.
+(xvii) For the purpose of these Rules, the following conversion from
+M.K.S. and F.P.S. system shall be reckoned for the road widths
+only:
+(1) 3m = 10ft (2) 6m = 20ft (3) 7.5m = 25ft (4) 9m = 30ft
+(5) 12m = 40ft (6) 15m = 50ft (7) 18m = 60ft (8) 24m = 80ft
+(9) 30m = 100ft (10) 45m = 150ft (11) 60m = 200ft.
+(xviii) All building applications for sanction of building permission for
+construction of above 10m height shall be accompanied with the
+following details:
+(a) Report of Soil Test / Geo-technical Investigation Report issued
+after personal inspection by Institution / Consultant
+empanelled with / licenced by the local authority.
+(b) Structural designs and drawings prepared duly taking the soil
+bearing capacity into consideration and certified by qualified
+Structural Engineer / Consultant Firm empanelled with / licenced
+by the local authority. The Structural Engineer / Consultant Firm
+is held responsible for defect in the design.
+(c) Building Plan and Application shall be invariably signed by the
+owner of the property, builder if any, the Architect and the
+Structural Engineer who designed the structure. They shall give
+their present and permanent addresses.
+(d) If the construction is being taken up by a builder, an attested
+copy of the registered agreement entered between the owner of
+the property and the builder shall be submitted. In case of any
+changes in the agreement at a later date, a copy of the same
+shall also be submitted to the local authority.
+(e) An undertaking on a Stamp Paper of Rs.100/-duly signed by the
+owner and builder specifying that no flat or built-up area shall be
+given possession to the purchaser / tenant unless they obtain the
+occupancy certificate from the local authority and provide all
+regular service connections.
+(f) Contractor / Builders / Developer / Owner shall submit All Risks
+Insurance Policy for the construction period.","Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied), Rule 5(f)(xi). Chowk or inner-courtyard spaces (Pset_SpaceCommon.Category Chowk or Courtyard, assumed names) must have a floor area of at least 9 sq.m; ""at least"" is inclusive. NOT encoded: (1) ""no side shall be less than 2m"" (no width helper); (2) ""open to sky""; (3) the condition that lighting and ventilation are through this space: every Chowk or Courtyard space is checked; (4) ducts and ""interior open space"" without one of the two Category values; (5) Rule 5's heading (non-high-rise buildings below 18m). Rule 7(a)(xv) requires 25sq.m and 3m for high-rise buildings; that unit is not created because without its heading it would fail non-high-rise buildings, while this 9sq.m minimum also holds for high-rise buildings (25 >= 9).",at least 9 m2 (computed: space_floor_area_m2),IfcSpace where Pset_SpaceCommon.Category is Chowk or Courtyard; needs Pset_SpaceCommon.Category and body geometry; not in a rulepack,,,,,,,,

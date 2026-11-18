@@ -1,0 +1,18 @@
+unit_id: "TGBR2012-5#c"
+clause_id: TGBR2012-5
+unit_text: Height of stilt floor shall not be less than 2.5m.
+topic: room height
+template: space_height_min
+dev_length_unit: mm
+params:
+  categories: [Stilt]
+threshold: {value: 2.5, text: "2.5", unit: m, inclusive: true}
+notes_for_reviewer: >-
+  Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied), Rule 5(c). Stilt floor
+  spaces (Pset_SpaceCommon.Category Stilt, an assumed name) must be at least 2.5 m high; "not less than" read as
+  inclusive. The stilt floor is modelled as an IfcSpace, like MBBL basements; a stilt floor that is only an
+  IfcBuildingStorey is not checked. NOT encoded: (1) Rule 5's heading limits it to non-high-rise buildings
+  ("Buildings below 18m in height inclusive of Stilt / Parking Floor"); the building height is not checked.
+  (2) The preceding sentence describes the stilt floor as "meant for parking"; its use is not checked.
+  (3) The next sentence sets 4.5m for parking floors "where mechanical system and lift are provided"; such a floor
+  passes this unit at 2.5m. (4) Height is the space's vertical extent, floor to slab, not a clear height under beams.

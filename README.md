@@ -14,7 +14,7 @@ buildings are synthetic.
 
 ```
  MBBL 2016 PDF ──> corpus (445 clauses) ──> rule units (verbatim sentences)
- TGBR 2012 PDF ──> corpus (55 clauses) ──┘  (no unit yet: see Coverage)
+ TGBR 2012 PDF ──> corpus (55 clauses) ──┘  (2 units: see Coverage)
                                                 │
                     hand-written spec ──────────┤──── or LLM compiler (gated / ungated)
                                                 ▼
@@ -36,14 +36,14 @@ buildings are synthetic.
 |---|---|
 | Corpus: MBBL 2016, 445 clauses, search and curation CLI | works |
 | Corpus: Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied), 55 clauses (29 rules, 12 annexures, 14 appendices) | ingested; **not reviewed**; coarse segmentation (rule level, annexures whole) |
-| Rule units: 25 verbatim units, all MBBL 2016 (6 hand-written pilots, 19 from rule specs; 3 tagged as duplicates; 9 IDS, 16 geometric); 0 Telangana units | works; **drafts, not human-reviewed**; each is a single-element threshold, conditions in the clause are not encoded |
+| Rule units: 27 verbatim units: 25 MBBL 2016 (6 hand-written pilots, 19 from rule specs; 3 tagged as duplicates; 9 IDS, 16 geometric) and 2 Telangana (from rule specs, both geometric) | works; **drafts, not human-reviewed**; each is a single-element threshold, conditions in the clause are not encoded |
 | IDS gate and sandboxed geometric gate | works (the sandbox is defence in depth, not a hard security boundary) |
 | LLM compiler, both tiers, with gated repair loop | works; two real runs on the 25 MBBL units with two NVIDIA models (`eval/results/`: pilot run 1 `20261118T133025Z-4c4519`, headline run 2 `20261118T140452Z-5b7edb`) |
 | Rulepack v0: 6 rules (3 door IDS, 3 room/stair Python) | works; **drafts, not reviewed** |
 | Audit engine, HTML and BCF export, upload API, web app with 3D viewer | works on synthetic IFC4 models |
 | Evaluation harness: held-out scoring, Wilson intervals, dry run, live-run preflight | works; dry-run numbers are synthetic and must never be quoted |
 | Review sheet for domain experts | exported; **no decisions returned yet** |
-| Real buildings, more rule templates, Telangana rule units | not built |
+| Real-building checks (two real IFC4 exports tried: `docs/real-models.md`), more rule templates | audit runs on them but finds almost nothing it can check |
 
 ## Quickstart
 
@@ -96,7 +96,7 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 - **Drafts.** Every rule encodes one reading of a clause and none is human-reviewed yet
   (`docs/review/REVIEWER_GUIDE.md`).
 - **Coverage.** The 25 units are every MBBL 2016 sentence found so far that fits a single-element template cleanly; the Stage 1 target of 40 to 60 clauses is not met (see `docs/spec-backlog.md` for why the rest do not fit).
-- **Telangana: zero units.** The Telangana rules leave room sizes, heights and doors to the National Building Code (Rule 15(a)(vi)); the few numeric sentences found depend on building height or type (non-high-rise stilt floors, hospitals above 30 m) or are accessibility clear openings, so none fits a template without dropping its condition. The corpus is ingested; no Telangana rule has been evaluated.
+- **Telangana: two units.** The Telangana rules leave room sizes, heights and doors to the National Building Code (Rule 15(a)(vi)). Two sentences of Rule 5 fit a template once Rule 5's heading (non-high-rise buildings below 18m) is dropped and noted: stilt floor height at least 2.5m (`TGBR2012-5#c`) and chowk / courtyard area at least 9sq.m (`TGBR2012-5#fxi`). They use assumed room Category names (Stilt, Chowk, Courtyard). Two units are a case study, not a sample: no rate is reported for them.
 - **Single-element thresholds.** The templates check one value of one element (a door width, a room's area or
   height). Ratios, counts, distances and relations between elements are not encoded (`docs/spec-backlog.md`).
 - **Ignored conditions.** Building-type exceptions (e.g. 2 m doorways in assembly buildings), room-use conditions

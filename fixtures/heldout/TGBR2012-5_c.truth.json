@@ -1,0 +1,42 @@
+{
+  "unit_id": "TGBR2012-5#c",
+  "length_unit": "m",
+  "synthetic": true,
+  "generated_from": "rules/specs/TGBR2012-5_c.yaml",
+  "models": {
+    "TGBR2012-5_c__heldout_pass.ifc": [
+      {
+        "name": "HO TGBR2012-5_c at the bound 2.5",
+        "global_id": "2X2h_l4T5KgB2jLgEHt934",
+        "expected": "pass"
+      },
+      {
+        "name": "HO TGBR2012-5_c ample 3.25",
+        "global_id": "1FZQzI$srIMwZJRGktTL$w",
+        "expected": "pass"
+      },
+      {
+        "name": "HO TGBR2012-5_c out of scope 1.5",
+        "global_id": "3JTzGsg9nIV9r_Q7Nb40gR",
+        "expected": "out_of_scope"
+      }
+    ],
+    "TGBR2012-5_c__heldout_fail.ifc": [
+      {
+        "name": "HO TGBR2012-5_c just failing 2.49",
+        "global_id": "1AXfZ56$HQIg6XzXklz3hj",
+        "expected": "fail"
+      },
+      {
+        "name": "HO TGBR2012-5_c comfortable 3",
+        "global_id": "3BhN6CADfQVQRIk7rMNtey",
+        "expected": "pass"
+      },
+      {
+        "name": "HO TGBR2012-5_c out of scope 1",
+        "global_id": "2T4xXKSN1J9e_GQhQyVhAs",
+        "expected": "out_of_scope"
+      }
+    ]
+  }
+}
