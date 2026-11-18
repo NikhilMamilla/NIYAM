@@ -9,4 +9,8 @@ Expected files:
   https://www.mohua.gov.in/static/uploads/2026/07/0e33558a9326c8a89f945cae00cc3647.pdf
   (270 pages, `%PDF-1.6`).
 
-Ingest with `python -m app.corpus.cli ingest` from `backend/`.
+- `telangana-building-rules-2012-go168.pdf` — Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied); 373 pages, `%PDF-1.3`, headed
+  "Government of Andhra Pradesh ... Andhra Pradesh Building Rules, 2012" (the text Telangana adopted).
+
+Ingest with `python -m app.corpus.cli ingest` (MBBL) or `python -m app.corpus.cli ingest --source tgbr` from
+`backend/`.

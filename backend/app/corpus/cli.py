@@ -4,13 +4,15 @@ from pathlib import Path
 from typing import get_args
 
 from app.corpus import repository as repo
-from app.corpus.extract_mbbl import extract_pages, segment
+from app.corpus import extract_mbbl, extract_tgbr
 from app.corpus.models import Clause, RuleUnit, Status, Tier
 from app.corpus.suggest import MAX_REVIEWABLE_CHARS, render_markdown, suggest
 from app.corpus import review
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_PDF = REPO_ROOT / "rules" / "source" / "mbbl-2016.pdf"
+SOURCES = {"mbbl": (extract_mbbl.segment, DEFAULT_PDF),
+           "tgbr": (extract_tgbr.segment, REPO_ROOT / "rules" / "source" / "telangana-building-rules-2012-go168.pdf")}
 DEFAULT_YAML = REPO_ROOT / "rules" / "corpus" / "mbbl-2016.selected.yaml"
 DEFAULT_CANDIDATES = REPO_ROOT / "docs" / "corpus-candidates.md"
 DEFAULT_UNITS_YAML = REPO_ROOT / "rules" / "corpus" / "rule-units.yaml"
@@ -18,15 +20,17 @@ CURATED_FIELDS = ("tier", "topic", "status", "notes")
 
 
 def cmd_ingest(conn, args):
-    if not args.pdf.exists():
-        sys.exit(f"PDF not found: {args.pdf} (see rules/source/README.md)")
-    clauses = segment(extract_pages(args.pdf))
+    segment, default_pdf = SOURCES[args.source]
+    pdf = args.pdf or default_pdf
+    if not pdf.exists():
+        sys.exit(f"PDF not found: {pdf} (see rules/source/README.md)")
+    clauses = segment(extract_mbbl.extract_pages(pdf))
     for clause in clauses:
         existing = repo.get_clause(conn, clause.id)
         if existing:  # re-ingest refreshes source text but keeps human curation
             clause = clause.model_copy(update={f: getattr(existing, f) for f in CURATED_FIELDS})
         repo.upsert_clause(conn, clause)
-    print(f"ingested {len(clauses)} clauses from {args.pdf.name}; db now holds {repo.count(conn)}")
+    print(f"ingested {len(clauses)} clauses from {pdf.name}; db now holds {repo.count(conn)}")
 
 
 def cmd_stats(conn, args):
@@ -144,7 +148,8 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="command", required=True)
 
     p = sub.add_parser("ingest")
-    p.add_argument("--pdf", type=Path, default=DEFAULT_PDF)
+    p.add_argument("--source", choices=sorted(SOURCES), default="mbbl")
+    p.add_argument("--pdf", type=Path, help="default: the source's PDF in rules/source/")
     p.set_defaults(func=cmd_ingest)
     sub.add_parser("stats").set_defaults(func=cmd_stats)
     p = sub.add_parser("show")

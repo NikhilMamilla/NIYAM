@@ -3,6 +3,15 @@ from typing import Literal
 from pydantic import BaseModel
 
 Tier = Literal["ids", "geometric", "out_of_scope", "unclassified"]
+SOURCES = {
+    "MBBL2016": "MoHUA Model Building Bye-Laws 2016",
+    "TGBR2012": "Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied)",
+}
+
+
+def source_of(any_id: str) -> str:
+    """The source id prefix of a clause or unit id: 'MBBL2016-4.8.1#1' -> 'MBBL2016'."""
+    return any_id.split("-", 1)[0]
 Status = Literal["candidate", "selected", "rejected"]
 
 
