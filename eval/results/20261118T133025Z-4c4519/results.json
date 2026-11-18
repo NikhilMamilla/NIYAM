@@ -1,0 +1,2847 @@
+{
+  "meta": {
+    "run_id": "20261118T133025Z-4c4519",
+    "date": "2026-11-18T13:30:25.904374+00:00",
+    "dry_run": false,
+    "git_commit": "ee865c2a3f971496d4109f623d36ce7a0a3952be",
+    "rulepack_hash": "ac3af42db49e15a0f5bc65773e6ab9d5a7af01d563439f05af2f8af98cb163d5",
+    "models": [
+      {
+        "name": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+        "role": "open",
+        "model": "nvidia/nemotron-3-ultra-550b-a55b",
+        "optional": false,
+        "price_per_million_input": null,
+        "price_per_million_output": null
+      },
+      {
+        "name": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+        "role": "open",
+        "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+        "optional": false,
+        "price_per_million_input": null,
+        "price_per_million_output": null
+      }
+    ],
+    "provider_classes": {
+      "nemotron-3-ultra-550b-a55b (NVIDIA)": "OpenAICompatProvider",
+      "nemotron-3.5-lightning-30b-a3b (NVIDIA)": "OpenAICompatProvider"
+    },
+    "request_extras": {
+      "nemotron-3-ultra-550b-a55b (NVIDIA)": {
+        "reasoning_effort": "none"
+      },
+      "nemotron-3.5-lightning-30b-a3b (NVIDIA)": {
+        "reasoning_effort": "none"
+      }
+    },
+    "modes": [
+      "gated",
+      "ungated"
+    ],
+    "repeats": 1,
+    "temperature": 0.0,
+    "max_repairs": 3,
+    "budget": {
+      "max_total_calls": 400,
+      "max_total_tokens": 4500000
+    },
+    "used": {
+      "calls": 143,
+      "tokens": 496888
+    },
+    "stopped_early": null,
+    "skipped_models": {
+      "glm-4.7-flash (Z.ai)": "optional model did not pass the preflight at 2026-11-18T13:26:23.548808+00:00"
+    },
+    "system_prompt_hashes": {
+      "geometric": "1bd396dd88ca675306d824e755a2e636c0a1529f0c4c49f5c6a9e63e1fa04873",
+      "ids": "d68ca6cc09084646481a8a01d47d580f6233ed236dd8c83456c67da05757f988"
+    }
+  },
+  "items": [
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-3.16.1#a",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2977,
+      "wall_time_s": 5.842,
+      "prompt_hash": "6fe9c4bd8be48be084810cd7b45b885d7219b9e028368a0bab795c4a02070af1",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.10.4#a",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2973,
+      "wall_time_s": 10.238,
+      "prompt_hash": "65ced84eb6a235a9a9b4199426034e0c82e925d7bc807d88304eed794bb4acf3",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.13#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2737,
+      "wall_time_s": 7.691,
+      "prompt_hash": "927fe4f9d2546f9f5e87e5c7a12c86aea66612d031b66b81f3d2791ebe23816c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.17.2#A",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2757,
+      "wall_time_s": 7.046,
+      "prompt_hash": "326908630cee40b88245ab6a537c4f449b32e633ac6ec8bfb5678f2a8b8f900c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.22#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2722,
+      "wall_time_s": 6.162,
+      "prompt_hash": "5cd402f3d351af9657ff7a1a6fe40d29140aded5d206cbc688c5d6a007ffb9a5",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.24.7.2#b",
+      "tier": "ids",
+      "template": "door_width_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3374,
+      "wall_time_s": 12.589,
+      "prompt_hash": "5b27fa6a7ea7954a89df3beef418a95ad5b1a1c91eb4652279589859ee70b837",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.24.7.2#c",
+      "tier": "ids",
+      "template": "door_operation_forbidden",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3389,
+      "wall_time_s": 8.021,
+      "prompt_hash": "26cd14d864cb4bb489d46e0b28c3de90fbbacccfadcafb339ea094b2da797c8b",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.24.7.2#f",
+      "tier": "ids",
+      "template": "door_operation_forbidden",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3332,
+      "wall_time_s": 4.966,
+      "prompt_hash": "dfb1c4cd817b0411f72bbec79957c4998b02a687e4504fb1d7798f974b8b9e1b",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.3.1.1#1",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2841,
+      "wall_time_s": 8.395,
+      "prompt_hash": "033a9ed37c1b16e8904c48375435412eb014fa1f3c5f5bb225de2ed31d725bbc",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.4.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2696,
+      "wall_time_s": 6.851,
+      "prompt_hash": "5c43182eea96ffb5b14742dce7ff9fbad842343d17a1b477092b81021f450c4c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.5.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2704,
+      "wall_time_s": 14.605,
+      "prompt_hash": "3928208348b112fde7f2863d062bc98fbbead5b41f1319caecc0615a409e618e",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.5.2#1",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2737,
+      "wall_time_s": 5.419,
+      "prompt_hash": "46a8de4a1a58a6097a380de14253b0255aabdd15b51332edf2d67cb975a94311",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.5.2#2",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2738,
+      "wall_time_s": 4.726,
+      "prompt_hash": "be98bbd7456e260bd4e678c53f7a4a614a0e9cd7c1540102c42b8cc9000e3b76",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.5.2#3",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2752,
+      "wall_time_s": 10.507,
+      "prompt_hash": "aebc02f0820a6cbee012311398a43755837f684f9b8a50dba1ccfb01e1f5bb42",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.7.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2647,
+      "wall_time_s": 7.601,
+      "prompt_hash": "ebd288ba13f34f03721db53d229e671ba573383e0c0b7d70c07dd280a070a292",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.7.2#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2723,
+      "wall_time_s": 14.757,
+      "prompt_hash": "6fcb5f6460cc54a08e62402b2491c1a4453a64a4657981c8f19de3950b701009",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.8.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2652,
+      "wall_time_s": 8.532,
+      "prompt_hash": "dc2ce5251a64df6b35e879bbb016e705a50a40581b8a963c22b95708ba23d525",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.8.2#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 16066,
+      "wall_time_s": 28.591,
+      "prompt_hash": "47a9e65d41d2ce6ebe654f3f8316074ae2ea8e4bd6ca2ea664a58217046ecb6a",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": true,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_8_2_1 at the bound 3",
+            "expected": "pass",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_8_2_1 ample 3.9",
+            "expected": "pass",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_8_2_1 just failing 2.99",
+            "expected": "fail",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_8_2_1 comfortable 3.6",
+            "expected": "pass",
+            "got": "unchecked"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.9.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2650,
+      "wall_time_s": 5.776,
+      "prompt_hash": "514c91743baae1d5424e2ff58688ebfed3e1cab7ede67fa54932f9a8e804799a",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-5.4.1#b",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3315,
+      "wall_time_s": 5.051,
+      "prompt_hash": "67ee58ab43431367abae78345e015df454a6001e823a0df400bdc6cffe7ea0c4",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-5.4.1#b2",
+      "tier": "ids",
+      "template": "door_height_min",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 18054,
+      "wall_time_s": 24.381,
+      "prompt_hash": "de42608223d46d7315717c5e1728c26dd7e957ceb7ec8fc666ef52d360aef080",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-5_4_1_b2__heldout_pass.ifc",
+            "element": "HO MBBL2016-5_4_1_b2 out of scope 1.2",
+            "expected": "out_of_scope",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_1_b2__heldout_fail.ifc",
+            "element": "HO MBBL2016-5_4_1_b2 out of scope 0.8",
+            "expected": "out_of_scope",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-5.4.1#c",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 1,
+      "total_tokens": 7591,
+      "wall_time_s": 11.525,
+      "prompt_hash": "a4ad6ab952cf668678d85df80031209494c2e7cda2ab99a401a45aea28931a50",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-5.4.2#1",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 1,
+      "total_tokens": 6907,
+      "wall_time_s": 10.396,
+      "prompt_hash": "2e0ba6fc335fa9961d59b23a94978c06befbeb90706bffd55f8c42aee49ac0c7",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_pass.ifc",
+            "element": "HO exit swing right",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_pass.ifc",
+            "element": "HO exit double swing",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_fail.ifc",
+            "element": "HO exit swing left 1.2 m",
+            "expected": "pass",
+            "got": "out_of_scope"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-7.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3121,
+      "wall_time_s": 5.964,
+      "prompt_hash": "9f867e0969baa0274711628fcc8945346d00bd159f95222b8affec886cff30a4",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-7.2#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 18085,
+      "wall_time_s": 44.235,
+      "prompt_hash": "4b02b67175eb2cd5574591675af9c5311a3adb99320fa59aa351deb9c33ec76b",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": true,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-7_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-7_2_1 at the bound 3",
+            "expected": "pass",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-7_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-7_2_1 ample 3.9",
+            "expected": "pass",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-7_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-7_2_1 just failing 2.99",
+            "expected": "fail",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-7_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-7_2_1 comfortable 3.6",
+            "expected": "pass",
+            "got": "unchecked"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-3.16.1#a",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2988,
+      "wall_time_s": 6.324,
+      "prompt_hash": "6fe9c4bd8be48be084810cd7b45b885d7219b9e028368a0bab795c4a02070af1",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.10.4#a",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2974,
+      "wall_time_s": 7.267,
+      "prompt_hash": "65ced84eb6a235a9a9b4199426034e0c82e925d7bc807d88304eed794bb4acf3",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.13#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2750,
+      "wall_time_s": 4.563,
+      "prompt_hash": "927fe4f9d2546f9f5e87e5c7a12c86aea66612d031b66b81f3d2791ebe23816c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.17.2#A",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2741,
+      "wall_time_s": 6.175,
+      "prompt_hash": "326908630cee40b88245ab6a537c4f449b32e633ac6ec8bfb5678f2a8b8f900c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.22#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2723,
+      "wall_time_s": 4.856,
+      "prompt_hash": "5cd402f3d351af9657ff7a1a6fe40d29140aded5d206cbc688c5d6a007ffb9a5",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.24.7.2#b",
+      "tier": "ids",
+      "template": "door_width_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3374,
+      "wall_time_s": 4.738,
+      "prompt_hash": "5b27fa6a7ea7954a89df3beef418a95ad5b1a1c91eb4652279589859ee70b837",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.24.7.2#c",
+      "tier": "ids",
+      "template": "door_operation_forbidden",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3377,
+      "wall_time_s": 5.421,
+      "prompt_hash": "26cd14d864cb4bb489d46e0b28c3de90fbbacccfadcafb339ea094b2da797c8b",
+      "score": {
+        "valid": false,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.24.7.2#f",
+      "tier": "ids",
+      "template": "door_operation_forbidden",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3332,
+      "wall_time_s": 5.628,
+      "prompt_hash": "dfb1c4cd817b0411f72bbec79957c4998b02a687e4504fb1d7798f974b8b9e1b",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.3.1.1#1",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2821,
+      "wall_time_s": 8.123,
+      "prompt_hash": "033a9ed37c1b16e8904c48375435412eb014fa1f3c5f5bb225de2ed31d725bbc",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.4.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2709,
+      "wall_time_s": 5.388,
+      "prompt_hash": "5c43182eea96ffb5b14742dce7ff9fbad842343d17a1b477092b81021f450c4c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.5.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2704,
+      "wall_time_s": 7.127,
+      "prompt_hash": "3928208348b112fde7f2863d062bc98fbbead5b41f1319caecc0615a409e618e",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.5.2#1",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2737,
+      "wall_time_s": 5.673,
+      "prompt_hash": "46a8de4a1a58a6097a380de14253b0255aabdd15b51332edf2d67cb975a94311",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.5.2#2",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2738,
+      "wall_time_s": 5.974,
+      "prompt_hash": "be98bbd7456e260bd4e678c53f7a4a614a0e9cd7c1540102c42b8cc9000e3b76",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.5.2#3",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2755,
+      "wall_time_s": 6.223,
+      "prompt_hash": "aebc02f0820a6cbee012311398a43755837f684f9b8a50dba1ccfb01e1f5bb42",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.7.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2647,
+      "wall_time_s": 8.195,
+      "prompt_hash": "ebd288ba13f34f03721db53d229e671ba573383e0c0b7d70c07dd280a070a292",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.7.2#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2710,
+      "wall_time_s": 5.55,
+      "prompt_hash": "6fcb5f6460cc54a08e62402b2491c1a4453a64a4657981c8f19de3950b701009",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.8.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2652,
+      "wall_time_s": 5.649,
+      "prompt_hash": "dc2ce5251a64df6b35e879bbb016e705a50a40581b8a963c22b95708ba23d525",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.8.2#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2821,
+      "wall_time_s": 8.569,
+      "prompt_hash": "47a9e65d41d2ce6ebe654f3f8316074ae2ea8e4bd6ca2ea664a58217046ecb6a",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": true,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_8_2_1 at the bound 3",
+            "expected": "pass",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_8_2_1 ample 3.9",
+            "expected": "pass",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_8_2_1 just failing 2.99",
+            "expected": "fail",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_8_2_1 comfortable 3.6",
+            "expected": "pass",
+            "got": "unchecked"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.9.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2650,
+      "wall_time_s": 9.395,
+      "prompt_hash": "514c91743baae1d5424e2ff58688ebfed3e1cab7ede67fa54932f9a8e804799a",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-5.4.1#b",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3315,
+      "wall_time_s": 6.226,
+      "prompt_hash": "67ee58ab43431367abae78345e015df454a6001e823a0df400bdc6cffe7ea0c4",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-5.4.1#b2",
+      "tier": "ids",
+      "template": "door_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3263,
+      "wall_time_s": 5.373,
+      "prompt_hash": "de42608223d46d7315717c5e1728c26dd7e957ceb7ec8fc666ef52d360aef080",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-5_4_1_b2__heldout_pass.ifc",
+            "element": "HO MBBL2016-5_4_1_b2 at the bound 2",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_1_b2__heldout_pass.ifc",
+            "element": "HO MBBL2016-5_4_1_b2 ample 2.6",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_1_b2__heldout_pass.ifc",
+            "element": "HO MBBL2016-5_4_1_b2 out of scope 1.2",
+            "expected": "out_of_scope",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_1_b2__heldout_fail.ifc",
+            "element": "HO MBBL2016-5_4_1_b2 comfortable 2.4",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_1_b2__heldout_fail.ifc",
+            "element": "HO MBBL2016-5_4_1_b2 out of scope 0.8",
+            "expected": "out_of_scope",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-5.4.1#c",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3246,
+      "wall_time_s": 5.369,
+      "prompt_hash": "a4ad6ab952cf668678d85df80031209494c2e7cda2ab99a401a45aea28931a50",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_pass.ifc",
+            "element": "HO exit swing left",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_pass.ifc",
+            "element": "HO exit double swing",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_pass.ifc",
+            "element": "HO sliding wardrobe door",
+            "expected": "out_of_scope",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_fail.ifc",
+            "element": "HO exit swing left",
+            "expected": "pass",
+            "got": "out_of_scope"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-5.4.2#1",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3033,
+      "wall_time_s": 5.547,
+      "prompt_hash": "2e0ba6fc335fa9961d59b23a94978c06befbeb90706bffd55f8c42aee49ac0c7",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_pass.ifc",
+            "element": "HO exit swing right",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_pass.ifc",
+            "element": "HO exit double swing",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_fail.ifc",
+            "element": "HO exit swing left 1.2 m",
+            "expected": "pass",
+            "got": "out_of_scope"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-7.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3149,
+      "wall_time_s": 9.142,
+      "prompt_hash": "9f867e0969baa0274711628fcc8945346d00bd159f95222b8affec886cff30a4",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-7.2#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3172,
+      "wall_time_s": 6.89,
+      "prompt_hash": "4b02b67175eb2cd5574591675af9c5311a3adb99320fa59aa351deb9c33ec76b",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": true,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-7_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-7_2_1 at the bound 3",
+            "expected": "pass",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-7_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-7_2_1 ample 3.9",
+            "expected": "pass",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-7_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-7_2_1 just failing 2.99",
+            "expected": "fail",
+            "got": "unchecked"
+          },
+          {
+            "model": "MBBL2016-7_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-7_2_1 comfortable 3.6",
+            "expected": "pass",
+            "got": "unchecked"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-3.16.1#a",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2946,
+      "wall_time_s": 2.839,
+      "prompt_hash": "6fe9c4bd8be48be084810cd7b45b885d7219b9e028368a0bab795c4a02070af1",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.10.4#a",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3118,
+      "wall_time_s": 5.162,
+      "prompt_hash": "65ced84eb6a235a9a9b4199426034e0c82e925d7bc807d88304eed794bb4acf3",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.13#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2718,
+      "wall_time_s": 2.847,
+      "prompt_hash": "927fe4f9d2546f9f5e87e5c7a12c86aea66612d031b66b81f3d2791ebe23816c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.17.2#A",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2831,
+      "wall_time_s": 3.52,
+      "prompt_hash": "326908630cee40b88245ab6a537c4f449b32e633ac6ec8bfb5678f2a8b8f900c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.22#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2804,
+      "wall_time_s": 4.213,
+      "prompt_hash": "5cd402f3d351af9657ff7a1a6fe40d29140aded5d206cbc688c5d6a007ffb9a5",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.24.7.2#b",
+      "tier": "ids",
+      "template": "door_width_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 1,
+      "total_tokens": 7695,
+      "wall_time_s": 6.218,
+      "prompt_hash": "5b27fa6a7ea7954a89df3beef418a95ad5b1a1c91eb4652279589859ee70b837",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.24.7.2#c",
+      "tier": "ids",
+      "template": "door_operation_forbidden",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 17888,
+      "wall_time_s": 11.024,
+      "prompt_hash": "26cd14d864cb4bb489d46e0b28c3de90fbbacccfadcafb339ea094b2da797c8b",
+      "score": {
+        "valid": false,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.24.7.2#f",
+      "tier": "ids",
+      "template": "door_operation_forbidden",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 19313,
+      "wall_time_s": 20.583,
+      "prompt_hash": "dfb1c4cd817b0411f72bbec79957c4998b02a687e4504fb1d7798f974b8b9e1b",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_24_7_2_f__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_24_7_2_f exit single_swing_right",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-4_24_7_2_f__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_24_7_2_f exit double_door_double_swing",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-4_24_7_2_f__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_24_7_2_f exit single_swing_left",
+            "expected": "pass",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.3.1.1#1",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 19358,
+      "wall_time_s": 19.329,
+      "prompt_hash": "033a9ed37c1b16e8904c48375435412eb014fa1f3c5f5bb225de2ed31d725bbc",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_3_1_1_1__heldout_pass.ifc",
+            "element": "HO store 2.2 m",
+            "expected": "out_of_scope",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-4_3_1_1_1__heldout_pass.ifc",
+            "element": "HO bath 2.4 m",
+            "expected": "out_of_scope",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-4_3_1_1_1__heldout_fail.ifc",
+            "element": "HO store 2.0 m",
+            "expected": "out_of_scope",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.4.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2712,
+      "wall_time_s": 2.885,
+      "prompt_hash": "5c43182eea96ffb5b14742dce7ff9fbad842343d17a1b477092b81021f450c4c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.5.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2713,
+      "wall_time_s": 2.845,
+      "prompt_hash": "3928208348b112fde7f2863d062bc98fbbead5b41f1319caecc0615a409e618e",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.5.2#1",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2701,
+      "wall_time_s": 3.115,
+      "prompt_hash": "46a8de4a1a58a6097a380de14253b0255aabdd15b51332edf2d67cb975a94311",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.5.2#2",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 14898,
+      "wall_time_s": 12.939,
+      "prompt_hash": "be98bbd7456e260bd4e678c53f7a4a614a0e9cd7c1540102c42b8cc9000e3b76",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": true,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_5_2_2__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_5_2_2 at the bound 1.1",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_5_2_2__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_5_2_2 ample 1.43",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_5_2_2__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_5_2_2 just failing 1.09",
+            "expected": "fail",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_5_2_2__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_5_2_2 comfortable 1.32",
+            "expected": "pass",
+            "got": "out_of_scope"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.5.2#3",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 16344,
+      "wall_time_s": 19.755,
+      "prompt_hash": "aebc02f0820a6cbee012311398a43755837f684f9b8a50dba1ccfb01e1f5bb42",
+      "score": {
+        "valid": false,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.7.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 13663,
+      "wall_time_s": 9.668,
+      "prompt_hash": "ebd288ba13f34f03721db53d229e671ba573383e0c0b7d70c07dd280a070a292",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_7_1_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_7_1_1 out of scope 1.32",
+            "expected": "out_of_scope",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-4_7_1_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_7_1_1 out of scope 0.88",
+            "expected": "out_of_scope",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.7.2#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2702,
+      "wall_time_s": 2.843,
+      "prompt_hash": "6fcb5f6460cc54a08e62402b2491c1a4453a64a4657981c8f19de3950b701009",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.8.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2610,
+      "wall_time_s": 2.437,
+      "prompt_hash": "dc2ce5251a64df6b35e879bbb016e705a50a40581b8a963c22b95708ba23d525",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.8.2#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 17538,
+      "wall_time_s": 17.835,
+      "prompt_hash": "47a9e65d41d2ce6ebe654f3f8316074ae2ea8e4bd6ca2ea664a58217046ecb6a",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": true,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_8_2_1 at the bound 3",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_8_2_1 ample 3.9",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_8_2_1 just failing 2.99",
+            "expected": "fail",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_8_2_1 comfortable 3.6",
+            "expected": "pass",
+            "got": "out_of_scope"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-4.9.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2606,
+      "wall_time_s": 2.511,
+      "prompt_hash": "514c91743baae1d5424e2ff58688ebfed3e1cab7ede67fa54932f9a8e804799a",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-5.4.1#b",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 1,
+      "total_tokens": 7547,
+      "wall_time_s": 11.556,
+      "prompt_hash": "67ee58ab43431367abae78345e015df454a6001e823a0df400bdc6cffe7ea0c4",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-5.4.1#b2",
+      "tier": "ids",
+      "template": "door_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3318,
+      "wall_time_s": 3.946,
+      "prompt_hash": "de42608223d46d7315717c5e1728c26dd7e957ceb7ec8fc666ef52d360aef080",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-5.4.1#c",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 18911,
+      "wall_time_s": 12.894,
+      "prompt_hash": "a4ad6ab952cf668678d85df80031209494c2e7cda2ab99a401a45aea28931a50",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_pass.ifc",
+            "element": "HO exit swing left",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_pass.ifc",
+            "element": "HO exit double swing",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_fail.ifc",
+            "element": "HO exit swing left",
+            "expected": "pass",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-5.4.2#1",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 17586,
+      "wall_time_s": 14.537,
+      "prompt_hash": "2e0ba6fc335fa9961d59b23a94978c06befbeb90706bffd55f8c42aee49ac0c7",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_pass.ifc",
+            "element": "HO exit swing right",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_pass.ifc",
+            "element": "HO exit double swing",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_fail.ifc",
+            "element": "HO exit swing left 1.2 m",
+            "expected": "pass",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-7.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "needs_human",
+      "shipped": false,
+      "repair_rounds": 3,
+      "total_tokens": 17839,
+      "wall_time_s": 16.987,
+      "prompt_hash": "9f867e0969baa0274711628fcc8945346d00bd159f95222b8affec886cff30a4",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-7_1_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-7_1_1 at the bound 4.5",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-7_1_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-7_1_1 ample 5.85",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-7_1_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-7_1_1 out of scope 2.7",
+            "expected": "out_of_scope",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-7_1_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-7_1_1 just failing 4.49",
+            "expected": "fail",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-7_1_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-7_1_1 comfortable 5.4",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-7_1_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-7_1_1 out of scope 1.8",
+            "expected": "out_of_scope",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "gated",
+      "unit_id": "MBBL2016-7.2#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "accepted",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3028,
+      "wall_time_s": 4.232,
+      "prompt_hash": "4b02b67175eb2cd5574591675af9c5311a3adb99320fa59aa351deb9c33ec76b",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-3.16.1#a",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2941,
+      "wall_time_s": 3.17,
+      "prompt_hash": "6fe9c4bd8be48be084810cd7b45b885d7219b9e028368a0bab795c4a02070af1",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.10.4#a",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3045,
+      "wall_time_s": 3.318,
+      "prompt_hash": "65ced84eb6a235a9a9b4199426034e0c82e925d7bc807d88304eed794bb4acf3",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.13#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2753,
+      "wall_time_s": 2.872,
+      "prompt_hash": "927fe4f9d2546f9f5e87e5c7a12c86aea66612d031b66b81f3d2791ebe23816c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.17.2#A",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2797,
+      "wall_time_s": 4.159,
+      "prompt_hash": "326908630cee40b88245ab6a537c4f449b32e633ac6ec8bfb5678f2a8b8f900c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.22#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2810,
+      "wall_time_s": 5.323,
+      "prompt_hash": "5cd402f3d351af9657ff7a1a6fe40d29140aded5d206cbc688c5d6a007ffb9a5",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.24.7.2#b",
+      "tier": "ids",
+      "template": "door_width_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3357,
+      "wall_time_s": 3.157,
+      "prompt_hash": "5b27fa6a7ea7954a89df3beef418a95ad5b1a1c91eb4652279589859ee70b837",
+      "score": {
+        "valid": false,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.24.7.2#c",
+      "tier": "ids",
+      "template": "door_operation_forbidden",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3272,
+      "wall_time_s": 2.524,
+      "prompt_hash": "26cd14d864cb4bb489d46e0b28c3de90fbbacccfadcafb339ea094b2da797c8b",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": true,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_24_7_2_c__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_24_7_2_c exit single_swing_right",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_24_7_2_c__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_24_7_2_c exit double_door_double_swing",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_24_7_2_c__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_24_7_2_c exit sliding_to_right",
+            "expected": "fail",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_24_7_2_c__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_24_7_2_c exit double_door_sliding",
+            "expected": "fail",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_24_7_2_c__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_24_7_2_c exit rollingup",
+            "expected": "fail",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_24_7_2_c__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_24_7_2_c exit single_swing_left",
+            "expected": "pass",
+            "got": "out_of_scope"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.24.7.2#f",
+      "tier": "ids",
+      "template": "door_operation_forbidden",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3375,
+      "wall_time_s": 3.054,
+      "prompt_hash": "dfb1c4cd817b0411f72bbec79957c4998b02a687e4504fb1d7798f974b8b9e1b",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_24_7_2_f__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_24_7_2_f exit revolving",
+            "expected": "fail",
+            "got": "pass"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.3.1.1#1",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2816,
+      "wall_time_s": 2.786,
+      "prompt_hash": "033a9ed37c1b16e8904c48375435412eb014fa1f3c5f5bb225de2ed31d725bbc",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.4.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2711,
+      "wall_time_s": 2.99,
+      "prompt_hash": "5c43182eea96ffb5b14742dce7ff9fbad842343d17a1b477092b81021f450c4c",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.5.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2738,
+      "wall_time_s": 6.836,
+      "prompt_hash": "3928208348b112fde7f2863d062bc98fbbead5b41f1319caecc0615a409e618e",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.5.2#1",
+      "tier": "geometric",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2741,
+      "wall_time_s": 3.017,
+      "prompt_hash": "46a8de4a1a58a6097a380de14253b0255aabdd15b51332edf2d67cb975a94311",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.5.2#2",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2747,
+      "wall_time_s": 3.35,
+      "prompt_hash": "be98bbd7456e260bd4e678c53f7a4a614a0e9cd7c1540102c42b8cc9000e3b76",
+      "score": {
+        "valid": false,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.5.2#3",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2784,
+      "wall_time_s": 3.365,
+      "prompt_hash": "aebc02f0820a6cbee012311398a43755837f684f9b8a50dba1ccfb01e1f5bb42",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.7.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2649,
+      "wall_time_s": 2.611,
+      "prompt_hash": "ebd288ba13f34f03721db53d229e671ba573383e0c0b7d70c07dd280a070a292",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_7_1_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_7_1_1 out of scope 1.32",
+            "expected": "out_of_scope",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-4_7_1_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_7_1_1 out of scope 0.88",
+            "expected": "out_of_scope",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.7.2#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2705,
+      "wall_time_s": 3.72,
+      "prompt_hash": "6fcb5f6460cc54a08e62402b2491c1a4453a64a4657981c8f19de3950b701009",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.8.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2610,
+      "wall_time_s": 2.635,
+      "prompt_hash": "dc2ce5251a64df6b35e879bbb016e705a50a40581b8a963c22b95708ba23d525",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.8.2#1",
+      "tier": "geometric",
+      "template": "space_area_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2720,
+      "wall_time_s": 3.578,
+      "prompt_hash": "47a9e65d41d2ce6ebe654f3f8316074ae2ea8e4bd6ca2ea664a58217046ecb6a",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": true,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_8_2_1 at the bound 3",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-4_8_2_1 ample 3.9",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_8_2_1 just failing 2.99",
+            "expected": "fail",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-4_8_2_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-4_8_2_1 comfortable 3.6",
+            "expected": "pass",
+            "got": "out_of_scope"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-4.9.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 2651,
+      "wall_time_s": 2.875,
+      "prompt_hash": "514c91743baae1d5424e2ff58688ebfed3e1cab7ede67fa54932f9a8e804799a",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-5.4.1#b",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3309,
+      "wall_time_s": 2.868,
+      "prompt_hash": "67ee58ab43431367abae78345e015df454a6001e823a0df400bdc6cffe7ea0c4",
+      "score": {
+        "valid": false,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-5.4.1#b2",
+      "tier": "ids",
+      "template": "door_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3316,
+      "wall_time_s": 2.525,
+      "prompt_hash": "de42608223d46d7315717c5e1728c26dd7e957ceb7ec8fc666ef52d360aef080",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-5_4_1_b2__heldout_pass.ifc",
+            "element": "HO MBBL2016-5_4_1_b2 at the bound 2",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_1_b2__heldout_pass.ifc",
+            "element": "HO MBBL2016-5_4_1_b2 ample 2.6",
+            "expected": "pass",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-5_4_1_b2__heldout_fail.ifc",
+            "element": "HO MBBL2016-5_4_1_b2 comfortable 2.4",
+            "expected": "pass",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-5.4.1#c",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3275,
+      "wall_time_s": 2.341,
+      "prompt_hash": "a4ad6ab952cf668678d85df80031209494c2e7cda2ab99a401a45aea28931a50",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": true,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_pass.ifc",
+            "element": "HO exit swing left",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_pass.ifc",
+            "element": "HO exit double swing",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_fail.ifc",
+            "element": "HO overhead exit",
+            "expected": "fail",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_fail.ifc",
+            "element": "HO double sliding exit",
+            "expected": "fail",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_1_c__heldout_fail.ifc",
+            "element": "HO exit swing left",
+            "expected": "pass",
+            "got": "out_of_scope"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-5.4.2#1",
+      "tier": "ids",
+      "template": "hand-written",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3034,
+      "wall_time_s": 2.71,
+      "prompt_hash": "2e0ba6fc335fa9961d59b23a94978c06befbeb90706bffd55f8c42aee49ac0c7",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_pass.ifc",
+            "element": "HO exit swing right",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_pass.ifc",
+            "element": "HO exit double swing",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_pass.ifc",
+            "element": "HO revolving lobby door",
+            "expected": "out_of_scope",
+            "got": "pass"
+          },
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_fail.ifc",
+            "element": "HO exit swing left 1.2 m",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-5_4_2_1__heldout_fail.ifc",
+            "element": "HO revolving lobby door",
+            "expected": "out_of_scope",
+            "got": "pass"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-7.1#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3347,
+      "wall_time_s": 8.615,
+      "prompt_hash": "9f867e0969baa0274711628fcc8945346d00bd159f95222b8affec886cff30a4",
+      "score": {
+        "valid": true,
+        "dev_correct": false,
+        "heldout_correct": false,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": [
+          {
+            "model": "MBBL2016-7_1_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-7_1_1 at the bound 4.5",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-7_1_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-7_1_1 ample 5.85",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-7_1_1__heldout_pass.ifc",
+            "element": "HO MBBL2016-7_1_1 out of scope 2.7",
+            "expected": "out_of_scope",
+            "got": "fail"
+          },
+          {
+            "model": "MBBL2016-7_1_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-7_1_1 just failing 4.49",
+            "expected": "fail",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-7_1_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-7_1_1 comfortable 5.4",
+            "expected": "pass",
+            "got": "out_of_scope"
+          },
+          {
+            "model": "MBBL2016-7_1_1__heldout_fail.ifc",
+            "element": "HO MBBL2016-7_1_1 out of scope 1.8",
+            "expected": "out_of_scope",
+            "got": "fail"
+          }
+        ]
+      }
+    },
+    {
+      "model": "nemotron-3.5-lightning-30b-a3b (NVIDIA)",
+      "mode": "ungated",
+      "unit_id": "MBBL2016-7.2#1",
+      "tier": "geometric",
+      "template": "space_height_min",
+      "repeat": 0,
+      "outcome": "baseline_scored",
+      "shipped": true,
+      "repair_rounds": 0,
+      "total_tokens": 3077,
+      "wall_time_s": 5.259,
+      "prompt_hash": "4b02b67175eb2cd5574591675af9c5311a3adb99320fa59aa351deb9c33ec76b",
+      "score": {
+        "valid": true,
+        "dev_correct": true,
+        "heldout_correct": true,
+        "vacuous": false,
+        "error": null,
+        "heldout_mismatches": []
+      }
+    }
+  ]
+}
