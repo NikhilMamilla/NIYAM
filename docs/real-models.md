@@ -51,6 +51,23 @@ See `docs/modelling-profile.md` for the full profile.
 Mapping a tool's own room names ("living room") to the profile's Category values is not done. A model must declare
 the Category, or a pre-processing step (not built) must add it.
 
+## What to add to your model before submitting
+
+`python -m app.rulepack.cli readiness` writes `docs/readiness/niyam-data-readiness.ids`, one IDS 1.0 file generated
+from the rule specs and rulepack v0. Each requirement's instructions name the clauses it enables. ifctester results:
+
+| Requirement | sample A (synthetic) | Building-Architecture.ifc (real) |
+|---|---|---|
+| Spaces declare a profile Category | PASS (0/0): no spaces | **FAIL (0/2)**: living room, entry hall have no Pset_SpaceCommon |
+| Doors declare Pset_DoorCommon.FireExit | FAIL (10/12) | PASS (0/0): no doors |
+| Exit doors carry Qto_DoorBaseQuantities.Width | FAIL (7/8) | PASS (0/0) |
+| Exit doors carry Qto_DoorBaseQuantities.Height | PASS (8/8) | PASS (0/0) |
+| Exit doors declare OperationType | PASS (8/8) | PASS (0/0) |
+| Buildings declare Pset_BuildingCommon.OccupancyType | FAIL (0/1) | FAIL (0/1) |
+
+PASS (0/0) means no element applied, not that the model is ready. The Category names are NIYAM's assumed profile, not
+a standard: a real model has to adopt them (or a mapping step, not built, has to add them).
+
 ## Limits
 
 - Two files from one synthetic scene, exported by one tool. Revit, ArchiCAD and other exporters were not tried.

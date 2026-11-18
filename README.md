@@ -38,12 +38,15 @@ buildings are synthetic.
 | Corpus: Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied), 55 clauses (29 rules, 12 annexures, 14 appendices) | ingested; **not reviewed**; coarse segmentation (rule level, annexures whole) |
 | Rule units: 27 verbatim units: 25 MBBL 2016 (6 hand-written pilots, 19 from rule specs; 3 tagged as duplicates; 9 IDS, 16 geometric) and 2 Telangana (from rule specs, both geometric) | works; **drafts, not human-reviewed**; each is a single-element threshold, conditions in the clause are not encoded |
 | IDS gate and sandboxed geometric gate | works (the sandbox is defence in depth, not a hard security boundary) |
-| LLM compiler, both tiers, with gated repair loop | works; two real runs on the 25 MBBL units with two NVIDIA models (`eval/results/`: pilot run 1 `20261118T133025Z-4c4519`, headline run 2 `20261118T140452Z-5b7edb`) |
+| LLM compiler, both tiers, with gated repair loop | works; real runs with two NVIDIA models in `eval/results/`: pilot run 1 `20261118T133025Z-4c4519` and headline run 2 `20261118T140452Z-5b7edb` on the 25 MBBL units, and a Telangana case study `20261118T180916Z-4b9c93` on its 2 units (counts only, no rates) |
 | Rulepack v0: 6 rules (3 door IDS, 3 room/stair Python) | works; **drafts, not reviewed** |
 | Audit engine, HTML and BCF export, upload API, web app with 3D viewer | works on synthetic IFC4 models |
 | Evaluation harness: held-out scoring, Wilson intervals, dry run, live-run preflight | works; dry-run numbers are synthetic and must never be quoted |
 | Review sheet for domain experts | exported; **no decisions returned yet** |
 | Real-building checks (two real IFC4 exports tried: `docs/real-models.md`), more rule templates | audit runs on them but finds almost nothing it can check |
+| Data-readiness IDS (`docs/readiness/niyam-data-readiness.ids`) | generated from the rules; tells a modeller what data to add |
+
+Pilot run 1's reports use the older format: no unit-level tables, no source sections, no post-hoc table.
 
 ## Quickstart
 
@@ -77,6 +80,25 @@ python -m app.audit.cli run ../fixtures/samples/sample_a_mm.ifc --out ../eval/ru
 It prints a per-rule table and writes `report.json`, `report.html` and `issues.bcf`. In the web app, click
 "Try sample A" (doors) or "Try sample D" (rooms and stairs).
 
+### What to add to your model before submitting
+
+```bash
+cd backend                                    # with the venv active
+python -m app.rulepack.cli readiness          # writes docs/readiness/niyam-data-readiness.ids
+```
+
+Open that IDS in any IDS checker (for example ifctester) against your IFC4 model before auditing it. It lists the data
+NIYAM's rules need, and each requirement names the clauses it enables:
+
+- `Pset_SpaceCommon.Category` on every IfcSpace, using one of the rules' Category values;
+- `Pset_DoorCommon.FireExit` on every IfcDoor, plus `Qto_DoorBaseQuantities.Width` / `Height` and `OperationType`
+  on exit doors;
+- `Pset_BuildingCommon.OccupancyType` on the IfcBuilding.
+
+The Category names are NIYAM's assumed profile (`docs/modelling-profile.md`), not a standard. A requirement that
+reports PASS (0/0) found no element to check, which does not make the model ready. Body geometry for spaces and stair
+flights is also needed and cannot be expressed in IDS.
+
 ### Reproduce the dry run (synthetic answers, no key)
 
 ```bash
@@ -91,8 +113,9 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 
 ## Limitations
 
-- **Synthetic fixtures.** Dev, held-out and sample models are small generated boxes, not real buildings or
-  authoring-tool exports.
+- **Synthetic fixtures.** Dev, held-out and sample models are small generated boxes, not real buildings. The only
+  real exports tried (two files of one buildingSMART sample scene, `docs/real-models.md`) carry too little data for
+  any rule to check anything.
 - **Drafts.** Every rule encodes one reading of a clause and none is human-reviewed yet
   (`docs/review/REVIEWER_GUIDE.md`).
 - **Coverage.** The 25 units are every MBBL 2016 sentence found so far that fits a single-element template cleanly; the Stage 1 target of 40 to 60 clauses is not met (see `docs/spec-backlog.md` for why the rest do not fit).
@@ -102,7 +125,7 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 - **Ignored conditions.** Building-type exceptions (e.g. 2 m doorways in assembly buildings), room-use conditions
   and second thresholds in the same sentence are dropped and only noted for the reviewer.
 - **Thresholds are checked against the text, not its meaning** (`docs/specgen.md`).
-- **Small n.** With 25 units (22 distinct) every evaluation interval is wide (`docs/evaluation.md`).
+- **Small n.** 27 units: 25 MBBL (22 distinct), so every evaluation interval is wide, and 2 Telangana units, reported only as a case study with counts (`docs/evaluation.md`).
 
 ## More
 
@@ -116,5 +139,7 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 
 ## License
 
-MIT (see `LICENSE`). Clause text is quoted from the publicly available MoHUA Model Building Bye-Laws 2016 for
-research purposes; the source PDF is not redistributed (`rules/source/` is ignored).
+MIT (see `LICENSE`). Clause text is quoted from the publicly available MoHUA Model Building Bye-Laws 2016 and the
+Telangana Building Rules 2012 (G.O.Ms.No.168) for research purposes; the source PDFs are not redistributed
+(`rules/source/` is ignored). The two models in `fixtures/real/` are (C) buildingSMART International, CC BY 4.0
+(`fixtures/real/README.md`).
