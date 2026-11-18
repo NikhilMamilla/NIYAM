@@ -43,13 +43,14 @@ metres or square metres.
 
 | Meaning | Where it is read |
 |---|---|
-| Kind of room: `Habitable`, `Bathroom`, `WaterCloset`, `CombinedBathWC`, `Kitchen`, `Store`, `Garage`, `Mezzanine`, `Basement`, `Cabin`, `Corridor` | `IfcSpace` property `Pset_SpaceCommon.Category` (`IfcLabel`) |
+| Kind of room: `Habitable`, `Bathroom`, `WaterCloset`, `CombinedBathWC`, `Kitchen`, `Store`, `Garage`, `Mezzanine`, `Basement`, `Cabin`, `Corridor`, `Office`, `Shop`, `Workspace`, `Creche`, `Workroom`, `Classroom` (assumed names, not yet seen in real authoring-tool exports) | `IfcSpace` property `Pset_SpaceCommon.Category` (`IfcLabel`) |
 | Floor area of a space | computed: the footprint of the space's body geometry (`space_floor_area_m2`) |
 | Height of a room | computed: vertical extent of the space's body geometry, floor to slab (`element_height_m`) |
 | Declared floor area | `Qto_SpaceBaseQuantities.NetFloorArea` (`IfcQuantityArea`); not used by rules |
 | Use of a building | `IfcBuilding` property `Pset_BuildingCommon.OccupancyType` (`Residential`, `Commercial`, ...) |
 | Width of a stair flight | computed: extent of an `IfcStairFlight`'s body geometry along its local Y axis (the run is along local X) (`stair_flight_width_m`) |
 
+- The room Category values are this project's convention. Every unit generated from a rule spec selects spaces by them (`rules/specs/*.yaml`, `categories:`); a real model must use exactly these labels, or its rooms are not matched.
 - A space or flight with no geometry cannot have a computed value: rules report it as unchecked.
 - A space without `Pset_SpaceCommon.Category`, or a stair flight in a building without
   `Pset_BuildingCommon.OccupancyType`, cannot be matched to a rule: unchecked, never a pass.
