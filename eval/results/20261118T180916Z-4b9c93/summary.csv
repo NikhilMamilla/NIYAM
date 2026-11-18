@@ -1,0 +1,9 @@
+view,model,mode,n,valid_k,valid_n,valid_rate,valid_lo,valid_hi,dev_correct_k,dev_correct_n,dev_correct_rate,dev_correct_lo,dev_correct_hi,heldout_correct_k,heldout_correct_n,heldout_correct_rate,heldout_correct_lo,heldout_correct_hi,shipped_k,shipped_n,shipped_rate,shipped_lo,shipped_hi,wrong_shipped_k,wrong_shipped_n,wrong_shipped_rate,wrong_shipped_lo,wrong_shipped_hi,needs_human_k,needs_human_n,needs_human_rate,needs_human_lo,needs_human_hi,mean_repairs,mean_tokens,mean_wall_s,source
+all_units,nemotron-3-ultra-550b-a55b (NVIDIA),gated,6,6,6,,,,6,6,,,,6,6,,,,6,6,,,,0,6,,,,0,6,,,,0.0,5748.5,10.222166666666668,TGBR2012
+all_units,nemotron-3-ultra-550b-a55b (NVIDIA),ungated,6,6,6,,,,4,6,,,,4,6,,,,6,6,,,,2,6,,,,,,,,,,5782.666666666667,15.194833333333333,TGBR2012
+all_units,nemotron-3.5-lightning-30b-a3b (NVIDIA),gated,6,5,6,,,,4,6,,,,4,6,,,,4,6,,,,0,4,,,,2,6,,,,1.1666666666666667,14966.166666666666,14.223,TGBR2012
+all_units,nemotron-3.5-lightning-30b-a3b (NVIDIA),ungated,6,4,6,,,,2,6,,,,2,6,,,,6,6,,,,4,6,,,,,,,,,,6315.833333333333,12.207166666666666,TGBR2012
+distinct_rules,nemotron-3-ultra-550b-a55b (NVIDIA),gated,6,6,6,,,,6,6,,,,6,6,,,,6,6,,,,0,6,,,,0,6,,,,0.0,5748.5,10.222166666666668,TGBR2012
+distinct_rules,nemotron-3-ultra-550b-a55b (NVIDIA),ungated,6,6,6,,,,4,6,,,,4,6,,,,6,6,,,,2,6,,,,,,,,,,5782.666666666667,15.194833333333333,TGBR2012
+distinct_rules,nemotron-3.5-lightning-30b-a3b (NVIDIA),gated,6,5,6,,,,4,6,,,,4,6,,,,4,6,,,,0,4,,,,2,6,,,,1.1666666666666667,14966.166666666666,14.223,TGBR2012
+distinct_rules,nemotron-3.5-lightning-30b-a3b (NVIDIA),ungated,6,4,6,,,,2,6,,,,2,6,,,,6,6,,,,4,6,,,,,,,,,,6315.833333333333,12.207166666666666,TGBR2012
