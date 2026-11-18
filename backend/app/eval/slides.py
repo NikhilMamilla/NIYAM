@@ -6,7 +6,9 @@ import json
 from pathlib import Path
 
 from app.eval.metrics import distinct_only, group_metrics, unit_metrics
-from app.eval.report import COLUMNS, RESULTS_DIR, RefusedOutput, _by, _tables, posthoc_lines
+from app.corpus.models import SOURCES
+from app.eval.report import (COLUMNS, POSTHOC_EXCLUDED, RESULTS_DIR, RefusedOutput, _by, _tables,
+                             by_source, posthoc_lines)
 from app.fixtures.gold_ids import load_units
 
 def caution(repeats: int) -> str:
@@ -47,7 +49,6 @@ def write_slides(results_path: Path, out_dir: Path | None = None) -> list[Path]:
     if meta["git_commit"].endswith("-dirty") or meta["git_commit"] == "unknown":
         raise RefusedOutput(f"refusing slide data for commit {meta['git_commit']!r}: rerun from a clean, committed tree")
     duplicates = {u.id: u.duplicate_of for u in load_units().values() if u.duplicate_of}
-    distinct = distinct_only(items, duplicates)
     fallback = sum(i.get("answered_model", i["model"]) != i["model"] for i in items)
 
     lines = [f"# NIYAM slide data: run {meta['run_id']}\n",
@@ -61,8 +62,30 @@ def write_slides(results_path: Path, out_dir: Path | None = None) -> list[Path]:
              f"- Stopped early: {meta['stopped_early'] or 'no'}",
              "- Skipped models: " + ("; ".join(f"{k} ({v})" for k, v in meta.get("skipped_models", {}).items()) or "none"),
              f"- Fallback items: {fallback} (only on_limit=wait is implemented; each item was answered by its model)",
-             "", f"**{caution(meta['repeats'])}**", "",
-             "## Headline: wrong_shipped, gated vs ungated\n",
+             "", f"**{caution(meta['repeats'])}**", ""]
+    csv_rows = []
+    for source, block in by_source(items):
+        lines += [f"# Source: {source} ({SOURCES.get(source, 'unknown source')})\n", *_source_lines(block, duplicates)]
+        distinct = distinct_only(block, duplicates)
+        csv_rows += [[*r, source] for r in _csv_rows(meta["run_id"], "all_units", block)
+                     + _csv_rows(meta["run_id"], "distinct_rules", distinct)]
+    lines += ["", caution(meta["repeats"])]
+
+    out_dir = out_dir or RESULTS_DIR / meta["run_id"]
+    out_dir.mkdir(parents=True, exist_ok=True)
+    md, path_csv = out_dir / "slides-data.md", out_dir / "slides-data.csv"
+    md.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with open(path_csv, "w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(["run_id", "view", "model", "mode", "group", "group_value", "metric", "k", "n", "rate",
+                    "wilson_lo", "wilson_hi", "source"])
+        w.writerows(csv_rows)
+    return [md, path_csv]
+
+
+def _source_lines(items: list[dict], duplicates: dict[str, str]) -> list[str]:
+    distinct = distinct_only(items, duplicates)
+    lines = ["## Headline: wrong_shipped, gated vs ungated\n",
              "wrong_shipped = shipped rules that are wrong on the held-out fixtures / shipped rules, "
              "as k/n = rate [Wilson 95% interval].\n",
              "Counted over items (correlated across repeats) and over units (a unit is wrong if any repeat shipped a "
@@ -77,16 +100,7 @@ def write_slides(results_path: Path, out_dir: Path | None = None) -> list[Path]:
                              f"{cells.get((model, 'ungated'), '-')} |")
     lines += ["", "## All units\n", *_tables(items, "###"), "", "## Distinct rules only\n",
               "Excluded as duplicates: " + (", ".join(sorted({i["unit_id"] for i in items} & duplicates.keys()))
-                                            or "none") + "\n", *_tables(distinct, "###"), "", *posthoc_lines(items, distinct, "##"), "",
-              caution(meta["repeats"])]
-
-    out_dir = out_dir or RESULTS_DIR / meta["run_id"]
-    out_dir.mkdir(parents=True, exist_ok=True)
-    md, path_csv = out_dir / "slides-data.md", out_dir / "slides-data.csv"
-    md.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    with open(path_csv, "w", newline="", encoding="utf-8") as fh:
-        w = csv.writer(fh)
-        w.writerow(["run_id", "view", "model", "mode", "group", "group_value", "metric", "k", "n", "rate",
-                    "wilson_lo", "wilson_hi"])
-        w.writerows(_csv_rows(meta["run_id"], "all_units", items) + _csv_rows(meta["run_id"], "distinct_rules", distinct))
-    return [md, path_csv]
+                                            or "none") + "\n", *_tables(distinct, "###"), ""]
+    if any(i["unit_id"] in POSTHOC_EXCLUDED for i in items):
+        lines += posthoc_lines(items, distinct, "##")
+    return lines

@@ -39,6 +39,7 @@ class ModelSpec(_Strict):
 
 class UnitSelector(_Strict):
     status: list[Literal["pilot", "selected"]] = ["pilot"]
+    source: list[Literal["MBBL2016", "TGBR2012"]] | None = None  # None: every source
 
 
 class Budget(_Strict):
@@ -62,7 +63,11 @@ def load_config(path: Path) -> EvalConfig:
 
 
 def select_units(config: EvalConfig) -> list[RuleUnit]:
-    return [u for u in load_units().values() if u.status in config.units.status and u.tier in ("ids", "geometric")]
+    from app.corpus.models import source_of
+
+    sources = config.units.source
+    return [u for u in load_units().values() if u.status in config.units.status and u.tier in ("ids", "geometric")
+            and (sources is None or source_of(u.id) in sources)]
 
 
 def worst_case_calls(config: EvalConfig, n_units: int) -> int:
@@ -84,6 +89,7 @@ class Plan:
             f"runs:    {len(self.units) * len(config.modes) * len(config.models) * config.repeats} compilations",
             f"LLM calls worst case: {self.worst_calls} (gated: 1 + {config.max_repairs} repairs per unit; ungated: 1)",
             f"budget:  max_total_calls={config.budget.max_total_calls}, max_total_tokens={config.budget.max_total_tokens}",
+            "REFUSED: no units match the config (units.status / units.source)" if not self.units else
             "OK: within the call budget" if self.within_budget else
             "REFUSED: the worst case exceeds max_total_calls; lower repeats/units/max_repairs or raise the cap",
         ]
@@ -134,7 +140,7 @@ class Plan:
 def make_plan(config: EvalConfig) -> Plan:
     units = select_units(config)
     calls = worst_case_calls(config, len(units))
-    return Plan(units, calls, calls <= config.budget.max_total_calls)
+    return Plan(units, calls, bool(units) and calls <= config.budget.max_total_calls)
 
 
 class BudgetExceeded(LLMError):

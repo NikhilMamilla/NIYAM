@@ -80,6 +80,7 @@ python -m app.eval.cli report ../eval/runs/<id>/results.json   # eval/results/<i
   endpoint, with the same key and limits) and `optional: true`. An optional model that fails the preflight is skipped
   by `run` and recorded in `results.json` as `skipped_models` (and in summary.md and slides-data.md); a required one
   blocks the run, and so does having no model left.
+- **Sources.** `units.source: [MBBL2016]` or `[TGBR2012]` selects units by source; summary.md, slides-data.md and both CSVs show each source in its own section (CSV column `source`) and never merge them. A plan that selects no unit is refused.
 - **Excluding a model.** `skip: "<reason>"` on a config model keeps it out of plan, preflight and run; the reason is
   recorded in `skipped_models`.
 - **Repeats are correlated.** The item-level tables are labelled "items, correlated across repeats": with

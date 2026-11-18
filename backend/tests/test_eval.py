@@ -320,3 +320,47 @@ def test_posthoc_sensitivity_is_labelled_and_recomputed_without_the_two_units(re
         assert "MBBL2016-4.8.2#1" in section and "MBBL2016-5.4.1#b2" in section
         assert str(expected["heldout_correct"]) in section and str(expected["wrong_shipped"]) in section
         assert doc.index("POST-HOC sensitivity") > doc.index("## All units")  # original tables stay first
+
+
+# --- sources (Phase 13) ---------------------------------------------------------------------------------------
+
+
+def test_units_can_be_filtered_by_source(config_path):
+    data = yaml.safe_load(config_path.read_text())
+    for source, expected in ((["TGBR2012"], set()), (["MBBL2016"], {u.id for u in runner.select_units(
+            runner.load_config(config_path))})):
+        data["units"] = {"status": ["pilot"], "source": source}
+        config_path.write_text(yaml.safe_dump(data))
+        units = runner.select_units(runner.load_config(config_path))
+        assert {u.id for u in units} == expected and all(u.id.startswith(source[0]) for u in units)
+    assert expected  # the MBBL selection is not empty
+
+
+def test_reports_split_results_by_source_and_never_merge_them(repeated_results, tmp_path):
+    from app.eval import slides
+
+    data = json.loads(repeated_results.read_text())
+    tg = [i for i in data["items"] if i["unit_id"] == IDS_UNITS[1]]
+    for i in tg:
+        i["unit_id"] = "TGBR2012-99#1"  # a stand-in Telangana unit
+    repeated_results.write_text(json.dumps(data))
+
+    summary = report.write_report(repeated_results, tmp_path / "r")[0].read_text(encoding="utf-8")
+    md, slides_csv = slides.write_slides(repeated_results, tmp_path / "s")
+    for doc in (summary, md.read_text(encoding="utf-8")):
+        mbbl, tgbr = doc.split("# Source: MBBL2016")[1].split("# Source: TGBR2012")
+        assert "Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied)" in tgbr
+        assert "TGBR2012-99#1" not in mbbl and IDS_UNITS[0] not in tgbr
+        assert f"| {len(tg) // 2} |" in tgbr  # n per gated/ungated cell counts only the Telangana items
+    for path in (tmp_path / "r" / "summary.csv", slides_csv):
+        rows = list(csv.reader(path.open(encoding="utf-8")))
+        assert rows[0][-1] == "source" and {r[-1] for r in rows[1:]} == {"MBBL2016", "TGBR2012"}
+
+
+def test_a_plan_with_no_units_is_refused(config_path, capsys):
+    data = yaml.safe_load(config_path.read_text())
+    data["units"] = {"status": ["pilot"], "source": ["TGBR2012"]}  # no Telangana unit exists
+    config_path.write_text(yaml.safe_dump(data))
+    assert cli.main(["--config", str(config_path), "plan"]) == 2
+    assert "REFUSED: no units match" in capsys.readouterr().out
+    assert cli.main(["--config", str(config_path), "run", "--yes", "--dry-run"]) == 2

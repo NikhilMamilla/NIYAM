@@ -6,6 +6,7 @@ import csv
 import json
 from pathlib import Path
 
+from app.corpus.models import SOURCES, source_of
 from app.eval.metrics import distinct_only, group_metrics, paired, review_share, unit_metrics
 from app.fixtures.builders import REPO_ROOT
 from app.fixtures.gold_ids import load_units
@@ -62,6 +63,14 @@ def _tables(items: list[dict], level: str) -> list[str]:
             lines.append(f"| {model} | {mode} | {value} | {m['n']} | {m['heldout_correct']} | {m['shipped']} | "
                          f"{m['wrong_shipped']} |")
     return lines + _unit_tables(items, level)
+
+
+def by_source(items: list[dict]) -> list[tuple[str, list[dict]]]:
+    """Items grouped by source (MBBL2016, TGBR2012, ...): reports show each source separately, never merged."""
+    groups: dict[str, list[dict]] = {}
+    for i in items:
+        groups.setdefault(source_of(i["unit_id"]), []).append(i)
+    return sorted(groups.items())
 
 
 def posthoc_lines(items: list[dict], distinct: list[dict], level: str) -> list[str]:
@@ -123,8 +132,6 @@ def write_report(results_path: Path, out_dir: Path | None = None) -> list[Path]:
         raise RefusedOutput(f"refusing to write a dry-run report into {DOCS_DIR}: dry-run numbers are not results")
     units = load_units()
     duplicates = {u.id: u.duplicate_of for u in units.values() if u.duplicate_of}
-    distinct = distinct_only(items, duplicates)
-    excluded = sorted({i["unit_id"] for i in items} & duplicates.keys())
 
     lines = [f"# {BANNER}\n", f"> **{BANNER}.** Never quote these numbers.\n"] if meta["dry_run"] else []
     lines += [f"# NIYAM evaluation {meta['run_id']}\n",
@@ -140,14 +147,23 @@ def write_report(results_path: Path, out_dir: Path | None = None) -> list[Path]:
         lines.append(f"Each cell has n ≤ {n_max} (n < 30): the 95% intervals are wide; differences between rows are "
                      "not evidence of a real difference.\n")
     lines += ["Rates are k/n = rate [Wilson 95% interval]. wrong_shipped is over shipped rules: how often a rule that "
-              "is wrong on the held-out fixtures reaches the rulepack.\n", "## All units\n"]
-    lines += _tables(items, "###")
-    lines.append("\n## Distinct rules only\n")
-    lines.append(("Excluded from the distinct view: " + ", ".join(f"{u} (duplicate of {duplicates[u]})" for u in excluded)
-                  + ". They encode the same requirement as another unit, so counting both would weight it twice.\n")
-                 if excluded else "No unit in this run is tagged as a duplicate; the distinct view equals the full one.\n")
-    lines += _tables(distinct, "###")
-    lines += ["", *posthoc_lines(items, distinct, "##")]
+              "is wrong on the held-out fixtures reaches the rulepack.\n"]
+    csv_rows = []
+    for source, block in by_source(items):
+        distinct = distinct_only(block, duplicates)
+        excluded = sorted({i["unit_id"] for i in block} & duplicates.keys())
+        lines += [f"# Source: {source} ({SOURCES.get(source, 'unknown source')})\n", "## All units\n"]
+        lines += _tables(block, "###")
+        lines.append("\n## Distinct rules only\n")
+        lines.append(("Excluded from the distinct view: " + ", ".join(f"{u} (duplicate of {duplicates[u]})"
+                                                                      for u in excluded)
+                      + ". They encode the same requirement as another unit, so counting both would weight it twice.\n")
+                     if excluded else "No unit in this block is tagged as a duplicate; the distinct view equals the "
+                                      "full one.\n")
+        lines += _tables(distinct, "###")
+        if any(i["unit_id"] in POSTHOC_EXCLUDED for i in block):
+            lines += ["", *posthoc_lines(block, distinct, "##")]
+        csv_rows += [[*r, source] for r in _csv_rows(block, "all_units") + _csv_rows(distinct, "distinct_rules")]
     share = review_share(units.values())
     lines.append("\n## Human review\n")
     lines.append(f"Reviewed rules with decision modify or reject: {share}" if share else
@@ -162,6 +178,6 @@ def write_report(results_path: Path, out_dir: Path | None = None) -> list[Path]:
         if meta["dry_run"]:
             w.writerow([BANNER])
         w.writerow(["view", "model", "mode", "n", *(f"{c}_{x}" for c in COLUMNS for x in ("k", "n", "rate", "lo", "hi")),
-                    "mean_repairs", "mean_tokens", "mean_wall_s"])
-        w.writerows(_csv_rows(items, "all_units") + _csv_rows(distinct, "distinct_rules"))
+                    "mean_repairs", "mean_tokens", "mean_wall_s", "source"])
+        w.writerows(csv_rows)
     return [md, path_csv]

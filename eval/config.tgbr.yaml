@@ -1,0 +1,23 @@
+# Telangana units only (TGBR2012). Same models and settings as headline run 2 (20261118T140452Z-5b7edb).
+# Credentials and request extras come from .env. max_total_calls is set to the plan's worst case.
+models:
+  - name: nemotron-3-ultra-550b-a55b (NVIDIA)
+    role: open
+    model: nvidia/nemotron-3-ultra-550b-a55b
+  - name: nemotron-3.5-lightning-30b-a3b (NVIDIA)
+    role: open
+    model: nvidia/nemotron-3.5-lightning-30b-a3b
+  - name: glm-4.7-flash (Z.ai)
+    role: hosted
+    skip: "excluded by the operator: failed preflight with HTTP 429 (overloaded) on 2026-11-18"
+modes: [gated, ungated]
+units:
+  status: [pilot]
+  source: [TGBR2012]
+repeats: 3
+temperature: 0.0
+max_repairs: 3
+max_tokens: 4096
+budget:
+  max_total_calls: 0
+  max_total_tokens: 4500000
