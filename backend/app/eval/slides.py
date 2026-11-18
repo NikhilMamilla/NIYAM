@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from app.eval.metrics import distinct_only, group_metrics, unit_metrics
-from app.eval.report import COLUMNS, RESULTS_DIR, RefusedOutput, _by, _tables
+from app.eval.report import COLUMNS, RESULTS_DIR, RefusedOutput, _by, _tables, posthoc_lines
 from app.fixtures.gold_ids import load_units
 
 def caution(repeats: int) -> str:
@@ -77,7 +77,8 @@ def write_slides(results_path: Path, out_dir: Path | None = None) -> list[Path]:
                              f"{cells.get((model, 'ungated'), '-')} |")
     lines += ["", "## All units\n", *_tables(items, "###"), "", "## Distinct rules only\n",
               "Excluded as duplicates: " + (", ".join(sorted({i["unit_id"] for i in items} & duplicates.keys()))
-                                            or "none") + "\n", *_tables(distinct, "###"), "", caution(meta["repeats"])]
+                                            or "none") + "\n", *_tables(distinct, "###"), "", *posthoc_lines(items, distinct, "##"), "",
+              caution(meta["repeats"])]
 
     out_dir = out_dir or RESULTS_DIR / meta["run_id"]
     out_dir.mkdir(parents=True, exist_ok=True)

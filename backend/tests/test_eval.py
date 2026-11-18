@@ -292,3 +292,31 @@ def test_slides_caution_and_headline_reflect_repeats(repeated_results, tmp_path)
     text = slides.write_slides(repeated_results, tmp_path / "s")[0].read_text(encoding="utf-8")
     assert "one repeat per unit" not in text and "2 repeats per unit" in text
     assert "| items, correlated across repeats |" in text and "| units (any repeat wrong) |" in text
+
+
+# --- post-hoc sensitivity (Phase 12c) ------------------------------------------------------------------------
+
+POSTHOC_NOTE = ("excluded after seeing results because the spec reading and the literal clause text disagree; "
+                "not a pre-registered analysis")
+
+
+def test_posthoc_sensitivity_is_labelled_and_recomputed_without_the_two_units(repeated_results, tmp_path):
+    from app.eval import slides
+    from app.eval.metrics import group_metrics
+
+    data = json.loads(repeated_results.read_text())
+    excluded = {"MBBL2016-4.8.2#1", "MBBL2016-5.4.1#b2"}
+    for i in data["items"][:2]:  # make the excluded units present in this small run
+        i["unit_id"] = "MBBL2016-4.8.2#1"
+    repeated_results.write_text(json.dumps(data))
+    kept = [i for i in data["items"] if i["unit_id"] not in excluded]
+    expected = group_metrics([i for i in kept if i["mode"] == "gated"])
+
+    summary = report.write_report(repeated_results, tmp_path / "r")[0].read_text(encoding="utf-8")
+    text = slides.write_slides(repeated_results, tmp_path / "s")[0].read_text(encoding="utf-8")
+    for doc in (summary, text):
+        assert "POST-HOC sensitivity" in doc and POSTHOC_NOTE in doc
+        section = doc.split("POST-HOC sensitivity")[1]
+        assert "MBBL2016-4.8.2#1" in section and "MBBL2016-5.4.1#b2" in section
+        assert str(expected["heldout_correct"]) in section and str(expected["wrong_shipped"]) in section
+        assert doc.index("POST-HOC sensitivity") > doc.index("## All units")  # original tables stay first

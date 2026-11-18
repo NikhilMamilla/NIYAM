@@ -14,6 +14,10 @@ RESULTS_DIR = REPO_ROOT / "eval" / "results"
 DOCS_DIR = REPO_ROOT / "docs"
 BANNER = "DRY RUN: synthetic responses, not model results"
 COLUMNS = ["valid", "dev_correct", "heldout_correct", "shipped", "wrong_shipped", "needs_human"]
+# Chosen AFTER seeing run 20261118T140452Z-5b7edb: units whose spec reading differs from the literal clause text.
+POSTHOC_EXCLUDED = ("MBBL2016-4.8.2#1", "MBBL2016-5.4.1#b2")
+POSTHOC_NOTE = ("excluded after seeing results because the spec reading and the literal clause text disagree; "
+                "not a pre-registered analysis")
 
 
 class RefusedOutput(Exception):
@@ -58,6 +62,22 @@ def _tables(items: list[dict], level: str) -> list[str]:
             lines.append(f"| {model} | {mode} | {value} | {m['n']} | {m['heldout_correct']} | {m['shipped']} | "
                          f"{m['wrong_shipped']} |")
     return lines + _unit_tables(items, level)
+
+
+def posthoc_lines(items: list[dict], distinct: list[dict], level: str) -> list[str]:
+    """POST-HOC sensitivity: the headline heldout_correct and wrong_shipped recomputed without POSTHOC_EXCLUDED."""
+    lines = [f"{level} POST-HOC sensitivity: without {', '.join(POSTHOC_EXCLUDED)}\n",
+             f"**Note: {POSTHOC_NOTE}.** The tables above are the primary results and are "
+             f"unchanged; this table only shows how much these two units move the headline numbers.\n",
+             "| view | model | mode | n | heldout_correct | wrong_shipped (items) | wrong_shipped per unit |",
+             "|---|---|---|---|---|---|---|"]
+    for view, group in (("all units", items), ("distinct rules", distinct)):
+        kept = [i for i in group if i["unit_id"] not in POSTHOC_EXCLUDED]
+        for (model, mode), cell in sorted(_by(kept, "model", "mode").items()):
+            m = group_metrics(cell)
+            lines.append(f"| {view} | {model} | {mode} | {m['n']} | {m['heldout_correct']} | {m['wrong_shipped']} | "
+                         f"{unit_metrics(cell)['wrong_shipped_units']} |")
+    return lines
 
 
 def _unit_tables(items: list[dict], level: str) -> list[str]:
@@ -127,6 +147,7 @@ def write_report(results_path: Path, out_dir: Path | None = None) -> list[Path]:
                   + ". They encode the same requirement as another unit, so counting both would weight it twice.\n")
                  if excluded else "No unit in this run is tagged as a duplicate; the distinct view equals the full one.\n")
     lines += _tables(distinct, "###")
+    lines += ["", *posthoc_lines(items, distinct, "##")]
     share = review_share(units.values())
     lines.append("\n## Human review\n")
     lines.append(f"Reviewed rules with decision modify or reject: {share}" if share else

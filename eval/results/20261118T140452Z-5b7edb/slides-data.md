@@ -253,4 +253,19 @@ Repeats that shipped a held-out-correct rule / repeats.
 | MBBL2016-7.1#1 | 3/3 | 3/3 | 0/3 | 0/3 |
 | MBBL2016-7.2#1 | 2/3 | 1/3 | 3/3 | 3/3 |
 
+## POST-HOC sensitivity: without MBBL2016-4.8.2#1, MBBL2016-5.4.1#b2
+
+**Note: excluded after seeing results because the spec reading and the literal clause text disagree; not a pre-registered analysis.** The tables above are the primary results and are unchanged; this table only shows how much these two units move the headline numbers.
+
+| view | model | mode | n | heldout_correct | wrong_shipped (items) | wrong_shipped per unit |
+|---|---|---|---|---|---|---|
+| all units | nemotron-3-ultra-550b-a55b (NVIDIA) | gated | 69 | 66/69 = 96% [88%, 99%] | 2/68 = 3% [1%, 10%] | 1/23 = 4% [1%, 21%] |
+| all units | nemotron-3-ultra-550b-a55b (NVIDIA) | ungated | 69 | 55/69 = 80% [69%, 88%] | 14/69 = 20% [12%, 31%] | 6/23 = 26% [13%, 46%] |
+| all units | nemotron-3.5-lightning-30b-a3b (NVIDIA) | gated | 69 | 47/69 = 68% [56%, 78%] | 0/47 = 0% [0%, 8%] | 0/16 = 0% [0%, 19%] |
+| all units | nemotron-3.5-lightning-30b-a3b (NVIDIA) | ungated | 69 | 43/69 = 62% [51%, 73%] | 26/69 = 38% [27%, 49%] | 12/23 = 52% [33%, 71%] |
+| distinct rules | nemotron-3-ultra-550b-a55b (NVIDIA) | gated | 60 | 57/60 = 95% [86%, 98%] | 2/59 = 3% [1%, 12%] | 1/20 = 5% [1%, 24%] |
+| distinct rules | nemotron-3-ultra-550b-a55b (NVIDIA) | ungated | 60 | 51/60 = 85% [74%, 92%] | 9/60 = 15% [8%, 26%] | 4/20 = 20% [8%, 42%] |
+| distinct rules | nemotron-3.5-lightning-30b-a3b (NVIDIA) | gated | 60 | 44/60 = 73% [61%, 83%] | 0/44 = 0% [0%, 8%] | 0/15 = 0% [0%, 20%] |
+| distinct rules | nemotron-3.5-lightning-30b-a3b (NVIDIA) | ungated | 60 | 40/60 = 67% [54%, 77%] | 20/60 = 33% [23%, 46%] | 9/20 = 45% [26%, 66%] |
+
 Caution: n is small (25 draft units, 3 repeats per unit; repeats of a unit are correlated), so every interval is wide; no model difference may be claimed, and no mode difference beyond what the intervals show.
