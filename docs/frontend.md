@@ -68,3 +68,27 @@ The e2e suite runs Chromium with SwiftShader (software WebGL). Please confirm in
 4. Drag-and-drop of an `.ifc` file onto the drop zone (the tests use the file picker).
 5. A large real-world IFC4 model: time to view, and that the "may be slow" note appears above 30 MB.
 6. Screen-reader output (NVDA or VoiceOver) for the summary, rule list and detail panel.
+
+## Why sample D looked like one red wall (fixed in Phase 13)
+
+Reproduced headless (`docs/screenshots/sample-d-before.png`) and diagnosed with per-element boxes from the
+fragments model, not by guessing. Two separate causes:
+
+1. **Viewer: the camera could not frame anything larger than about 150 m.** That Open's camera controls fix
+   `maxDistance = 300` and the camera's far plane at 1000. Sample D's model box is 4 km across, so the fit was
+   clamped 300 units from the target, inside the volumes. Fix: `src/framing.ts` computes an exact fit (every corner
+   of the box inside both field-of-view angles) plus near/far planes and zoom limits from the model's size;
+   `viewer.ts` applies them on load and on "Reset view". Unit tests cover a 0.1 m element, sample A, sample E and a
+   4 km box; `e2e/viewer-framing.spec.ts` checks every sample is framed with the camera outside the model.
+2. **Data: sample D's file stores its room and stair shapes 1000x too large** (a 2.0 m room has a 2,000,000 mm
+   profile), while their placements are correct. The viewer draws what the file contains, so these elements are
+   kilometres across and overlap. This is a backend unit-conversion bug that the fixtures compensate for; it is
+   documented in `STATUS.md` and not changed here. The viewer now shows a notice when audited elements are more
+   than 200 m across ("NIYAM draws the file as it is").
+
+A third bug surfaced while checking the fix against sample E's truth file: room edge lines were matched to rooms by
+array position, but rooms without geometry return no meshes, so later rooms got their neighbour's verdict colour.
+Edges now use each mesh's own id; the e2e check asserts every edge set lies inside its own room's box (it fails with
+the old mapping).
+
+After the fix: `docs/screenshots/viewer-sample_*.png`.

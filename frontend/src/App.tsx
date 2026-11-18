@@ -39,6 +39,7 @@ export default function App() {
   const [selected, setSelected] = useState<number | null>(null);
   const [picked, setPicked] = useState<{ localId: number; globalId: string | null } | null>(null);
   const [onlyIssues, setOnlyIssues] = useState(false);
+  const [implausible, setImplausible] = useState(0);
   const viewportRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
   const maps = useRef({ localByExpress: new Map<number, number>(), expressByLocal: new Map<number, number>() });
@@ -54,6 +55,7 @@ export default function App() {
   useEffect(() => {
     const viewer = new Viewer(viewportRef.current!);
     viewerRef.current = viewer;
+    if (import.meta.env.DEV) (window as unknown as { __niyamViewer?: Viewer }).__niyamViewer = viewer; // e2e diagnostics
     return () => {
       viewerRef.current = null;
       void viewer.dispose();
@@ -70,6 +72,7 @@ export default function App() {
     setFile(label);
     setView("loading");
     setIdMapping("");
+    setImplausible(0);
     const token = ++runToken.current;
     const stale = () => token !== runToken.current;
     const viewer = viewerRef.current!;
@@ -103,7 +106,9 @@ export default function App() {
     maps.current.localByExpress = mapped.localByExpress;
     maps.current.expressByLocal = new Map([...mapped.localByExpress].map(([e, l]) => [l, e]));
     setIdMapping(mapped.idsMatch ? "express_id" : "global_id");
-    await viewer.paint(mapped.paints, translucentLocalIds(byExpress, mapped.localByExpress));
+    const info = await viewer.paint(mapped.paints, translucentLocalIds(byExpress, mapped.localByExpress));
+    if (stale()) return;
+    setImplausible(info.implausible);
     setView("ready");
   }, []);
 
@@ -230,6 +235,12 @@ export default function App() {
             {view === "empty" && <p className="viewport-message">Load a model to see it here.</p>}
             {view === "loading" && <p className="viewport-message"><span className="spinner" aria-hidden="true" />Preparing the 3D view…</p>}
             {view === "failed" && <p className="viewport-message">The 3D view could not be shown for this file. The audit results are still valid.</p>}
+            {view === "ready" && implausible > 0 && (
+              <p className="viewport-warning" role="status" data-testid="implausible-geometry">
+                {implausible} element{implausible === 1 ? " is" : "s are"} drawn more than 200 m across. The file
+                probably stores their shape in the wrong unit; NIYAM draws the file as it is.
+              </p>
+            )}
           </div>
         </section>
 

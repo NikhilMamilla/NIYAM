@@ -57,3 +57,40 @@ export async function colourStats(page: Page, png: Buffer): Promise<ColourStats>
     return stats;
   }, dataUrl);
 }
+
+export interface HueStats {
+  total: number;
+  /** saturated red (failed) and amber (unchecked) pixels, by hue: robust to lighting, translucency and background */
+  red: number;
+  amber: number;
+  blue: number;
+}
+
+export async function hueStats(page: Page, png: Buffer): Promise<HueStats> {
+  const dataUrl = `data:image/png;base64,${png.toString("base64")}`;
+  return page.evaluate(async (src) => {
+    const img = new Image();
+    img.src = src;
+    await img.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext("2d")!;
+    ctx.drawImage(img, 0, 0);
+    const { data } = ctx.getImageData(0, 0, img.width, img.height);
+    const stats = { total: img.width * img.height, red: 0, amber: 0, blue: 0 };
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i]! / 255, g = data[i + 1]! / 255, b = data[i + 2]! / 255;
+      const max = Math.max(r, g, b), min = Math.min(r, g, b), c = max - min;
+      if (c < 0.12 || max < 0.25) continue; // greys, whites, near-black
+      const sat = c / max;
+      let hue = max === r ? ((g - b) / c) % 6 : max === g ? (b - r) / c + 2 : (r - g) / c + 4;
+      hue = (hue * 60 + 360) % 360;
+      if (sat < 0.3) continue;
+      if (hue < 18 || hue > 345) stats.red += 1;
+      else if (hue >= 30 && hue <= 52) stats.amber += 1;
+      else if (hue >= 205 && hue <= 235) stats.blue += 1;
+    }
+    return stats;
+  }, dataUrl);
+}

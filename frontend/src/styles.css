@@ -232,3 +232,5 @@ code { font: 0.86em/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace; over
   *, *::before, *::after { transition: none !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
   .spinner { border-top-color: var(--accent); border-right-color: var(--accent); }
 }
+.viewport-warning { position: absolute; left: 12px; right: 12px; bottom: 12px; padding: 8px 12px; border-radius: var(--radius-sm);
+  background: var(--warn-bg); color: var(--warn); font-size: 0.9rem; box-shadow: var(--shadow); }
