@@ -113,7 +113,8 @@ def _spec_scope(spec) -> str:
     if spec.template.startswith("door"):
         s = spec.params.selector
         value = str(s.value).upper() if isinstance(s.value, bool) else s.value
-        needs = "Qto_DoorBaseQuantities.Width" if spec.template == "door_width_min" else "OperationType"
+        needs = {"door_width_min": "Qto_DoorBaseQuantities.Width",
+                 "door_height_min": "Qto_DoorBaseQuantities.Height"}.get(spec.template, "OperationType")
         return f"IfcDoor where {s.pset}.{s.property} is {value}; needs {s.pset}.{s.property}, {needs}; not in a rulepack"
     return (f"IfcSpace where Pset_SpaceCommon.Category is {' or '.join(spec.params.categories)}; needs "
             "Pset_SpaceCommon.Category and body geometry; not in a rulepack")

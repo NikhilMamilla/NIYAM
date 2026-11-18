@@ -25,8 +25,8 @@ def test_existing_fixtures_are_byte_identical_to_phase8():
 
 
 def test_specs_cover_all_four_templates_and_are_registered_as_draft_pilots():
-    assert set(ONE_PER_TEMPLATE) == {"door_width_min", "door_operation_forbidden", "space_area_min",
-                                     "space_height_min"}
+    assert set(ONE_PER_TEMPLATE) == {"door_width_min", "door_height_min", "door_operation_forbidden",
+                                     "space_area_min", "space_height_min"}
     units = load_units()
     for unit_id, spec in SPECS.items():
         u = units[unit_id]

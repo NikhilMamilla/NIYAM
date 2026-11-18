@@ -16,8 +16,8 @@ from app.fixtures.builders import REPO_ROOT, safe_name
 
 SPECS_DIR = REPO_ROOT / "rules" / "specs"
 CLAUSES_SNAPSHOT = SPECS_DIR / "clauses.yaml"  # parent clauses of every spec, so validation needs no database
-TEMPLATES = ("door_width_min", "door_operation_forbidden", "space_area_min", "space_height_min")
-TIER = {"door_width_min": "ids", "door_operation_forbidden": "ids", "space_area_min": "geometric",
+TEMPLATES = ("door_width_min", "door_height_min", "door_operation_forbidden", "space_area_min", "space_height_min")
+TIER = {"door_width_min": "ids", "door_height_min": "ids", "door_operation_forbidden": "ids", "space_area_min": "geometric",
         "space_height_min": "geometric"}
 # selection data the modelling profile defines (docs/modelling-profile.md)
 DOOR_SELECTORS = {("Pset_DoorCommon", "FireExit")}
@@ -65,11 +65,13 @@ class Spec(_Strict):
     clause_id: str
     unit_text: str
     topic: str
-    template: Literal["door_width_min", "door_operation_forbidden", "space_area_min", "space_height_min"]
+    template: Literal["door_width_min", "door_height_min", "door_operation_forbidden", "space_area_min",
+                      "space_height_min"]
     params: Params
     threshold: Threshold | None = None
     notes_for_reviewer: str
     duplicate_of: str | None = None  # another unit encoding the same requirement
+    dev_length_unit: Literal["mm", "m"] | None = None  # pins the dev project unit (held-out uses the other)
 
     @property
     def tier(self) -> str:
@@ -108,9 +110,9 @@ class Spec(_Strict):
                 raise ValueError(f"{t} threshold unit must be {want}, not {self.threshold.unit}")
             if p.forbidden_operations is not None:
                 raise ValueError(f"{t} takes no forbidden_operations")
-            if t == "door_width_min" and not self.threshold.inclusive:
+            if t in ("door_width_min", "door_height_min") and not self.threshold.inclusive:
                 # IDS compares the unit-converted quantity: 900 mm reads 0.9000000000000001 m, so "> 0.9" would pass
-                raise ValueError("door_width_min supports inclusive thresholds only (exclusive IDS bounds are unsafe "
+                raise ValueError(f"{t} supports inclusive thresholds only (exclusive IDS bounds are unsafe "
                                  "on unit-converted values)")
         return self
 

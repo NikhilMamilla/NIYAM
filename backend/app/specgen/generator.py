@@ -27,8 +27,10 @@ MEASURE = {"space_area_min": ("space_floor_area_m2", "floor area", "m2"),
 
 def units_of(spec: Spec) -> tuple[str, str]:
     """(dev, held-out) project length units: alternate by the spec's position so both are exercised."""
-    index = [p.stem for p in spec_paths()].index(spec.safe)
-    return ("mm", "m") if index % 2 == 0 else ("m", "mm")
+    if spec.dev_length_unit is not None:  # pinned, so adding specs never shifts other units' fixtures
+        return (spec.dev_length_unit, "m" if spec.dev_length_unit == "mm" else "mm")
+    unpinned = [p.stem for p in spec_paths() if "dev_length_unit" not in p.read_text(encoding="utf-8")]
+    return ("mm", "m") if unpinned.index(spec.safe) % 2 == 0 else ("m", "mm")
 
 
 def meets(spec: Spec, value: float) -> bool:
@@ -108,9 +110,10 @@ def _model(spec: Spec, elements: list[Element], length_unit: str, key: str):
     for e in elements:
         if spec.template.startswith("door"):
             width = e.value if spec.template == "door_width_min" else 1.2
+            height = e.value if spec.template == "door_height_min" else 2.1
             op = e.value if spec.template == "door_operation_forbidden" else "SINGLE_SWING_LEFT"
             add_door(f, storey, e.name, fire_exit=e.selected, operation_type=op, width=width * scale,
-                     height=2.1 * scale)
+                     height=height * scale)
             continue
         category = spec.params.categories[0] if e.selected else CONTROL_CATEGORY
         if spec.template == "space_area_min":
@@ -150,10 +153,11 @@ def gold_ids(spec: Spec, threshold: float | None = None, forbidden: list[str] | 
     value = ("TRUE" if sel.value else "FALSE") if isinstance(sel.value, bool) else sel.value
     spec_ids.applicability.append(ids.Property(propertySet=sel.pset, baseName=sel.property, value=value,
                                                dataType="IFCBOOLEAN" if isinstance(sel.value, bool) else "IFCLABEL"))
-    if spec.template == "door_width_min":
+    if spec.template in ("door_width_min", "door_height_min"):
         bound = spec.threshold.value if threshold is None else threshold
         spec_ids.requirements.append(ids.Property(
-            propertySet="Qto_DoorBaseQuantities", baseName="Width", dataType="IFCLENGTHMEASURE",
+            propertySet="Qto_DoorBaseQuantities", baseName="Width" if spec.template == "door_width_min" else "Height",
+            dataType="IFCLENGTHMEASURE",
             value=ids.Restriction(options={"minInclusive": bound}, base="double")))
     else:
         ops = forbidden or spec.params.forbidden_operations
@@ -218,7 +222,7 @@ def gold_artifact(spec: Spec) -> tuple[Path, str]:
 def overfit(spec: Spec) -> str:
     """A rule tuned to the dev pair instead of the clause: it passes the dev gate and fails held-out."""
     t = spec.threshold
-    if spec.template == "door_width_min":
+    if spec.template in ("door_width_min", "door_height_min"):
         return gold_ids(spec, threshold=_r(t.value - 0.05))  # between the dev fail (-10%) and pass values
     if spec.template == "door_operation_forbidden":
         return gold_ids(spec, forbidden=spec.params.forbidden_operations[:1])  # only the operation dev shows
@@ -231,7 +235,7 @@ def dryrun_answers(spec: Spec) -> dict[str, str]:
         answers = {"correct.ids": gold_ids(spec), "inverted.ids": gold_ids(spec, cardinality="required")
                    if spec.template == "door_operation_forbidden" else gold_ids(spec, threshold=spec.threshold.value * 2),
                    "malformed.ids": gold_ids(spec)[:400]}
-        if spec.template == "door_width_min" or len(spec.params.forbidden_operations) > 1:
+        if spec.template != "door_operation_forbidden" or len(spec.params.forbidden_operations) > 1:
             answers["overfit.ids"] = overfit(spec)
         return answers
     return {"correct.py": gold_check(spec), "overfit.py": overfit(spec),
