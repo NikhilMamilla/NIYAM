@@ -10,7 +10,8 @@
     "test": "vitest run",
     "e2e": "playwright test",
     "preview": "vite preview",
-    "postinstall": "node scripts/copy-wasm.mjs"
+    "postinstall": "node scripts/copy-wasm.mjs",
+    "site-data": "node --experimental-strip-types --no-warnings scripts/build-site-data.ts"
   },
   "dependencies": {
     "@thatopen/components": "3.6.0",

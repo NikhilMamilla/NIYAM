@@ -36,7 +36,7 @@ buildings are synthetic.
 |---|---|
 | Corpus: MBBL 2016, 445 clauses, search and curation CLI | works |
 | Corpus: Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied), 55 clauses (29 rules, 12 annexures, 14 appendices) | ingested; **not reviewed**; coarse segmentation (rule level, annexures whole) |
-| Rule units: 27 verbatim units: 25 MBBL 2016 (6 hand-written pilots, 19 from rule specs; 3 tagged as duplicates; 9 IDS, 16 geometric) and 2 Telangana (from rule specs, both geometric) | works; **drafts, not human-reviewed**; each is a single-element threshold, conditions in the clause are not encoded |
+| Rule units: 27 verbatim units: 25 MBBL 2016 (6 hand-written pilots, 19 from rule specs; 3 tagged as duplicates; 7 IDS, 18 geometric) and 2 Telangana (from rule specs, both geometric) | works; **drafts, not human-reviewed**; each is a single-element threshold, conditions in the clause are not encoded |
 | IDS gate and sandboxed geometric gate | works (the sandbox is defence in depth, not a hard security boundary) |
 | LLM compiler, both tiers, with gated repair loop | works; real runs with two NVIDIA models in `eval/results/`: pilot run 1 `20261118T133025Z-4c4519` and headline run 2 `20261118T140452Z-5b7edb` on the 25 MBBL units, and a Telangana case study `20261118T180916Z-4b9c93` on its 2 units (counts only, no rates) |
 | Rulepack v0: 6 rules (3 door IDS, 3 room/stair Python) | works; **drafts, not reviewed** |

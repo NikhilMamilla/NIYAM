@@ -1,0 +1,39 @@
+{
+  "run_id": "20261118T140452Z-5b7edb",
+  "unit_id": "MBBL2016-5.4.1#b2",
+  "model": "nemotron-3-ultra-550b-a55b (NVIDIA)",
+  "mode": "gated",
+  "repeat": 0,
+  "attempt": 1,
+  "outcome": "needs_human",
+  "repair_rounds": 3,
+  "stages": [
+    {
+      "stage": "xml_wellformed",
+      "passed": true
+    },
+    {
+      "stage": "xsd_valid",
+      "passed": true
+    },
+    {
+      "stage": "unit_safe_bounds",
+      "passed": true
+    },
+    {
+      "stage": "loads_in_ifctester",
+      "passed": true
+    },
+    {
+      "stage": "applicable_on_fixtures",
+      "passed": true
+    },
+    {
+      "stage": "verdict_pass_fixture",
+      "passed": false
+    }
+  ],
+  "failing_stage": "verdict_pass_fixture",
+  "repair_message_head": "The verifier rejected your previous answer.\nFailing stage: verdict_pass_fixture\nMessage: must pass the compliant model but failed: 'MBBL2016-5.4.1#b2 Doorway Height' failed ['a control element that must PASS', 'the element that must FAIL in the non-compliant model']",
+  "note": "Extracted from the local attempt log of the run; the repair message is rebuilt with the compiler's own build_repair_message, so fixture names and ids are masked exactly as the model saw them."
+}
