@@ -14,11 +14,11 @@ from pathlib import Path
 
 import yaml
 
-from app.corpus.models import RuleUnit
+from app.corpus.models import SOURCES, RuleUnit, source_of
 from app.rulepack.loader import read_manifest, write_manifest
 from app.rulepack.models import Rule
 
-INFO_COLUMNS = ["unit_id", "clause_id", "page", "tier", "unit_text", "clause_text", "machine_reading", "threshold",
+INFO_COLUMNS = ["unit_id", "source", "clause_id", "page", "tier", "unit_text", "clause_text", "machine_reading", "threshold",
                 "scope", "duplicate_of", "reading_dependent"]
 # Units whose spec reading departs from the literal clause text (found in evaluation run 20261118T140452Z-5b7edb).
 # They are listed first so a reviewer settles the reading before anything is scored against it.
@@ -97,7 +97,7 @@ def sheet_rows(units: list[RuleUnit], pack: Path) -> list[dict[str, str]]:
             page, clause_text = (str(rule.page), rule.clause_text) if rule else ("", "")
             threshold, scope = _threshold(rule, pack), _scope(rule)
         rows.append({
-            "unit_id": u.id, "clause_id": u.clause_id, "page": page, "tier": u.tier,
+            "unit_id": u.id, "source": SOURCES.get(source_of(u.id), source_of(u.id)), "clause_id": u.clause_id, "page": page, "tier": u.tier,
             "unit_text": " ".join(u.text.split()), "clause_text": clause_text,
             "machine_reading": " ".join((u.notes or "none").split()), "threshold": threshold,
             "scope": scope, "duplicate_of": u.duplicate_of or "", "reading_dependent": READING_DEPENDENT.get(u.id, ""),
@@ -152,7 +152,7 @@ def _markdown(rows: list[dict[str, str]]) -> str:
              "or `reject`; give your name and the date. For `modify`, write the corrected reading and/or "
              "threshold. Every rule below is a draft machine encoding of the quoted clause.\n"]
     for r in rows:
-        parts += [f"## {r['unit_id']} ({r['tier']}, page {r['page'] or '?'})\n",
+        parts += [f"## {r['unit_id']} ({r['tier']}, page {r['page'] or '?'})\n", f"**Source:** {r['source']}\n",
                   f"**Rule text:** {r['unit_text']}\n", f"**Machine reading:** {r['machine_reading']}\n",
                   f"**Threshold:** {r['threshold']}\n", f"**Applies to:** {r['scope']}\n",
                   *([f"**Claimed duplicate of:** {r['duplicate_of']} (confirm or reject in comments)\n"]

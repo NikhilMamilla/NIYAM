@@ -4,6 +4,8 @@ Fill in the empty columns of `review-sheet.csv` (it opens in Excel): **decision*
 
 ## MBBL2016-4.8.2#1 (geometric, page 72)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** The size of a store room, where provided in a residential building, shall be not less than 3 m2.
 
 **Machine reading:** Store rooms (Category Store) must have a floor area of at least 3 m2. "Size" is read as floor area. NOT encoded: the condition "where provided in a residential building"; store rooms in other building types are checked too.
@@ -24,6 +26,8 @@ than 3 m2.
 </details>
 
 ## MBBL2016-5.4.1#b2 (ids, page 100)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** Doorways shall be not less than 2 m in height.
 
@@ -59,6 +63,8 @@ the direction of exit.
 </details>
 
 ## MBBL2016-3.16.1#a (geometric, page 67)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** The height of the rooms shall be not less than 3.6 metres from the floor to soffit
 
@@ -96,6 +102,8 @@ AND SERVICES
 </details>
 
 ## MBBL2016-4.10.4#a (geometric, page 72)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** Every basement shall be in every part at least 2.4 m in height from the floor to the underside of the roof slab or ceiling
 
@@ -135,6 +143,8 @@ Life Safety’
 
 ## MBBL2016-4.13#1 (geometric, page 73)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** The size of cabins shall not be less than 3.0 m2
 
 **Machine reading:** Cabins (Category Cabin) must have a floor area of at least 3.0 m2. NOT encoded: "with a minimum width of 1.0 m", the 0.75 m clear passages, the 18.5 m travel distance and the 2.2 m maximum height of unventilated cabins.
@@ -156,6 +166,8 @@ any open spaces/ mechanical means, the maximum height of the cabin shall be 2.2 
 </details>
 
 ## MBBL2016-4.17.2#A (geometric, page 75)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** The minimum width of staircase shall be as follows: A Residential buildings (dwellings) 1.0 m
 
@@ -184,6 +196,8 @@ F All other buildings 1.5 m
 
 ## MBBL2016-4.22#1 (geometric, page 76)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** The minimum area for office room/shop or any other space to be used as workspace shall not be less than 6.0 sq m.
 
 **Machine reading:** Offices, shops and other workspaces (Category Office, Shop or Workspace) must have a floor area of at least 6.0 m2. NOT encoded: "with a minimum width of 2.1 m" and the clause heading's condition "Non-residential buildings" (the building type is not checked; the room categories are assumed to imply it).
@@ -202,6 +216,8 @@ shall not be less than 6.0 sq m. with a minimum width of 2.1 m.
 </details>
 
 ## MBBL2016-4.24.7.2#b (ids, page 80)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** No exit doorways shall be less than 1m in width
 
@@ -240,6 +256,8 @@ the direction of exit.
 
 ## MBBL2016-4.24.7.2#c (ids, page 80)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** Overhead or sliding door shall not be installed.
 
 **Machine reading:** Exit doors (FireExit = TRUE) must not be sliding (SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING) or overhead (ROLLINGUP). AMBIGUITY: the sentence has no subject restriction; it is read as applying to exit doorways because it sits in sub-item c about exit doorways. "Overhead" mapped to ROLLINGUP only. Duplicates MBBL2016-5.4.1#c.
@@ -276,6 +294,8 @@ the direction of exit.
 </details>
 
 ## MBBL2016-4.24.7.2#f (ids, page 80)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** Revolving doors shall not to be provided as means of fire exit.
 
@@ -314,6 +334,8 @@ the direction of exit.
 
 ## MBBL2016-4.3.1.1#1 (geometric, page 69)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** The height of all rooms for human habitation shall not be less than 2.75 m measured from the surface of the floor to the lowest point of the ceiling (bottom of slab)
 
 **Machine reading:** IfcSpace with Pset_SpaceCommon.Category=Habitable: vertical extent of the space geometry (floor to underside of slab) >= 2.75 m. Ambiguity: assumes the modelled space spans floor surface to slab soffit; the beam (2.4 m), pitched-roof (average height) and air-conditioned (2.4 m) provisions in the following sentences are not encoded; applies to residential/business/mercantile only (4.3.1.2), building type not checked.
@@ -338,6 +360,8 @@ be provided.
 
 ## MBBL2016-4.4.1#1 (geometric, page 70)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** The height of a kitchen measured from the surface of the floor to the lowest point in the ceiling (bottom of slab) shall not be less than 2.75 m
 
 **Machine reading:** Kitchens (IfcSpace with Pset_SpaceCommon.Category = Kitchen) must be at least 2.75 m high, measured as the vertical extent of the space geometry, which assumes the modelled space runs from floor surface to the underside of the slab. "Not less than" read as inclusive. NOT encoded: the exception "except for the portion to accommodate floor trap of the upper floor" (a local lowering of the ceiling would make the whole kitchen fail or pass depending on modelling).
@@ -358,6 +382,8 @@ accommodate floor trap of the upper floor.
 
 ## MBBL2016-4.5.1#1 (geometric, page 70)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** The height of a bathroom or water-closet measured from the surface of the floor to the lowest point in the ceiling (bottom of slab) shall not be less than 2.1 m.
 
 **Machine reading:** Bathrooms, water-closets and combined bath/WC rooms (Category Bathroom, WaterCloset or CombinedBathWC) must be at least 2.1 m high (vertical extent of the space geometry, floor to slab soffit). Inclusive. Ambiguity: a combined bath/WC room is assumed to be covered by "bathroom or water-closet"; false ceilings are not distinguished.
@@ -376,6 +402,8 @@ lowest point in the ceiling (bottom of slab) shall not be less than 2.1 m.
 </details>
 
 ## MBBL2016-4.5.2#1 (geometric, page 70)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** The area of a bathroom shall not be less than 1.8 m2
 
@@ -398,6 +426,8 @@ minimum width of 1.2 m.
 
 ## MBBL2016-4.5.2#2 (geometric, page 70)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** The floor area of water-closet shall be 1.1 m2
 
 **Machine reading:** Water-closets (Category WaterCloset) must have a floor area of at least 1.1 m2 (footprint of the space geometry). AMBIGUITY: the clause says "shall be 1.1 m2", read as a minimum; a reviewer may read it as an exact size. NOT encoded: "with a minimum width of 0.9 m".
@@ -418,6 +448,8 @@ minimum width of 1.2 m.
 </details>
 
 ## MBBL2016-4.5.2#3 (geometric, page 70)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** If bath and water-closet are combined, its floor area shall not be less than 2.8 m2
 
@@ -440,6 +472,8 @@ minimum width of 1.2 m.
 
 ## MBBL2016-4.7.1#1 (geometric, page 71)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** It shall have a minimum height of 2.2 m.
 
 **Machine reading:** A mezzanine floor (Category Mezzanine) must be at least 2.2 m high. "It" is read as the mezzanine floor from the section title 4.7 Mezzanine Floor. AMBIGUITY: whether the height is clear height above the mezzanine or below it is not stated; the encoding uses the vertical extent of the modelled mezzanine space.
@@ -457,6 +491,8 @@ It shall have a minimum height of 2.2 m.
 </details>
 
 ## MBBL2016-4.7.2#1 (geometric, page 71)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** The minimum size of the mezzanine floor, if it is to be used as a living room, shall not be less than 9.5 m2.
 
@@ -479,6 +515,8 @@ third the plinth area of the building.
 
 ## MBBL2016-4.8.1#1 (geometric, page 72)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** The height of a store room shall be not less than 2.2 m.
 
 **Machine reading:** Store rooms (Category Store) must be at least 2.2 m high (vertical extent of the space geometry). Inclusive.
@@ -497,6 +535,8 @@ The height of a store room shall be not less than 2.2 m.
 
 ## MBBL2016-4.9.1#1 (geometric, page 72)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** The height of a garage shall be not less than 2.4 m.
 
 **Machine reading:** Garages (Category Garage) must be at least 2.4 m high. Inclusive. AMBIGUITY: private and public garages are not distinguished.
@@ -514,6 +554,8 @@ The height of a garage shall be not less than 2.4 m.
 </details>
 
 ## MBBL2016-5.4.1#b (ids, page 100)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** No exit doorway shall be less than 1m in width.
 
@@ -548,6 +590,8 @@ the direction of exit.
 
 ## MBBL2016-5.4.1#c (ids, page 100)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** overhead or sliding doors shall not be installed
 
 **Machine reading:** IfcDoor with FireExit=TRUE: OperationType not in {SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING, ROLLINGUP}. Ambiguity: scope (exit doorways) inferred from sub-item c; 'overhead' mapped to ROLLINGUP only; fragment of a comma-spliced sentence whose first half (0.9m landing width) is geometric.
@@ -581,6 +625,8 @@ the direction of exit.
 
 ## MBBL2016-5.4.2#1 (ids, page 100)
 
+**Source:** MoHUA Model Building Bye-Laws 2016
+
 **Rule text:** Revolving door shall not be provided as a means of fire exit.
 
 **Machine reading:** IfcDoor with Pset_DoorCommon.FireExit=TRUE: OperationType must not be REVOLVING. Ambiguity: 'means of fire exit' is mapped to the FireExit flag.
@@ -598,6 +644,8 @@ Revolving door shall not be provided as a means of fire exit.
 </details>
 
 ## MBBL2016-7.1#1 (geometric, page 119)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** The minimum internal height of workrooms shall not be less than 4.5 m.
 
@@ -643,6 +691,8 @@ the same into a watercourse or municipal drain.
 </details>
 
 ## MBBL2016-7.2#1 (geometric, page 119)
+
+**Source:** MoHUA Model Building Bye-Laws 2016
 
 **Rule text:** A minimum room height for classroom in all schools and other institutions shall not be less than 3.0 m.
 

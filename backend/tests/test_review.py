@@ -167,3 +167,9 @@ def test_reading_dependent_units_come_first_with_a_note(work):
 def test_committed_sheet_lists_reading_dependent_units_first():
     rows = rows_of(REPO_ROOT / "docs" / "review" / "review-sheet.csv")
     assert [r["unit_id"] for r in rows[:2]] == ["MBBL2016-4.8.2#1", "MBBL2016-5.4.1#b2"]
+
+
+def test_sheet_has_a_source_column(work):
+    rows = rows_of(work[2])
+    assert {r["source"] for r in rows} == {"MoHUA Model Building Bye-Laws 2016"}  # no Telangana unit exists yet
+    assert list(rows[0])[:2] == ["unit_id", "source"]

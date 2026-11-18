@@ -46,3 +46,27 @@ review sheet (`reading_dependent` column). Their status and truth files are unch
 
 The report's POST-HOC sensitivity table shows the headline numbers without these two units. It was added after
 seeing the results and is not a pre-registered analysis.
+
+## Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied)
+
+Searched every page outside the locality lists (pages 1-30 and 280-373) for doors, rooms, heights and areas. The rules
+defer room sizes to the NBC: Rule 15(a)(vi), "the requirements of parts of the building like size and area requirements
+of habitable rooms, kitchen, bathrooms and Water closets ... shall conform to the National Building Code of India".
+No sentence fits a template without dropping a condition, so there are no Telangana units.
+
+| Clause (page) | Text (verbatim or abridged) | Why it is not a unit |
+|---|---|---|
+| TGBR2012-5 (10) | "Height of stilt floor shall not be less than 2.5m." | Rule 5 covers non-high-rise buildings only ("Buildings below 18m in height"): depends on building height; a stilt floor is a storey, not a room |
+| TGBR2012-5 (10) | parking floors with mechanical system and lift: not less than 4.5m | a second condition (mechanical parking) |
+| TGBR2012-7 (14) | chowk / inner courtyard at least 25 sq.m, no side less than 3m | an open space, not a room; a second dimension |
+| TGBR2012-13 (19) | watchman room and toilets in a stilt floor, maximum 25 sq.m | a maximum; conditional on a stilt floor |
+| TGBR2012-AnnexureIII (284) | "clear height of 2100 MM in the passage/escape path" | fire provisions for vertical openings; a passage, not a room |
+| TGBR2012-AnnexureIV (296, 298, 305) | egress height 2.4 m, door clear widths 2.0 / 1.2 m, a room of at least 9 m2 | the annexure's 'Building' means a hospital above 30 m: building type and height |
+| TGBR2012-AnnexureV (315, 318) | door clear width 900 mm; WC door 800 mm | accessibility clear openings and doors identified by the room they serve (as for MBBL 8.x) |
+
+Same topic, different numbers (verbatim):
+
+| Topic | MBBL 2016 | Telangana 2012 |
+|---|---|---|
+| high-rise threshold | MBBL2016-1.1 (p19): "A building above 4 stories, and/or a building exceeding 15 meters or more in height (without stilt) and 17.5M (including stilt)." | TGBR2012-5 (p9): "NON-HIGH RISE BUILDINGS (Buildings below 18m in height inclusive of Stilt / Parking Floor)" |
+| stilt floor height | MBBL2016-5.5.11 (p108): "Stilts in high-rise will not be restricted to height of 2.4m as long as it is used for parking." | TGBR2012-5 (p10): "Height of stilt floor shall not be less than 2.5m." |
