@@ -8,8 +8,12 @@ from pathlib import Path
 from app.eval.metrics import distinct_only, group_metrics, unit_metrics
 from app.corpus.models import SOURCES
 from app.eval.report import (COLUMNS, POSTHOC_EXCLUDED, RESULTS_DIR, RefusedOutput, _by, _tables,
-                             by_source, posthoc_lines)
+                             blank_rates, by_source, case_study_lines, is_case_study, posthoc_lines)
 from app.fixtures.gold_ids import load_units
+
+SLIDES_HEADER = ["run_id", "view", "model", "mode", "group", "group_value", "metric", "k", "n", "rate", "wilson_lo",
+                 "wilson_hi", "source"]
+
 
 def caution(repeats: int) -> str:
     return (f"Caution: n is small (25 draft units, {repeats} repeat{'s' if repeats != 1 else ''} per unit; repeats of a "
@@ -65,10 +69,13 @@ def write_slides(results_path: Path, out_dir: Path | None = None) -> list[Path]:
              "", f"**{caution(meta['repeats'])}**", ""]
     csv_rows = []
     for source, block in by_source(items):
-        lines += [f"# Source: {source} ({SOURCES.get(source, 'unknown source')})\n", *_source_lines(block, duplicates)]
+        small = is_case_study(block)
+        lines += [f"# Source: {source} ({SOURCES.get(source, 'unknown source')})\n",
+                  *(case_study_lines(block) if small else _source_lines(block, duplicates))]
         distinct = distinct_only(block, duplicates)
-        csv_rows += [[*r, source] for r in _csv_rows(meta["run_id"], "all_units", block)
-                     + _csv_rows(meta["run_id"], "distinct_rules", distinct)]
+        rows = [[*r, source] for r in _csv_rows(meta["run_id"], "all_units", block)
+                + _csv_rows(meta["run_id"], "distinct_rules", distinct)]
+        csv_rows += [blank_rates(r, SLIDES_HEADER) for r in rows] if small else rows
     lines += ["", caution(meta["repeats"])]
 
     out_dir = out_dir or RESULTS_DIR / meta["run_id"]
@@ -77,8 +84,7 @@ def write_slides(results_path: Path, out_dir: Path | None = None) -> list[Path]:
     md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     with open(path_csv, "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
-        w.writerow(["run_id", "view", "model", "mode", "group", "group_value", "metric", "k", "n", "rate",
-                    "wilson_lo", "wilson_hi", "source"])
+        w.writerow(SLIDES_HEADER)
         w.writerows(csv_rows)
     return [md, path_csv]
 

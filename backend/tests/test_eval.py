@@ -103,6 +103,7 @@ def config_path(tmp_path):
 def ids_only(monkeypatch):
     units = load_units()
     monkeypatch.setattr(runner, "select_units", lambda config: [units[u] for u in IDS_UNITS])
+    monkeypatch.setattr(report, "MIN_UNITS_FOR_RATES", 1)  # 2-unit synthetic runs: these tests check the rate tables
 
 
 def test_plan_counts_worst_case_calls_and_refuses_over_budget(config_path, ids_only, capsys):
@@ -327,13 +328,12 @@ def test_posthoc_sensitivity_is_labelled_and_recomputed_without_the_two_units(re
 
 def test_units_can_be_filtered_by_source(config_path):
     data = yaml.safe_load(config_path.read_text())
-    for source, expected in ((["TGBR2012"], set()), (["MBBL2016"], {u.id for u in runner.select_units(
-            runner.load_config(config_path))})):
-        data["units"] = {"status": ["pilot"], "source": source}
+    everything = {u.id for u in runner.select_units(runner.load_config(config_path))}
+    for source in ("TGBR2012", "MBBL2016"):
+        data["units"] = {"status": ["pilot"], "source": [source]}
         config_path.write_text(yaml.safe_dump(data))
-        units = runner.select_units(runner.load_config(config_path))
-        assert {u.id for u in units} == expected and all(u.id.startswith(source[0]) for u in units)
-    assert expected  # the MBBL selection is not empty
+        selected = {u.id for u in runner.select_units(runner.load_config(config_path))}
+        assert selected and selected == {i for i in everything if i.startswith(source + "-")}
 
 
 def test_reports_split_results_by_source_and_never_merge_them(repeated_results, tmp_path):
@@ -359,8 +359,31 @@ def test_reports_split_results_by_source_and_never_merge_them(repeated_results, 
 
 def test_a_plan_with_no_units_is_refused(config_path, capsys):
     data = yaml.safe_load(config_path.read_text())
-    data["units"] = {"status": ["pilot"], "source": ["TGBR2012"]}  # no Telangana unit exists
+    data["units"] = {"status": ["selected"]}  # no unit has status selected
     config_path.write_text(yaml.safe_dump(data))
     assert cli.main(["--config", str(config_path), "plan"]) == 2
     assert "REFUSED: no units match" in capsys.readouterr().out
     assert cli.main(["--config", str(config_path), "run", "--yes", "--dry-run"]) == 2
+
+
+def test_a_source_with_fewer_than_5_units_is_a_case_study_without_rates(repeated_results, tmp_path, monkeypatch):
+    from app.eval import slides
+
+    monkeypatch.setattr(report, "MIN_UNITS_FOR_RATES", 5)  # the production threshold
+    data = json.loads(repeated_results.read_text())
+    for i in data["items"]:
+        if i["unit_id"] == IDS_UNITS[1]:
+            i["unit_id"] = "TGBR2012-99#1"
+    repeated_results.write_text(json.dumps(data))
+    summary = report.write_report(repeated_results, tmp_path / "r")[0].read_text(encoding="utf-8")
+    md, slides_csv = slides.write_slides(repeated_results, tmp_path / "s")
+    for doc in (summary, md.read_text(encoding="utf-8")):
+        tgbr = doc.split("# Source: TGBR2012")[1]
+        assert "case study, n too small for rates" in tgbr and "%" not in tgbr and "Wilson" not in tgbr
+        assert "| TGBR2012-99#1 |" in tgbr  # per-unit outcomes
+        assert "case study, n too small for rates" in doc.split("# Source: TGBR2012")[0]  # 1 MBBL unit here too
+    for path, rate_cols in ((tmp_path / "r" / "summary.csv", None), (slides_csv, (9, 10, 11))):
+        rows = list(csv.reader(path.open(encoding="utf-8")))
+        tg = [r for r in rows[1:] if r[-1] == "TGBR2012"]
+        cols = rate_cols or [j for j, h in enumerate(rows[0]) if h.endswith(("_rate", "_lo", "_hi"))]
+        assert tg and all(r[j] == "" for r in tg for j in cols)

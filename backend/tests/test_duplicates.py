@@ -57,6 +57,7 @@ def test_report_shows_both_views_with_hand_computed_counts(tmp_path, monkeypatch
             "temperature": 0.0, "max_repairs": 1, "repeats": 1, "provider_classes": {}, "stopped_early": None}
     results = tmp_path / "results.json"
     results.write_text(json.dumps({"meta": meta, "items": items}), encoding="utf-8")
+    monkeypatch.setattr(report, "MIN_UNITS_FOR_RATES", 1)  # a 3-unit synthetic run: this test checks the rate tables
     [md, csv_path] = report.write_report(results, tmp_path / "out")
     text = md.read_text(encoding="utf-8")
     # all units: 3 shipped, 2 wrong (4.24.7.2#b and 4.8.1#1); distinct: 2 shipped, 1 wrong (4.8.1#1)

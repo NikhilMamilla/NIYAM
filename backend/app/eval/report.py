@@ -65,6 +65,42 @@ def _tables(items: list[dict], level: str) -> list[str]:
     return lines + _unit_tables(items, level)
 
 
+CSV_HEADER = ["view", "model", "mode", "n", *(f"{c}_{x}" for c in COLUMNS for x in ("k", "n", "rate", "lo", "hi")),
+              "mean_repairs", "mean_tokens", "mean_wall_s", "source"]
+MIN_UNITS_FOR_RATES = 5
+CASE_STUDY = "case study, n too small for rates"
+
+
+def is_case_study(items: list[dict]) -> bool:
+    return len({i["unit_id"] for i in items}) < MIN_UNITS_FOR_RATES
+
+
+def case_study_lines(items: list[dict]) -> list[str]:
+    """Counts and per-unit outcomes only: no rates and no intervals for fewer than MIN_UNITS_FOR_RATES units."""
+    lines = [f"**{CASE_STUDY}** ({len({i['unit_id'] for i in items})} unit(s); "
+             f"rates need at least {MIN_UNITS_FOR_RATES}). Counts per unit, model and mode:\n",
+             "| unit | model | mode | repeats | shipped | shipped and held-out correct | outcomes |",
+             "|---|---|---|---|---|---|---|"]
+    for (unit, model, mode), group in sorted(_by(items, "unit_id", "model", "mode").items()):
+        outcomes = ", ".join(f"{k} x{v}" for k, v in sorted(_count(i["outcome"] for i in group).items()))
+        lines.append(f"| {unit} | {model} | {mode} | {len(group)} | {sum(i['shipped'] for i in group)} | "
+                     f"{sum(i['shipped'] and i['score']['heldout_correct'] for i in group)} | {outcomes} |")
+    return lines
+
+
+def _count(values) -> dict:
+    counts: dict = {}
+    for v in values:
+        counts[v] = counts.get(v, 0) + 1
+    return counts
+
+
+def blank_rates(row: list, header: list[str]) -> list:
+    """Keep counts, drop rate and interval cells (for case-study sources)."""
+    return ["" if h.endswith(("_rate", "_lo", "_hi")) or h in ("rate", "wilson_lo", "wilson_hi") else v
+            for v, h in zip(row, header)]
+
+
 def by_source(items: list[dict]) -> list[tuple[str, list[dict]]]:
     """Items grouped by source (MBBL2016, TGBR2012, ...): reports show each source separately, never merged."""
     groups: dict[str, list[dict]] = {}
@@ -152,8 +188,14 @@ def write_report(results_path: Path, out_dir: Path | None = None) -> list[Path]:
     for source, block in by_source(items):
         distinct = distinct_only(block, duplicates)
         excluded = sorted({i["unit_id"] for i in block} & duplicates.keys())
-        lines += [f"# Source: {source} ({SOURCES.get(source, 'unknown source')})\n", "## All units\n"]
-        lines += _tables(block, "###")
+        lines.append(f"# Source: {source} ({SOURCES.get(source, 'unknown source')})\n")
+        rows = [[*r, source] for r in _csv_rows(block, "all_units") + _csv_rows(distinct, "distinct_rules")]
+        if is_case_study(block):
+            lines += case_study_lines(block)
+            csv_rows += [blank_rates(r, CSV_HEADER) for r in rows]
+            continue
+        csv_rows += rows
+        lines += ["## All units\n", *_tables(block, "###")]
         lines.append("\n## Distinct rules only\n")
         lines.append(("Excluded from the distinct view: " + ", ".join(f"{u} (duplicate of {duplicates[u]})"
                                                                       for u in excluded)
@@ -163,7 +205,6 @@ def write_report(results_path: Path, out_dir: Path | None = None) -> list[Path]:
         lines += _tables(distinct, "###")
         if any(i["unit_id"] in POSTHOC_EXCLUDED for i in block):
             lines += ["", *posthoc_lines(block, distinct, "##")]
-        csv_rows += [[*r, source] for r in _csv_rows(block, "all_units") + _csv_rows(distinct, "distinct_rules")]
     share = review_share(units.values())
     lines.append("\n## Human review\n")
     lines.append(f"Reviewed rules with decision modify or reject: {share}" if share else
@@ -177,7 +218,6 @@ def write_report(results_path: Path, out_dir: Path | None = None) -> list[Path]:
         w = csv.writer(fh)
         if meta["dry_run"]:
             w.writerow([BANNER])
-        w.writerow(["view", "model", "mode", "n", *(f"{c}_{x}" for c in COLUMNS for x in ("k", "n", "rate", "lo", "hi")),
-                    "mean_repairs", "mean_tokens", "mean_wall_s", "source"])
+        w.writerow(CSV_HEADER)
         w.writerows(csv_rows)
     return [md, path_csv]
