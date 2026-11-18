@@ -9,8 +9,10 @@ from app.eval.metrics import distinct_only, group_metrics, unit_metrics
 from app.eval.report import COLUMNS, RESULTS_DIR, RefusedOutput, _by, _tables
 from app.fixtures.gold_ids import load_units
 
-CAUTION = ("Caution: n is small (one repeat per unit), so every interval is wide; no model difference may be claimed, "
-           "and no mode difference beyond what the intervals show.")
+def caution(repeats: int) -> str:
+    return (f"Caution: n is small (25 draft units, {repeats} repeat{'s' if repeats != 1 else ''} per unit; repeats of a "
+            "unit are correlated), so every interval is wide; no model difference may be claimed, and no mode "
+            "difference beyond what the intervals show.")
 
 
 def _csv_rows(run_id: str, view: str, items: list[dict]) -> list[list]:
@@ -59,18 +61,23 @@ def write_slides(results_path: Path, out_dir: Path | None = None) -> list[Path]:
              f"- Stopped early: {meta['stopped_early'] or 'no'}",
              "- Skipped models: " + ("; ".join(f"{k} ({v})" for k, v in meta.get("skipped_models", {}).items()) or "none"),
              f"- Fallback items: {fallback} (only on_limit=wait is implemented; each item was answered by its model)",
-             "", f"**{CAUTION}**", "",
+             "", f"**{caution(meta['repeats'])}**", "",
              "## Headline: wrong_shipped, gated vs ungated\n",
              "wrong_shipped = shipped rules that are wrong on the held-out fixtures / shipped rules, "
              "as k/n = rate [Wilson 95% interval].\n",
-             "| view | model | gated | ungated |", "|---|---|---|---|"]
+             "Counted over items (correlated across repeats) and over units (a unit is wrong if any repeat shipped a "
+             "wrong rule; n = units that shipped at least once).\n",
+             "| view | counted over | model | gated | ungated |", "|---|---|---|---|---|"]
     for view, group in (("all units", items), ("distinct rules", distinct)):
-        cells = {k: group_metrics(v)["wrong_shipped"] for k, v in _by(group, "model", "mode").items()}
-        for model in sorted({m for m, _ in cells}):
-            lines.append(f"| {view} | {model} | {cells.get((model, 'gated'), '-')} | {cells.get((model, 'ungated'), '-')} |")
+        for counted, metric in (("items, correlated across repeats", lambda g: group_metrics(g)["wrong_shipped"]),
+                                ("units (any repeat wrong)", lambda g: unit_metrics(g)["wrong_shipped_units"])):
+            cells = {k: metric(v) for k, v in _by(group, "model", "mode").items()}
+            for model in sorted({m for m, _ in cells}):
+                lines.append(f"| {view} | {counted} | {model} | {cells.get((model, 'gated'), '-')} | "
+                             f"{cells.get((model, 'ungated'), '-')} |")
     lines += ["", "## All units\n", *_tables(items, "###"), "", "## Distinct rules only\n",
               "Excluded as duplicates: " + (", ".join(sorted({i["unit_id"] for i in items} & duplicates.keys()))
-                                            or "none") + "\n", *_tables(distinct, "###"), "", CAUTION]
+                                            or "none") + "\n", *_tables(distinct, "###"), "", caution(meta["repeats"])]
 
     out_dir = out_dir or RESULTS_DIR / meta["run_id"]
     out_dir.mkdir(parents=True, exist_ok=True)

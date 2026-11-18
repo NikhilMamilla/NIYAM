@@ -284,3 +284,11 @@ def test_report_and_slides_have_the_unit_level_view(repeated_results, tmp_path):
     assert f"| {IDS_UNITS[0]} |" in summary  # one row per unit
     rows = list(csv.reader(csv_path.open(encoding="utf-8")))
     assert {"unit_wrong_shipped", "stability"} <= {r[4] for r in rows[1:]}
+
+
+def test_slides_caution_and_headline_reflect_repeats(repeated_results, tmp_path):
+    from app.eval import slides
+
+    text = slides.write_slides(repeated_results, tmp_path / "s")[0].read_text(encoding="utf-8")
+    assert "one repeat per unit" not in text and "2 repeats per unit" in text
+    assert "| items, correlated across repeats |" in text and "| units (any repeat wrong) |" in text
