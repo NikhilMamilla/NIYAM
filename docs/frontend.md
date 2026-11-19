@@ -92,3 +92,38 @@ Edges now use each mesh's own id; the e2e check asserts every edge set lies insi
 the old mapping).
 
 After the fix: `docs/screenshots/viewer-sample_*.png`.
+
+## Phase 13 redesign (branch ui-redesign)
+
+**Routes.** A tiny History API router (`src/router.tsx`, no dependency): `/` is the landing page, `/app` the dashboard,
+`/app?sample=<name>` opens a sample. Back/forward and deep links work in `vite` and `vite preview`. The dashboard
+(three.js, web-ifc) is a lazy chunk, so the landing page loads no WebGL code.
+
+**Design world: a diazo whiteprint.** Warm print paper, deep ink, one accent in diazo blue-violet, and a dark light-table
+for the 3D stage. Tokens live in `src/styles/tokens.css` (colour, type scale, spacing, radius, elevation, motion).
+Every text colour pair was checked numerically for WCAG AA. Fonts: IBM Plex Serif, Sans and Mono (OFL), latin subsets
+self-hosted in `public/fonts/` (about 140 KB), so nothing is fetched at runtime. Verdicts are always colour, icon and word.
+State grammar: pressed = inverted ink, disabled = half-tone, focus = a diazo ring. Plain words first ("Room", "Door");
+IFC terms sit behind "Details for experts". Glossary tooltips: IFC, IDS, BCF, gate, unchecked.
+
+**One source of truth for numbers.** `npm run site-data` (Node type stripping, no dependency) reads the committed
+results (`eval/results/*/results.json`), the review sheet, the specs, `docs/real-models.md`, the readiness IDS and one real
+gate rejection (`docs/examples/gate-rejection.json`, extracted by `scripts/extract_gate_example.py`) and writes
+`src/data/site-data.json`. Tests check it is current, that its Wilson intervals and counts equal the Python harness's
+CSVs and summaries, and that every number rendered on the landing page traces to it (a hand-typed statistic fails
+`src/landing/Landing.test.tsx`). Context facts in "The problem" (NBC/NBCS dates, Singapore) come from the project brief
+(`src/content/site.ts`) and should be checked against the official notifications before publishing.
+
+**Dashboard.** Fixed regions (load, light table, verdicts); a plain summary sentence first ("2 doors break a rule..."),
+then the status, the distinct-element counts and, behind a disclosure, the per-rule checks; rule filters and search;
+a detail panel that says what is missing and offers the readiness IDS; exports (HTML report, BCF, JSON); a three-step
+empty state and a skippable first-use tour (remembered in localStorage, guarded by try/catch). The UI never says
+"Compliant": the statuses read "Breaks a rule", "Not fully checked", "No issues found", "Nothing checked". The backend's
+HTML report keeps its own wording (backend unchanged).
+
+**3D stage (`src/stage.ts`, `src/viewer.ts`).** Procedural sky dome, low warm sun with soft shadows (High quality only),
+a paving grid and fog sized to each model, ACES tone mapping, sRGB output; a "Neutral light" toggle. Verdict outlines are
+built from each element's real mesh (failed outlines pulse unless reduced motion is set). Camera: eased fly-in, presets
+(3D, plan, front), fly-to on selection with the rest dimmed, reset, optional auto-orbit, a hover tooltip. Quality
+defaults to Low on devices with 4 or fewer cores, 4 GB or less memory, or narrow screens. Not built: a storey filter
+and a section slider. The That Open logo overlay is hidden; That Open Engine is credited in the stage caption.

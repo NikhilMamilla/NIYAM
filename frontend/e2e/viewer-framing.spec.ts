@@ -6,24 +6,25 @@ import { hueStats } from "./pixels";
 
 const SHOTS = "../docs/screenshots";
 const SAMPLES: { label: RegExp; name: string; implausible: boolean }[] = [
-  { label: /sample A/, name: "sample_a_mm", implausible: false },
-  { label: /sample B/, name: "sample_b_m", implausible: false },
-  { label: /sample C/, name: "sample_c_no_fireexit_mm", implausible: false },
-  { label: /sample D/, name: "sample_d_rooms_stairs_mm", implausible: true },
-  { label: /sample E/, name: "sample_e_rooms_stairs_m", implausible: false },
+  { label: /Sample A/, name: "sample_a_mm", implausible: false },
+  { label: /Sample B/, name: "sample_b_m", implausible: false },
+  { label: /Sample C/, name: "sample_c_no_fireexit_mm", implausible: false },
+  { label: /Sample D/, name: "sample_d_rooms_stairs_mm", implausible: true },
+  { label: /Sample E/, name: "sample_e_rooms_stairs_m", implausible: false },
 ];
 
 type DebugState = { allCornersInView: boolean; cameraOutsideModel: boolean; near: number; far: number; maxDistance: number };
 const state = (page: Page) => page.evaluate(() => (window as unknown as { __niyamViewer: { debugState(): DebugState } }).__niyamViewer.debugState());
 
 test("every sample is framed on load and shows the verdict colours of its summary", async ({ page }) => {
+  test.setTimeout(900_000); // five models in one page; D and E take about a minute each here
   await page.goto("/app");
   for (const sample of SAMPLES) {
     const response = page.waitForResponse((r) => r.url().endsWith(`/api/samples/${sample.name}/audit`) && r.request().method() === "POST");
     await page.getByRole("button", { name: sample.label }).first().click();
     const audit = await (await response).json();
     const viewport = page.locator(".viewport");
-    await expect(viewport).toHaveAttribute("data-view-state", "ready", { timeout: 90_000 });
+    await expect(viewport).toHaveAttribute("data-view-state", "ready", { timeout: 170_000 });
     await page.waitForTimeout(1200);
     const s = await state(page);
     expect(s.allCornersInView, `${sample.name}: whole model in view`).toBe(true);

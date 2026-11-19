@@ -77,8 +77,10 @@ cd backend && source .venv/bin/activate      # Windows: .venv\Scripts\Activate.p
 python -m app.audit.cli run ../fixtures/samples/sample_a_mm.ifc --out ../eval/runs/audit-demo
 ```
 
-It prints a per-rule table and writes `report.json`, `report.html` and `issues.bcf`. In the web app, click
-"Try sample A" (doors) or "Try sample D" (rooms and stairs).
+It prints a per-rule table and writes `report.json`, `report.html` and `issues.bcf`. In the web app the landing
+page is at `/` and the checker at `/app`: pick "Sample A" (doors) or "Sample D" (rooms and stairs), or open
+`/app?sample=sample_a_mm` directly. Screenshots are in `docs/screenshots/` (`landing-desktop.png`,
+`app-sample-a.png`, `app-selected.png`).
 
 ### What to add to your model before submitting
 
@@ -135,6 +137,8 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 - `docs/geometric-gate.md`: the Python sandbox and what it does not enforce.
 - `docs/modelling-profile.md`: what an IFC model must contain to be checkable.
 - `docs/review/`: the review sheet and the reviewer guide.
+- `docs/frontend.md`: the web app, the 3D view, and why sample D once looked like one red wall.
+- `cd frontend && npm run site-data`: regenerates every number the landing page shows from committed results.
 - `python scripts/check_public_ready.py`: scans the tree and history for secrets and personal paths.
 
 ## License

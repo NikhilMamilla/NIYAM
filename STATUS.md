@@ -31,8 +31,23 @@ forbid, so it was not done.
 
 ## Done
 
-- Stage 1: 3D framing fixed (see docs/frontend.md, "Why sample D looked like one red wall").
+- Stage 1: 3D framing fixed for any model size; room edges mapped by mesh id (see docs/frontend.md).
+- Stage 2: design system (tokens, self-hosted IBM Plex, base components), PRODUCT.md, surface brief.
+- Stage 3: site data generated from committed files (`npm run site-data`), cross-checked against the CSVs.
+- Stage 4: landing page at `/`, 12 sections, every number from site-data.json.
+- Stage 5: dashboard at `/app` with plain-language statuses, rule filters, detail panel, tour, deep links.
+- Stage 6: 3D stage (sky, ground, fog, sun shadows on High quality, auto-orbit, preset views, hover tips).
+- Stage 7: tsc, vitest, build, backend pytest, Playwright (workers=1) and check_public_ready run.
+
+## Not done or limited
+
+- The millimetre double-scale bug above (blocked by the phase rules).
+- TEAM names, college and mentor on the landing page are placeholders in `frontend/src/content/site.ts`.
+- The regulatory dates in `CONTEXT` (same file) come from the brief and were not checked against sources.
+- Run backend pytest and Playwright one after the other: run at the same time on this machine they
+  produced three failures (cause not investigated) that all passed when re-run alone.
 
 ## Next
 
-See the stage list in the Phase 13 brief.
+- Decide on the millimetre fix, then regenerate samples and fixtures.
+- Fill in the team details; review the landing copy.
