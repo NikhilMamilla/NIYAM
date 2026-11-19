@@ -7,6 +7,7 @@ import workerUrl from "@thatopen/fragments/worker?url";
 import * as THREE from "three";
 import { FRONT_DIRECTION, ISO_DIRECTION, PLAN_DIRECTION, frameBox, implausiblySized, type Vec3 } from "./framing";
 import type { Paint } from "./results";
+import { Stage, defaultQuality, type Atmosphere, type Quality } from "./stage";
 
 type PaintKey = Paint | "selected";
 
@@ -52,6 +53,10 @@ export class Viewer {
   private readonly world: OBC.SimpleWorld<OBC.SimpleScene, OBC.OrthoPerspectiveCamera, OBC.SimpleRenderer>;
   private readonly fragments: OBC.FragmentsManager;
   private readonly edges = new THREE.Group();
+  private readonly stage: Stage;
+  private autoOrbit = false;
+  private clock = new THREE.Clock();
+  private frameCount = 0;
   private model: FRAGS.FragmentsModel | null = null;
   private paints = new Map<number, Paint>();
   private rooms = new Set<number>();
@@ -63,12 +68,15 @@ export class Viewer {
     this.world = worlds.create<OBC.SimpleScene, OBC.OrthoPerspectiveCamera, OBC.SimpleRenderer>();
     this.world.scene = new OBC.SimpleScene(this.components);
     this.world.scene.setup();
-    this.world.scene.three.background = new THREE.Color("#e9e4d8");
     this.world.renderer = new OBC.SimpleRenderer(this.components, container);
+    this.world.renderer.showLogo = false; // That Open is credited in the stage caption and docs/frontend.md
     this.world.camera = new OBC.OrthoPerspectiveCamera(this.components);
     this.components.init();
-    this.edges.name = "room-edges";
+    this.edges.name = "verdict-outlines";
     this.world.scene.three.add(this.edges);
+    this.stage = new Stage(this.world.scene.three, this.world.renderer.three);
+    this.stage.setQuality(defaultQuality(navigator as Navigator & { deviceMemory?: number }, window.innerWidth));
+    this.world.renderer.onBeforeUpdate.add(() => this.tick());
 
     this.fragments = this.components.get(OBC.FragmentsManager);
     this.fragments.init(workerUrl);
@@ -86,7 +94,63 @@ export class Viewer {
     this.world.scene.three.add(model.object);
     this.model = model;
     await this.fragments.core.update(true);
+    const box = await this.wholeModelBox(model);
+    if (!box.isEmpty()) this.stage.fit(box);
+    // an eased fly-in: start further out along the same line of sight, then settle on the framed view
     await this.frame(undefined, false);
+    if (!prefersReducedMotion()) {
+      const pos = new THREE.Vector3();
+      const tgt = new THREE.Vector3();
+      this.world.camera.controls.getPosition(pos);
+      this.world.camera.controls.getTarget(tgt);
+      const far = pos.clone().sub(tgt).multiplyScalar(1.8).add(tgt);
+      await this.world.camera.controls.setLookAt(far.x, far.y + pos.distanceTo(tgt) * 0.3, far.z, tgt.x, tgt.y, tgt.z, false);
+      void this.world.camera.controls.setLookAt(pos.x, pos.y, pos.z, tgt.x, tgt.y, tgt.z, true);
+    }
+  }
+
+  setAtmosphere(a: Atmosphere) { this.stage.setAtmosphere(a); }
+  setQuality(q: Quality) { this.stage.setQuality(q); }
+  get quality(): Quality { return this.stage.quality; }
+  setAutoOrbit(on: boolean) { this.autoOrbit = on && !prefersReducedMotion(); }
+
+  /** Per frame: slow auto-orbit, the failed-outline pulse, and shadows on the model's meshes. */
+  private tick() {
+    const dt = Math.min(0.1, this.clock.getDelta());
+    if (this.autoOrbit) void this.world.camera.controls.rotate(dt * 0.12, 0, false);
+    const t = this.clock.elapsedTime;
+    const pulse = prefersReducedMotion() ? 1 : 0.6 + 0.4 * Math.sin(t * 2.4);
+    for (const child of this.edges.children) {
+      if (child.userData.pulse) ((child as THREE.LineSegments).material as THREE.LineBasicMaterial).opacity = pulse;
+    }
+    if (this.model && this.stage.quality === "high" && this.frameCount++ % 30 === 0) {
+      this.model.object.traverse((o) => {
+        if ((o as THREE.Mesh).isMesh) { o.castShadow = true; o.receiveShadow = true; }
+      });
+    }
+  }
+
+  /** Call back with the element under the pointer (throttled) for a hover tooltip; null when over nothing. */
+  onHover(callback: (localId: number | null, x: number, y: number) => void): () => void {
+    const dom = this.world.renderer!.three.domElement;
+    let last = 0;
+    let pending = false;
+    const onMove = async (e: PointerEvent) => {
+      const now = performance.now();
+      if (pending || now - last < 90 || e.buttons) return;
+      last = now;
+      pending = true;
+      const hit = await this.fragments.raycast({ camera: this.world.camera.three, mouse: new THREE.Vector2(e.clientX, e.clientY), dom });
+      pending = false;
+      callback(hit ? hit.localId : null, e.clientX, e.clientY);
+    };
+    const onLeave = () => callback(null, 0, 0);
+    dom.addEventListener("pointermove", onMove);
+    dom.addEventListener("pointerleave", onLeave);
+    return () => {
+      dom.removeEventListener("pointermove", onMove);
+      dom.removeEventListener("pointerleave", onLeave);
+    };
   }
 
   /** Local ids of the given GlobalIds in the loaded model (null where not found). */
@@ -102,7 +166,7 @@ export class Viewer {
   async paint(paints: Map<number, Paint>, rooms = new Set<number>()): Promise<LoadInfo> {
     this.paints = paints;
     this.rooms = rooms;
-    await this.buildRoomEdges();
+    await this.buildOutlines();
     await this.repaint();
     const ids = [...paints.keys()];
     const boxes = this.model && ids.length ? await this.model.getBoxes(ids) : [];
@@ -222,6 +286,9 @@ export class Viewer {
       cameraOutsideModel: box ? !box.containsPoint(cam.position) : null,
       allCornersInView,
       edges: this.edges.children.length,
+      memory: { ...this.world.renderer!.three.info.memory },
+      quality: this.stage.quality,
+      atmosphere: this.stage.atmosphere,
     };
   }
 
@@ -240,6 +307,7 @@ export class Viewer {
 
   async dispose(): Promise<void> {
     await this.clearModel();
+    this.stage.dispose();
     this.components.dispose();
   }
 
@@ -274,12 +342,12 @@ export class Viewer {
     await this.fragments.core.update(true);
   }
 
-  /** Edge lines for rooms, built from each room's real mesh (nothing that is not in the model). */
-  private async buildRoomEdges(): Promise<void> {
+  /** Verdict outlines for every audited element, built from its real mesh (nothing that is not in the model). */
+  private async buildOutlines(): Promise<void> {
     this.disposeEdges();
     const model = this.model;
-    if (!model || this.rooms.size === 0) return;
-    const ids = [...this.rooms];
+    if (!model || this.paints.size === 0) return;
+    const ids = [...this.paints.keys()];
     const geometries = await model.getItemsGeometry(ids);
     geometries.forEach((meshes, i) => {
       for (const mesh of meshes) {
@@ -307,8 +375,9 @@ export class Viewer {
       const line = child as THREE.LineSegments<THREE.EdgesGeometry, THREE.LineBasicMaterial>;
       const id = line.userData.localId as number;
       const paint: PaintKey = id === this.selected ? "selected" : this.paints.get(id) ?? "passed";
-      line.material.color.set(VERDICT_COLOR[paint]);
+      line.material.color.set(VERDICT_COLOR[paint]).multiplyScalar(paint === "selected" ? 1 : 0.8); // a shade darker than the fill
       line.material.opacity = this.selected !== null && id !== this.selected ? 0.15 : paint === "out_of_scope" ? 0.4 : 0.95;
+      line.userData.pulse = paint === "failed" && (this.selected === null);
     }
     this.syncEdgeVisibility();
   }

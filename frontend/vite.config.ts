@@ -7,9 +7,11 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     proxy: { "/api": "http://127.0.0.1:8000" },
+    // the readiness IDS is imported from docs/ (one source of truth), outside the frontend folder
+    fs: { allow: [".."] },
   },
   test: {
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.{ts,tsx}"],
     environment: "node",
   },
 });

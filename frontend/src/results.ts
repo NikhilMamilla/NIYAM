@@ -3,18 +3,19 @@ import type { AuditResult, ElementResult, RuleResult, RuleStatus, Status, Verdic
 
 export type Paint = Verdict;
 
+// Words for what the draft rules found. Never "compliant": no draft rule can certify a building.
 export const STATUS_LABEL: Record<RuleStatus, string> = {
   error: "Could not run",
-  noncompliant: "Non-compliant",
-  incomplete: "Incomplete",
-  compliant: "Compliant",
+  noncompliant: "Breaks a rule",
+  incomplete: "Not fully checked",
+  compliant: "No issues found",
   nothing_checked: "Nothing checked",
 };
 
 export const STATUS_EXPLANATION: Record<Status, string> = {
   noncompliant: "At least one element breaks a rule.",
   incomplete: "No element breaks a rule, but some elements could not be checked because required data is missing.",
-  compliant: "Every element in scope was checked and none breaks a rule.",
+  compliant: "Every element these draft rules apply to was checked and none breaks them. This is not an approval.",
   nothing_checked: "No element in the model is in scope of any rule, so nothing was checked.",
 };
 
@@ -137,3 +138,40 @@ export function formatBytes(bytes: number): string {
 }
 
 export const LARGE_MODEL_BYTES = 30 * 1024 * 1024;
+
+const NOUN: Record<string, [string, string]> = {
+  IfcDoor: ["door", "doors"],
+  IfcSpace: ["room", "rooms"],
+  IfcStairFlight: ["stair flight", "stair flights"],
+  IfcStair: ["stair", "stairs"],
+};
+
+/** "door" / "doors", "room" / "rooms": plain words for the IFC classes the rules look at. */
+export function plainNoun(ifcClass: string, count: number): string {
+  const [one, many] = NOUN[ifcClass] ?? ["element", "elements"];
+  return count === 1 ? one : many;
+}
+
+const listWords = (parts: string[]) =>
+  parts.length <= 1 ? parts.join("") : `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
+
+/** Distinct elements by their worst verdict, grouped by kind, and one sentence a non-expert can read. */
+export function plainSummary(audit: AuditResult) {
+  const summaries = [...elementsByExpressId(audit).values()];
+  const group = (v: Verdict) => {
+    const byClass = new Map<string, number>();
+    for (const s of summaries) if (s.worst === v) byClass.set(s.ifcClass, (byClass.get(s.ifcClass) ?? 0) + 1);
+    return [...byClass].map(([cls, count]) => ({ noun: plainNoun(cls, count), count }));
+  };
+  const failed = group("failed");
+  const unchecked = group("unchecked");
+  const words = (g: { noun: string; count: number }[]) => listWords(g.map((x) => `${x.count} ${x.noun}`));
+  const total = (g: { count: number }[]) => g.reduce((n, x) => n + x.count, 0);
+  const sentences: string[] = [];
+  if (failed.length) sentences.push(`${words(failed)} ${total(failed) === 1 ? "breaks" : "break"} a rule.`);
+  if (unchecked.length) sentences.push(`${words(unchecked)} could not be checked because the model lacks data.`);
+  return {
+    failed, unchecked, withFailed: total(failed), withUnchecked: total(unchecked),
+    sentence: sentences.length ? sentences.join(" ") : "No element breaks a rule, and nothing was left unchecked.",
+  };
+}

@@ -5377,5 +5377,90 @@
    ]
   }
  ],
- "telanganaSegmenterLines": 48
+ "telanganaSegmenterLines": 48,
+ "workedExample": {
+  "unitId": "MBBL2016-5.4.1#b",
+  "clauseId": "MBBL2016-5.4.1",
+  "page": 100,
+  "text": "No exit doorway shall be less than 1m in width.",
+  "ids": {
+   "file": "rules/rulepack/v0/ids/MBBL2016-5_4_1_b.ids",
+   "appliesTo": "IFCDOOR where Pset_DoorCommon.FireExit = TRUE",
+   "requires": "Qto_DoorBaseQuantities.Width at least 1.0 m"
+  },
+  "sampleA": [
+   {
+    "name": "A-G-01 main exit",
+    "fireExit": true,
+    "widthM": 1.8,
+    "verdict": "passed"
+   },
+   {
+    "name": "A-G-02 side exit at 1.0 m",
+    "fireExit": true,
+    "widthM": 1,
+    "verdict": "passed"
+   },
+   {
+    "name": "A-G-03 narrow exit",
+    "fireExit": true,
+    "widthM": 0.9,
+    "verdict": "failed"
+   },
+   {
+    "name": "A-G-04 revolving exit",
+    "fireExit": true,
+    "widthM": 1.2,
+    "verdict": "passed"
+   },
+   {
+    "name": "A-G-05 sliding exit",
+    "fireExit": true,
+    "widthM": 1.2,
+    "verdict": "passed"
+   },
+   {
+    "name": "A-G-06 revolving lobby door (not exit)",
+    "fireExit": false,
+    "widthM": 0.75,
+    "verdict": "out_of_scope"
+   },
+   {
+    "name": "A-1-01 rolling shutter exit",
+    "fireExit": true,
+    "widthM": 1.5,
+    "verdict": "passed"
+   },
+   {
+    "name": "A-1-02 narrow sliding exit",
+    "fireExit": true,
+    "widthM": 0.8,
+    "verdict": "failed"
+   },
+   {
+    "name": "A-1-03 sliding store door (not exit)",
+    "fireExit": false,
+    "widthM": 0.7,
+    "verdict": "out_of_scope"
+   },
+   {
+    "name": "A-1-04 door without FireExit",
+    "fireExit": null,
+    "widthM": 0.9,
+    "verdict": "unchecked"
+   },
+   {
+    "name": "A-1-05 revolving door without FireExit",
+    "fireExit": null,
+    "widthM": 1.2,
+    "verdict": "unchecked"
+   },
+   {
+    "name": "A-1-06 exit without width quantity",
+    "fireExit": true,
+    "widthM": null,
+    "verdict": "unchecked"
+   }
+  ]
+ }
 }

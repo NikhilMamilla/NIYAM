@@ -70,6 +70,26 @@ export function buildSiteData(root: string) {
     },
     readiness: idsSpecifications(read("docs", "readiness", "niyam-data-readiness.ids")),
     telanganaSegmenterLines: read("backend", "app", "corpus", "extract_tgbr.py").split(/\r?\n/).filter((l) => l.trim()).length,
+    workedExample: workedExample(read, units),
+  };
+}
+
+/** One unit traced from clause to audit: MBBL2016-5.4.1#b, its rulepack v0 IDS and its verdicts on sample A. */
+function workedExample(read: (...p: string[]) => string, units: { id: string; text: string; page: number }[]) {
+  const unitId = "MBBL2016-5.4.1#b";
+  const unit = units.find((u) => u.id === unitId)!;
+  const ids = read("rules", "rulepack", "v0", "ids", "MBBL2016-5_4_1_b.ids");
+  const simple = (tag: string, after: string) => ids.slice(ids.indexOf(after)).match(new RegExp(`<${tag}>\\s*<simpleValue>([^<]+)`))?.[1] ?? "";
+  const truth = JSON.parse(read("fixtures", "samples", "sample_a_mm.truth.json")) as
+    { doors: { name: string; fire_exit: boolean | null; width_m: number | null; expected: Record<string, string> }[] };
+  return {
+    unitId, clauseId: "MBBL2016-5.4.1", page: unit.page, text: unit.text,
+    ids: {
+      file: "rules/rulepack/v0/ids/MBBL2016-5_4_1_b.ids",
+      appliesTo: `${simple("name", "<applicability")} where ${simple("propertySet", "<applicability")}.${simple("baseName", "<applicability")} = ${simple("value", "<applicability")}`,
+      requires: `${simple("propertySet", "<requirements")}.${simple("baseName", "<requirements")} at least ${ids.match(/<xs:minInclusive value="([^"]+)"/)?.[1] ?? "?"} m`,
+    },
+    sampleA: truth.doors.map((d) => ({ name: d.name, fireExit: d.fire_exit, widthM: d.width_m, verdict: d.expected[unitId] ?? null })),
   };
 }
 

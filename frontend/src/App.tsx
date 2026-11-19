@@ -1,35 +1,37 @@
+// The dashboard at /app: load a building, read the verdicts, ask why. Fixed regions; their contents swap.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import readinessIds from "../../docs/readiness/niyam-data-readiness.ids?raw";
 import {
-  ApiError,
-  auditSample,
-  auditUpload,
-  bcfUrl,
-  fetchSampleBytes,
-  getRulepack,
-  listSamples,
-  reportUrl,
-  type AuditResult,
-  type Sample,
+  ApiError, auditSample, auditUpload, bcfUrl, fetchSampleBytes, getRulepack, listSamples, reportUrl,
+  type AuditResult, type Sample,
 } from "./api";
-import { DetailPanel, Legend, RuleList, StartPanel, SummaryCard } from "./components";
-import { IconDownload, IconExternal, IconReset } from "./icons";
+import { DetailPanel, EmptyState, Legend, RuleList, SAMPLES, StartPanel, SummaryStrip, Tour, VerdictBadge } from "./components";
+import { IconReset, IconUnchecked } from "./icons";
 import {
-  LARGE_MODEL_BYTES, affectedLine, checksLine, elementsByExpressId, errorRules, formatBytes, paintByLocalId,
-  translucentLocalIds,
+  LARGE_MODEL_BYTES, elementsByExpressId, errorRules, formatBytes, paintByLocalId, plainNoun, plainSummary, translucentLocalIds,
 } from "./results";
-import { Viewer } from "./viewer";
+import { Link } from "./router";
+import type { Atmosphere, Quality } from "./stage";
+import { Viewer, type ViewPreset } from "./viewer";
+import "./styles/app.css";
 
 type Phase = "idle" | "working" | "done";
 type ViewState = "empty" | "loading" | "ready" | "failed";
 
-interface LoadedFile {
-  name: string;
-  size: number;
+interface LoadedFile { name: string; size: number; sample: string | null }
+
+function downloadReadiness() {
+  const url = URL.createObjectURL(new Blob([readinessIds], { type: "application/xml" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "niyam-data-readiness.ids";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export default function App() {
+export default function App({ initialSample = null }: { initialSample?: string | null }) {
   const [samples, setSamples] = useState<Sample[]>([]);
-  const [draftRules, setDraftRules] = useState(false);
+  const [draftRules, setDraftRules] = useState(true);
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState<ApiError | null>(null);
   const [audit, setAudit] = useState<AuditResult | null>(null);
@@ -40,21 +42,29 @@ export default function App() {
   const [picked, setPicked] = useState<{ localId: number; globalId: string | null } | null>(null);
   const [onlyIssues, setOnlyIssues] = useState(false);
   const [implausible, setImplausible] = useState(0);
+  const [leftOpen, setLeftOpen] = useState(true);
+  const [orbit, setOrbit] = useState(false);
+  const [atmosphere, setAtmosphere] = useState<Atmosphere>("golden");
+  const [quality, setQuality] = useState<Quality>("low");
+  const [hover, setHover] = useState<{ x: number; y: number; name: string; detail: string } | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
   const maps = useRef({ localByExpress: new Map<number, number>(), expressByLocal: new Map<number, number>() });
   const runToken = useRef(0);
+  const autoStarted = useRef(false);
 
   const summaries = useMemo(() => (audit ? elementsByExpressId(audit) : new Map()), [audit]);
 
   useEffect(() => {
+    document.title = "NIYAM app: check a building model";
     listSamples().then(setSamples).catch(() => setSamples([]));
-    getRulepack().then((p) => setDraftRules(p.rules.some((r) => !r.human_reviewed))).catch(() => setDraftRules(false));
+    getRulepack().then((p) => setDraftRules(p.rules.some((r) => !r.human_reviewed))).catch(() => setDraftRules(true));
   }, []);
 
   useEffect(() => {
     const viewer = new Viewer(viewportRef.current!);
     viewerRef.current = viewer;
+    setQuality(viewer.quality);
     if (import.meta.env.DEV) (window as unknown as { __niyamViewer?: Viewer }).__niyamViewer = viewer; // e2e diagnostics
     return () => {
       viewerRef.current = null;
@@ -73,6 +83,7 @@ export default function App() {
     setView("loading");
     setIdMapping("");
     setImplausible(0);
+    setHover(null);
     const token = ++runToken.current;
     const stale = () => token !== runToken.current;
     const viewer = viewerRef.current!;
@@ -113,12 +124,19 @@ export default function App() {
   }, []);
 
   const onFile = (f: File) =>
-    void run({ name: f.name, size: f.size }, f.arrayBuffer().then((b) => new Uint8Array(b)), auditUpload(f));
+    void run({ name: f.name, size: f.size, sample: null }, f.arrayBuffer().then((b) => new Uint8Array(b)), auditUpload(f));
 
-  const onSample = (name: string) => {
+  const onSample = useCallback((name: string) => {
     const size = samples.find((s) => s.name === name)?.size_bytes ?? 0;
-    void run({ name: `${name}.ifc`, size }, fetchSampleBytes(name), auditSample(name));
-  };
+    void run({ name: `${name}.ifc`, size, sample: name }, fetchSampleBytes(name), auditSample(name));
+  }, [samples, run]);
+
+  // deep link: /app?sample=sample_a_mm opens that sample once the sample list is known
+  useEffect(() => {
+    if (autoStarted.current || !initialSample || !samples.some((s) => s.name === initialSample)) return;
+    autoStarted.current = true;
+    onSample(initialSample);
+  }, [initialSample, samples, onSample]);
 
   const selectExpress = useCallback(async (expressId: number | null) => {
     setSelected(expressId);
@@ -130,7 +148,7 @@ export default function App() {
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer || view !== "ready") return;
-    return viewer.onPick(async (localId) => {
+    const offPick = viewer.onPick(async (localId) => {
       if (localId === null) return void selectExpress(null);
       const expressId = maps.current.expressByLocal.get(localId);
       if (expressId !== undefined) return void selectExpress(expressId);
@@ -139,116 +157,140 @@ export default function App() {
       setPicked({ localId, globalId: globalId ?? null });
       await viewer.select(localId, false);
     });
-  }, [view, selectExpress]);
+    const offHover = viewer.onHover((localId, x, y) => {
+      const expressId = localId === null ? undefined : maps.current.expressByLocal.get(localId);
+      const s = expressId === undefined ? undefined : summaries.get(expressId);
+      const rect = viewportRef.current?.getBoundingClientRect();
+      if (!s || !rect) return setHover(null);
+      setHover({ x: x - rect.left, y: y - rect.top, name: s.name ?? "Unnamed element", detail: `${plainNoun(s.ifcClass, 1)} · ${s.worst.replace(/_/g, " ")}` });
+    });
+    return () => { offPick(); offHover(); };
+  }, [view, selectExpress, summaries]);
 
   const toggleOnlyIssues = async () => {
     const next = !onlyIssues;
     setOnlyIssues(next);
     await viewerRef.current?.setOnlyIssues(next);
   };
-
   const resetView = async () => {
     setOnlyIssues(false);
     await selectExpress(null);
     await viewerRef.current?.setOnlyIssues(false);
     await viewerRef.current?.frame();
   };
+  const preset = (p: ViewPreset) => void viewerRef.current?.preset(p);
 
+  const plain = audit ? plainSummary(audit) : null;
   const issueCount = audit ? audit.summary.elements.with_failed + audit.summary.elements.with_unchecked : 0;
-  const textAlternative = audit
-    ? `3D view of ${file?.name}. ${affectedLine(audit)} (red: violations, amber: could not be fully checked; ` +
-      `other elements grey if passed, faded if out of scope). ${checksLine(audit)}.`
+  const textAlternative = audit && plain
+    ? `3D view of ${file?.name}. ${plain.sentence} Red: breaks a rule; amber: could not be checked; grey: passed; faded: out of scope.`
     : "3D view: no model loaded.";
+  const sampleMeta = file?.sample ? SAMPLES.find((s) => s.name === file.sample) : null;
+  const ready = view === "ready";
 
   return (
-    <div className="app">
-      <a href="#results" className="skip-link">Skip to results</a>
-      <header className="header">
-        <div className="brand">
-          <h1 translate="no">NIYAM</h1>
-          <p>Checks IFC building models against Indian building bye-laws.</p>
-        </div>
-        {draftRules && (
-          <span className="draft-badge" title="The rule encodings have not been reviewed by a person yet.">
-            Draft rules, not human-reviewed
-          </span>
-        )}
+    <div className={`dash ${leftOpen ? "" : "left-closed"}`}>
+      <a href="#verdicts" className="skip-link">Skip to the verdicts</a>
+      <header className="dash-top">
+        <button type="button" className="btn small icon-only" aria-expanded={leftOpen} aria-controls="left-panel"
+                onClick={() => setLeftOpen(!leftOpen)} title={leftOpen ? "Hide the load panel" : "Show the load panel"}>
+          <span className="hamburger" aria-hidden="true" /><span className="visually-hidden">{leftOpen ? "Hide" : "Show"} the load panel</span>
+        </button>
+        <Link to="/" className="brand" translate="no">NIYAM</Link>
+        <span className="dash-title">Check a building model</span>
+        {draftRules && <span className="draft-badge" title="The rule encodings have not been reviewed by a person yet."><IconUnchecked />Draft rules, not human-reviewed</span>}
+        <Link to="/" className="btn small ghost">About NIYAM</Link>
       </header>
 
-      <main className="layout">
-        <div className="column controls" id="results">
+      <div className="dash-body">
+        <aside id="left-panel" className="dash-left" hidden={!leftOpen} aria-label="Load a building">
           <div aria-live="polite" className="live">
             {phase === "working" && <p className="progress"><span className="spinner" aria-hidden="true" />Auditing the model on the server…</p>}
           </div>
           {error && (
             <div className="banner error" role="alert">
-              <p className="banner-title">{error.status ? `The model could not be audited (HTTP ${error.status})` : "Connection problem"}</p>
+              <p className="banner-title">{error.status === 400 && /schema/i.test(error.message) ? "This file was not checked" : error.status ? `The model could not be audited (HTTP ${error.status})` : "Connection problem"}</p>
               <p className="banner-message" data-testid="error-message">{error.message}</p>
+              {/schema/i.test(error.message) && <p className="banner-help">NIYAM reads IFC4 files. Export your model as IFC4 (not IFC2X3) and try again.</p>}
             </div>
           )}
-          {file && file.size > LARGE_MODEL_BYTES && (
-            <p className="note">This model is {formatBytes(file.size)}: the 3D view may be slow. The audit itself runs on the server.</p>
-          )}
-          <StartPanel samples={samples} busy={phase === "working"} onFile={onFile} onSample={onSample} />
-          {audit && file && (
-            <>
-              <SummaryCard audit={audit} fileName={file.name} fileSize={file.size} />
-              {errorRules(audit).length > 0 && (
-                <p className="note" role="status" data-testid="rules-with-errors">
-                  {errorRules(audit).length} rule(s) could not be run ({errorRules(audit).map((r) => r.clause_id).join(", ")}),
-                  so the result is never better than Incomplete. See the rule list for the reason.
-                </p>
-              )}
-              <div className="button-row downloads">
-                <a className="button" href={bcfUrl(audit.audit_id)} download data-testid="download-bcf">
-                  <IconDownload />Download BCF
-                </a>
-                <a className="button" href={reportUrl(audit.audit_id)} target="_blank" rel="noopener noreferrer"
-                   data-testid="open-report">
-                  <IconExternal />Open HTML report
-                </a>
-              </div>
-              <RuleList audit={audit} summaries={summaries} selectedExpressId={selected}
-                        onSelect={(id) => void selectExpress(id)} />
-            </>
-          )}
-        </div>
+          {file && file.size > LARGE_MODEL_BYTES && <p className="note">This model is {formatBytes(file.size)}: the 3D view may be slow. The audit itself runs on the server.</p>}
+          <StartPanel samples={samples} busy={phase === "working"} current={file?.sample ?? null} onFile={onFile} onSample={onSample} />
+        </aside>
 
-        <section className="column stage" aria-labelledby="viewport-h">
-          <h2 id="viewport-h" className="visually-hidden">3D model</h2>
-          <p className="text-alternative" id="viewport-summary" data-testid="viewport-summary">{textAlternative}</p>
-          <div className="toolbar">
-            <Legend />
-            <div className="button-row">
-              <button type="button" className="button small" aria-pressed={onlyIssues} disabled={view !== "ready" || issueCount === 0}
-                      onClick={() => void toggleOnlyIssues()}>
-                Show only issues
-              </button>
-              <button type="button" className="button small" disabled={view !== "ready"} onClick={() => void resetView()}>
-                <IconReset />Reset view
-              </button>
+        <section className="dash-stage" aria-labelledby="stage-h" data-tour="stage">
+          <h2 id="stage-h" className="visually-hidden">3D model</h2>
+          <p className="visually-hidden" id="viewport-summary" data-testid="viewport-summary">{textAlternative}</p>
+          <div className="stage-tools" role="toolbar" aria-label="3D view controls">
+            <div className="segmented" role="group" aria-label="Camera">
+              {(["iso", "plan", "front"] as ViewPreset[]).map((p) => (
+                <button key={p} type="button" className="tool" disabled={!ready} onClick={() => preset(p)}>{p === "iso" ? "3D" : p === "plan" ? "Plan" : "Front"}</button>
+              ))}
             </div>
+            <button type="button" className="tool" disabled={!ready} onClick={() => void resetView()}><IconReset />Reset view</button>
+            <button type="button" className="tool" aria-pressed={onlyIssues} disabled={!ready || issueCount === 0} onClick={() => void toggleOnlyIssues()}>Show only issues</button>
+            <span className="tool-gap" />
+            <button type="button" className="tool" aria-pressed={orbit} disabled={!ready} onClick={() => { setOrbit(!orbit); viewerRef.current?.setAutoOrbit(!orbit); }}>Auto-orbit</button>
+            <button type="button" className="tool" aria-pressed={atmosphere === "neutral"}
+                    onClick={() => { const a = atmosphere === "golden" ? "neutral" : "golden"; setAtmosphere(a); viewerRef.current?.setAtmosphere(a); }}>
+              {atmosphere === "golden" ? "Neutral light" : "Golden hour"}
+            </button>
+            <button type="button" className="tool" aria-label={`Quality: ${quality === "low" ? "Low" : "High"}. Switch to ${quality === "low" ? "High" : "Low"}.`}
+                    onClick={() => { const q = quality === "low" ? "high" : "low"; setQuality(q); viewerRef.current?.setQuality(q); }}>
+              Quality: {quality === "low" ? "Low" : "High"}
+            </button>
           </div>
           <div className="viewport-wrap">
-            <div ref={viewportRef} className="viewport" role="img" aria-label="3D model view"
-                 aria-describedby="viewport-summary" data-view-state={view} data-id-mapping={idMapping} />
-            {view === "empty" && <p className="viewport-message">Load a model to see it here.</p>}
+            <div ref={viewportRef} className="viewport" role="img" aria-label="3D model view" aria-describedby="viewport-summary"
+                 data-view-state={view} data-id-mapping={idMapping} />
+            {view === "empty" && <EmptyState onSample={onSample} />}
             {view === "loading" && <p className="viewport-message"><span className="spinner" aria-hidden="true" />Preparing the 3D view…</p>}
-            {view === "failed" && <p className="viewport-message">The 3D view could not be shown for this file. The audit results are still valid.</p>}
-            {view === "ready" && implausible > 0 && (
+            {view === "failed" && <p className="viewport-message">The 3D view could not be shown for this file. The audit results on the right are still valid.</p>}
+            {ready && hover && (
+              <div className="hover-tip" style={{ left: hover.x + 14, top: hover.y + 14 }} aria-hidden="true">
+                <strong>{hover.name}</strong><span>{hover.detail}</span>
+              </div>
+            )}
+            {ready && implausible > 0 && (
               <p className="viewport-warning" role="status" data-testid="implausible-geometry">
                 {implausible} element{implausible === 1 ? " is" : "s are"} drawn more than 200 m across. The file
                 probably stores their shape in the wrong unit; NIYAM draws the file as it is.
               </p>
             )}
           </div>
+          <div className="stage-foot">
+            <Legend />
+            <p className="stage-caption">
+              {sampleMeta ? "Synthetic test building: only the modelled elements are drawn." : "Only the modelled elements are drawn."}
+              {" "}Sky and ground are scenery. 3D by That Open Engine.
+            </p>
+          </div>
         </section>
 
-        <div className="column side">
-          <DetailPanel summary={selected === null ? null : summaries.get(selected) ?? null} pickedWithoutRules={picked}
-                       onClose={() => void selectExpress(null)} />
-        </div>
-      </main>
+        <aside className="dash-right" id="verdicts" aria-label="Verdicts" tabIndex={-1}>
+          {!audit && phase !== "working" && <p className="right-empty">Verdicts appear here after a model is loaded.</p>}
+          {phase === "working" && <p className="right-empty"><span className="spinner" aria-hidden="true" />Waiting for the audit…</p>}
+          {audit && file && (selected !== null || picked) && (
+            <DetailPanel summary={selected === null ? null : summaries.get(selected) ?? null} pickedWithoutRules={picked}
+                         onClose={() => { void selectExpress(null); setPicked(null); }} onDownloadReadiness={downloadReadiness} />
+          )}
+          {audit && file && selected === null && !picked && (
+            <>
+              <SummaryStrip audit={audit} fileName={file.name} fileSize={file.size} reportUrl={reportUrl(audit.audit_id)} bcfUrl={bcfUrl(audit.audit_id)} />
+              {errorRules(audit).length > 0 && (
+                <p className="note" role="status" data-testid="rules-with-errors">
+                  {errorRules(audit).length} rule(s) could not be run ({errorRules(audit).map((r) => r.clause_id).join(", ")}), so the result is never better than Not fully checked.
+                </p>
+              )}
+              <RuleList audit={audit} selectedExpressId={selected} onSelect={(id) => void selectExpress(id)} />
+              {plain && plain.withFailed + plain.withUnchecked > 0 && (
+                <p className="right-foot">Select an element in the list or the 3D view to see why. <VerdictBadge verdict="unchecked" /> means data is missing, not that the element passed.</p>
+              )}
+            </>
+          )}
+        </aside>
+      </div>
+      <Tour ready={samples.length > 0} />
     </div>
   );
 }

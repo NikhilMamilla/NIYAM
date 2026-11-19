@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { AuditResult, ElementResult, RuleResult, Verdict } from "./api";
 import {
-  STATUS_LABEL, affectedLine, checksLine, elementsByExpressId, errorRules, issuesOf, paintByLocalId, translucentLocalIds,
+  STATUS_LABEL, affectedLine, checksLine, elementsByExpressId, errorRules, issuesOf, paintByLocalId, plainNoun, plainSummary, translucentLocalIds,
   worstVerdict,
 } from "./results";
 
@@ -29,7 +29,7 @@ const audit = (rules: RuleResult[]): AuditResult => ({
 describe("status labels", () => {
   it("names every status in words, never only by colour", () => {
     expect(STATUS_LABEL).toEqual({
-      noncompliant: "Non-compliant", incomplete: "Incomplete", compliant: "Compliant", nothing_checked: "Nothing checked",
+      noncompliant: "Breaks a rule", incomplete: "Not fully checked", compliant: "No issues found", nothing_checked: "Nothing checked",
       error: "Could not run",
     });
   });
@@ -108,5 +108,34 @@ describe("spaces and rule errors", () => {
     const broken = { ...rule("G#2", []), status: "error" as const, error: "the check timed out after 60 s" };
     const a = audit([rule("G#1", [el(1, "passed")]), broken]);
     expect(errorRules(a).map((r) => [r.unit_id, r.error])).toEqual([["G#2", "the check timed out after 60 s"]]);
+  });
+});
+
+describe("plain wording (Phase 13)", () => {
+  it("never calls a building compliant: status words describe what the draft rules found", () => {
+    expect(Object.values(STATUS_LABEL).join(" ")).not.toMatch(/\bcompliant\b/i);
+    expect(STATUS_LABEL.compliant).toBe("No issues found");
+  });
+
+  it("names elements in plain words, with the IFC class kept for experts", () => {
+    expect(plainNoun("IfcDoor", 1)).toBe("door");
+    expect(plainNoun("IfcSpace", 3)).toBe("rooms");
+    expect(plainNoun("IfcStairFlight", 2)).toBe("stair flights");
+    expect(plainNoun("IfcWall", 1)).toBe("element");
+  });
+
+  it("summarises distinct elements by their worst verdict, in words, matching the report's element counts", () => {
+    const space = (id: number, v: Verdict): ElementResult => ({ ...el(id, v), ifc_class: "IfcSpace" });
+    const a = audit([
+      rule("A#1", [el(1, "failed"), el(2, "unchecked"), el(3, "passed"), space(10, "failed")]),
+      rule("B#1", [el(1, "unchecked"), el(2, "unchecked"), space(11, "unchecked"), space(10, "passed")]),
+    ]);
+    const s = plainSummary(a);
+    expect(s.failed).toEqual([{ noun: "door", count: 1 }, { noun: "room", count: 1 }]);
+    expect(s.unchecked).toEqual([{ noun: "door", count: 1 }, { noun: "room", count: 1 }]);
+    expect(s.sentence).toBe("1 door and 1 room break a rule. 1 door and 1 room could not be checked because the model lacks data.");
+    expect(s.withFailed).toBe(2);
+    expect(s.withUnchecked).toBe(2);
+    expect(plainSummary(audit([rule("A#1", [el(1, "passed")])])).sentence).toBe("No element breaks a rule, and nothing was left unchecked.");
   });
 });
