@@ -1,7 +1,7 @@
 // ArchitecturalJourney.tsx — Sheet A-03
 // Layout: left column = stepper + stage text + dots
 //         right column = large image, top-aligned with the lede, full height
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import siteJson from "../data/site-data.json";
 import type { SiteData } from "../data/buildSiteData";
 import { IconFailed, IconPassed, IconUnchecked } from "../icons";
@@ -209,6 +209,34 @@ function Stage3DView() {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function ArchitecturalJourney() {
   const [active, setActive] = useState(0);
+  // Every stage card has the same fixed size, no scrollbar: the text is scaled up when there is little of it and down when there is a lot.
+  const fitRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = fitRef.current;
+    const body = el?.parentElement;
+    if (!el || !body) return;
+    const fit = () => {
+      el.style.zoom = "1";
+      if (window.matchMedia("(max-width: 960px)").matches) return; // stacked layout: natural height
+      const cs = getComputedStyle(body);
+      const avail = body.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      let lo = 0.55;
+      let hi = 1.4;
+      for (let i = 0; i < 9; i++) {
+        const mid = (lo + hi) / 2;
+        el.style.zoom = String(mid);
+        if (el.getBoundingClientRect().height <= avail) lo = mid; else hi = mid;
+      }
+      el.style.zoom = String(lo);
+    };
+    fit();
+    void document.fonts?.ready.then(fit);
+    window.addEventListener("resize", fit);
+    // the stage content is swapped after a short fade, so refit whenever it changes
+    const swapped = new MutationObserver(() => requestAnimationFrame(fit));
+    swapped.observe(el, { childList: true, subtree: true });
+    return () => { window.removeEventListener("resize", fit); swapped.disconnect(); };
+  }, []);
   const go = (i: number) => setActive(Math.max(0, Math.min(STAGES.length - 1, i)));
   const stage = STAGES[active]!;
 
@@ -244,6 +272,7 @@ export default function ArchitecturalJourney() {
       <div className="j-panel" id="j-panel" role="tabpanel" aria-labelledby={`j-tab-${active}`}>
         <div className="j-card">
           <div className="j-card-body">
+           <div className="j-fit" ref={fitRef}>
             <Fade id={active}>
               {active === 0 && <StageClause />}
               {active === 1 && <StageDraft />}
@@ -252,6 +281,7 @@ export default function ArchitecturalJourney() {
               {active === 4 && <StageAudit />}
               {active === 5 && <Stage3DView />}
             </Fade>
+           </div>
           </div>
           <div className="j-nav" role="group" aria-label="Stage navigation">
             <button type="button" className="j-nav-btn" onClick={() => go(active - 1)} disabled={active === 0}

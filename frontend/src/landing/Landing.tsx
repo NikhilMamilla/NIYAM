@@ -125,6 +125,26 @@ function HeroSheet() {
 }
 
 /* ---------- 2. problem ---------- */
+/* Flag emoji do not render on Windows, so the two flags are drawn as SVG. */
+function FlagIndia() {
+  return (
+    <svg className="flag" viewBox="0 0 36 24" width="36" height="24" role="img" aria-label="India">
+      <rect width="36" height="8" fill="#FF9933" /><rect y="8" width="36" height="8" fill="#fff" /><rect y="16" width="36" height="8" fill="#138808" />
+      <circle cx="18" cy="12" r="3" fill="none" stroke="#000080" strokeWidth="0.8" /><circle cx="18" cy="12" r="0.7" fill="#000080" />
+    </svg>
+  );
+}
+function FlagSingapore() {
+  const star = (cx = 0, cy = 0) => <circle key={`${cx}${cy}`} cx={cx} cy={cy} r="0.9" fill="#fff" />;
+  return (
+    <svg className="flag" viewBox="0 0 36 24" width="36" height="24" role="img" aria-label="Singapore">
+      <rect width="36" height="12" fill="#ED2939" /><rect y="12" width="36" height="12" fill="#fff" />
+      <circle cx="8" cy="6" r="3.6" fill="#fff" /><circle cx="9.4" cy="6" r="3.6" fill="#ED2939" />
+      {[[14, 3.2], [11.6, 5.2], [16.4, 5.2], [12.6, 8.4], [15.4, 8.4]].map(([x, y]) => star(x, y))}
+    </svg>
+  );
+}
+
 function ProblemSheet() {
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
 
@@ -148,7 +168,7 @@ function ProblemSheet() {
               onClick={() => toggleCard(0)}
             >
               <div className="accordion-header">
-                <div className="info-card-icon">🇮🇳</div>
+                <div className="info-card-icon"><FlagIndia /></div>
                 <h4>India</h4>
                 <span className="accordion-toggle">{expandedCard === 0 ? '−' : '+'}</span>
               </div>
@@ -162,7 +182,7 @@ function ProblemSheet() {
               onClick={() => toggleCard(1)}
             >
               <div className="accordion-header">
-                <div className="info-card-icon">🇸🇬</div>
+                <div className="info-card-icon"><FlagSingapore /></div>
                 <h4>Singapore</h4>
                 <span className="accordion-toggle">{expandedCard === 1 ? '−' : '+'}</span>
               </div>
