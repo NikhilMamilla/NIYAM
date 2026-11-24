@@ -55,7 +55,7 @@ test.describe("screenshots", () => {
     await page.screenshot({ path: `${DEMO}/demo-2-select.png` });
     await page.screenshot({ path: `${SHOTS}/app-selected.png` });
     await page.getByRole("button", { name: "Back to rules" }).click();
-    await page.getByRole("button", { name: "Show only issues" }).click();
+    await page.getByRole("button", { name: "Only issues" }).click();
     await page.waitForTimeout(1200);
     await page.screenshot({ path: `${DEMO}/demo-3-issues.png` });
     await page.screenshot({ path: `${SHOTS}/app-only-issues.png` });

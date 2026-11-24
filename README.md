@@ -12,23 +12,15 @@ buildings are synthetic.
 
 ## Pipeline
 
-```
- MBBL 2016 PDF ──> corpus (445 clauses) ──> rule units (verbatim sentences)
- TGBR 2012 PDF ──> corpus (55 clauses) ──┘  (2 units: see Coverage)
-                                                │
-                    hand-written spec ──────────┤──── or LLM compiler (gated / ungated)
-                                                ▼
-                     candidate IDS / Python check
-                                                │
-       verifier gate on dev fixtures: schema, sandbox, pass model must pass, fail model must fail
-                                                │ accepted
-                                                ▼
-          draft rulepack ──> human review sheet ──> reviewed rulepack (none reviewed yet)
-                                                │
-   IFC model ──> audit engine ──> JSON, HTML report, BCF, web app with 3D viewer
-
-   evaluation: compile per model x mode, score on held-out fixtures the gate never sees
-```
+| Step | What happens |
+|---|---|
+| 1. Source text | The MBBL 2016 PDF becomes a corpus of 445 clauses; the Telangana Building Rules 2012 PDF becomes 55 clauses. |
+| 2. Rule units | Single sentences are lifted out verbatim as rule units (25 from MBBL, 2 from Telangana; see Coverage below). |
+| 3. Candidate check | Each unit becomes a candidate IDS file or Python check, written either by hand (a rule spec) or by the LLM compiler, with or without the gate. |
+| 4. Verifier gate | The candidate runs on development fixtures: it must pass the schema and sandbox checks, accept the model that should pass and reject the model that should fail. |
+| 5. Draft rulepack | Accepted candidates form the draft rulepack and an exported review sheet. No rule has been reviewed by a domain expert yet. |
+| 6. Audit | An IFC model goes through the audit engine, which produces JSON, an HTML report, BCF issues and the web app with its 3D view. |
+| 7. Evaluation | Separately, compilation is scored per model and mode on held-out fixtures that the gate never sees. |
 
 ## Status
 
@@ -138,6 +130,7 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 - `docs/modelling-profile.md`: what an IFC model must contain to be checkable.
 - `docs/review/`: the review sheet and the reviewer guide.
 - `docs/frontend.md`: the web app, the 3D view, and why sample D once looked like one red wall.
+- `cd frontend && npm run docs:pdf`: rebuilds the PDF versions of these documents that the landing page footer offers for reading and download.
 - `cd frontend && npm run site-data`: regenerates every number the landing page shows from committed results.
 - `python scripts/check_public_ready.py`: scans the tree and history for secrets and personal paths.
 

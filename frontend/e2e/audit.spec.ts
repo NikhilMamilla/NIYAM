@@ -117,12 +117,15 @@ test("the external-request guard flags a request to another host (it can fail)",
   await expect.poll(() => external).toEqual(["http://example.invalid/"]);
 });
 
-test("landing page: no external requests, no WebGL, no console errors; Open the app and back/forward work", async ({ page }) => {
+test("landing page: no external requests, no 3D engine loaded, no console errors; Open the app and back/forward work", async ({ page }) => {
   const external = watchExternalRequests(page);
   const errors = watchConsoleErrors(page);
+  const engineRequests: string[] = [];
+  page.on("request", (r) => { if (/web-ifc|\.wasm/.test(r.url())) engineRequests.push(r.url()); });
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("as checks a computer can run");
-  await expect(page.locator("canvas")).toHaveCount(0);
+  // the button light and navigation use small canvases; the 3D engine (web-ifc wasm) must not load on the landing page
+  expect(engineRequests).toEqual([]);
   await page.getByRole("link", { name: "Open the app" }).first().click();
   await expect(page).toHaveURL(/\/app$/);
   await expect(page.getByTestId("empty-state")).toBeVisible();
@@ -178,8 +181,8 @@ test("clicking a door in 3D and an element in the list both open the detail pane
 test("show only issues hides passing and out-of-scope elements", async ({ page }) => {
   await loadSample(page, /Sample A/, "sample_a_mm");
   const before = await colourStats(page, await viewportShot(page));
-  await page.getByRole("button", { name: "Show only issues" }).click();
-  await expect(page.getByRole("button", { name: "Show only issues" })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Only issues" }).click();
+  await expect(page.getByRole("button", { name: "Only issues" })).toHaveAttribute("aria-pressed", "true");
   await page.waitForTimeout(1000);
   const after = await colourStats(page, await viewportShot(page));
   const hues = await hueStats(page, await viewportShot(page));

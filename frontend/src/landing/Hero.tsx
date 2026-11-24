@@ -36,7 +36,7 @@ function Mark({ at, kind }: { at: [number, number]; kind: "fail" | "warn" | "pas
 export function HeroDrawing() {
   return (
     <figure className="hero-figure">
-      <svg viewBox="0 0 600 440" className="hero-svg" role="img"
+      <svg viewBox="0 -44 600 484" className="hero-svg" role="img"
            aria-label="Schematic drawing of a small building: a bathroom is marked as failing a rule, an exit door as not checked because data is missing, and a bedroom as passing. An illustration, not a real result.">
         {/* grid bubbles, as on a plan sheet: letters along one side, numbers along the other */}
         {[0, 5, 12].map((gx, i) => {

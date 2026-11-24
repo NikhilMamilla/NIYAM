@@ -33,7 +33,7 @@ describe("landing page numbers", () => {
 
   it("contains no hand-typed number: every number traces to site-data.json, the content file or a standard's name", () => {
     const allowed = new Set<string>(["0", "25", "50", "75", "100", "95", "2", "3", "1.0", "2.1", "4", "16739"]); // axis, 95% CI, 2D/3D, IDS 1.0, BCF 2.1, IFC4, ISO 16739
-    for (let i = 1; i <= 11; i++) allowed.add(String(i).padStart(2, "0")); // sheet numbers A-01..A-11
+    for (let i = 1; i <= 12; i++) allowed.add(String(i).padStart(2, "0")); // sheet numbers A-01..A-12
     const addTokens = (s: string) => (s.match(/\d[\d,.]*\d|\d/g) ?? []).forEach((t) => allowed.add(t));
     const walk = (v: unknown): void => {
       if (typeof v === "number") {

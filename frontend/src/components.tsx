@@ -1,6 +1,7 @@
-import { useEffect, useId, useMemo, useRef, useState, type DragEvent } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type DragEvent } from "react";
 import type { AuditResult, Counts, RuleResult, RuleStatus, Sample, Verdict } from "./api";
 import { Term } from "./glossary";
+import Button from "./Button";
 import { IconDownload, IconUpload, STATUS_ICON, VERDICT_ICON } from "./icons";
 import {
   STATUS_EXPLANATION, STATUS_LABEL, VERDICT_LABEL, formatBytes, issuesOf, plainNoun, plainSummary, type ElementSummary,
@@ -60,7 +61,7 @@ export function StartPanel(props: { samples: Sample[]; busy: boolean; current: s
            onDragOver={(e) => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop}>
         <IconUpload className="dropzone-icon" />
         <p>Drop an <Term k="IFC">IFC4</Term> file here, or</p>
-        <label htmlFor={inputId} className="btn primary small">Choose a file</label>
+        <Button as="label" htmlFor={inputId} size="sm" primary>Choose a file</Button>
         <input id={inputId} className="visually-hidden" type="file" accept=".ifc" disabled={props.busy}
                onChange={(e) => { const f = e.target.files?.[0]; if (f) props.onFile(f); e.target.value = ""; }} />
         <p className="hint">Audited on the NIYAM server, drawn in 3D in your browser.</p>
@@ -114,12 +115,12 @@ export function SummaryStrip(props: { audit: AuditResult; fileName: string; file
         <CountList counts={audit.summary.checks} />
       </details>
       <div className="exports" aria-label="Exports">
-        <a className="btn small" href={props.reportUrl} target="_blank" rel="noopener noreferrer" data-testid="open-report"><IconDownload />HTML report</a>
-        <a className="btn small" href={props.bcfUrl} download data-testid="download-bcf"><IconDownload /><span><Term k="BCF">BCF</Term> issues</span></a>
-        <button type="button" className="btn small" data-testid="download-json"
+        <Button as="a" size="sm" href={props.reportUrl} target="_blank" rel="noopener noreferrer" data-testid="open-report"><IconDownload />HTML report</Button>
+        <Button as="a" size="sm" href={props.bcfUrl} download data-testid="download-bcf"><IconDownload /><span><Term k="BCF">BCF</Term> issues</span></Button>
+        <Button size="sm" data-testid="download-json"
                 onClick={() => downloadText(`${props.fileName.replace(/\.ifc$/i, "")}-audit.json`, JSON.stringify(audit, null, 2), "application/json")}>
           <IconDownload />JSON
-        </button>
+        </Button>
       </div>
     </section>
   );
@@ -235,7 +236,7 @@ export function DetailPanel(props: {
     return (
       <section className="panel detail" aria-labelledby="detail-h" data-testid="detail-panel">
         <div className="detail-head"><h2 id="detail-h" ref={head} tabIndex={-1}>An element no rule looks at</h2>
-          <button type="button" className="btn small" onClick={props.onClose}>Back to rules</button></div>
+          <Button size="sm" onClick={props.onClose}>Back to rules</Button></div>
         <p>None of the draft rules applies to this element, so it has no verdict.</p>
         <details className="expert"><summary>Details for experts</summary><p className="mono small">{props.pickedWithoutRules!.globalId ?? `#${props.pickedWithoutRules!.localId}`}</p></details>
       </section>
@@ -246,7 +247,7 @@ export function DetailPanel(props: {
     <section className="panel detail" aria-labelledby="detail-h" data-testid="detail-panel">
       <div className="detail-head">
         <h2 id="detail-h" ref={head} tabIndex={-1}>{s.name ?? "Unnamed element"}</h2>
-        <button type="button" className="btn small" onClick={props.onClose}>Back to rules</button>
+        <Button size="sm" onClick={props.onClose}>Back to rules</Button>
       </div>
       <p className="detail-meta">{plainNoun(s.ifcClass, 1).replace(/^./, (c) => c.toUpperCase())} · worst result: <VerdictBadge verdict={s.worst} /></p>
       <ul className="finding-list">
@@ -260,7 +261,7 @@ export function DetailPanel(props: {
               {element.verdict === "unchecked" && (
                 <div className="fix">
                   <p><strong>What is missing:</strong> {hint ?? "data this rule needs to decide."} The readiness file lists every item NIYAM's rules need.</p>
-                  <button type="button" className="btn small" onClick={props.onDownloadReadiness}><IconDownload />Readiness <Term k="IDS">IDS</Term> file</button>
+                  <Button size="sm" onClick={props.onDownloadReadiness}><IconDownload />Readiness <Term k="IDS">IDS</Term> file</Button>
                 </div>
               )}
               <details className="disclosure">
@@ -301,7 +302,7 @@ export function EmptyState({ onSample }: { onSample: (name: string) => void }) {
         <li><strong>Read the verdicts.</strong> Red breaks a rule, amber could not be checked, grey passed. Every verdict has a word and an icon too.</li>
         <li><strong>Ask why.</strong> Select an element to see the rule, the reason and the clause it came from.</li>
       </ol>
-      <button type="button" className="btn primary" onClick={() => onSample("sample_a_mm")}>Open sample A</button>
+      <Button primary onClick={() => onSample("sample_a_mm")}>Open sample A</Button>
     </div>
   );
 }
@@ -322,26 +323,35 @@ export function Tour({ ready }: { ready: boolean }) {
     try { done = window.localStorage.getItem(TOUR_KEY) === "1"; } catch { done = false; }
     if (!done) setStep(0);
   }, [ready]);
-  const finish = () => {
+  const finish = useCallback(() => {
     setStep(null);
     try { window.localStorage.setItem(TOUR_KEY, "1"); } catch { /* storage unavailable: the tour shows again next time */ }
-  };
+  }, []);
   useEffect(() => {
     document.querySelectorAll("[data-tour-active]").forEach((el) => el.removeAttribute("data-tour-active"));
     if (step !== null) document.querySelector(`[data-tour="${TOUR[step]!.target}"]`)?.setAttribute("data-tour-active", "");
   }, [step]);
+  useEffect(() => {
+    if (step === null) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [step, finish]);
   if (step === null) return null;
   const t = TOUR[step]!;
   return (
     <div className="tour" role="dialog" aria-modal="false" aria-labelledby="tour-h" data-testid="tour">
       <p className="tour-step num">{step + 1} of {TOUR.length}</p>
-      <h2 id="tour-h">{t.title}</h2>
-      <p>{t.text}</p>
-      <div className="btn-row">
-        <button type="button" className="btn small" onClick={finish}>Skip the tour</button>
-        <button type="button" className="btn small primary" autoFocus onClick={() => (step + 1 < TOUR.length ? setStep(step + 1) : finish())}>
+      <div className="tour-copy">
+        <h2 id="tour-h">{t.title}</h2>
+        <p className="tour-text">{t.text}</p>
+      </div>
+      <div className="tour-actions">
+        <Button size="sm" tone="light" onClick={finish}>Skip the tour</Button>
+        <Button size="sm" tone="light" primary onClick={() => (step + 1 < TOUR.length ? setStep(step + 1) : finish())}>
           {step + 1 < TOUR.length ? "Next" : "Done"}
-        </button>
+        </Button>
+        <button type="button" className="tour-close" aria-label="Close the tour" onClick={finish}>×</button>
       </div>
     </div>
   );

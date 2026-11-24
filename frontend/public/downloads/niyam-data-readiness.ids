@@ -1,0 +1,176 @@
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/1.0/ids.xsd">
+    <info>
+        <title>NIYAM data readiness</title>
+        <version>0.1</version>
+        <description>What a model must carry before NIYAM can check its rules. Presence only, not compliance. Generated from the rule specs and rulepack v0.</description>
+    </info>
+    <specifications>
+        <specification name="Spaces declare a profile Category" ifcVersion="IFC4" instructions="Enables MBBL2016-3.16.1#a, MBBL2016-4.10.4#a, MBBL2016-4.13#1, MBBL2016-4.22#1, MBBL2016-4.3.1.1#1, MBBL2016-4.4.1#1, MBBL2016-4.5.1#1, MBBL2016-4.5.2#1, MBBL2016-4.5.2#2, MBBL2016-4.5.2#3, MBBL2016-4.7.1#1, MBBL2016-4.7.2#1, MBBL2016-4.8.1#1, MBBL2016-4.8.2#1, MBBL2016-4.9.1#1, MBBL2016-7.1#1, MBBL2016-7.2#1, TGBR2012-5#c, TGBR2012-5#fxi. Room rules also need Body geometry (not expressible in IDS). Category names are NIYAM's assumed profile (docs/modelling-profile.md), not a standard; they have not been seen in real authoring-tool exports.">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCSPACE</simpleValue>
+                    </name>
+                </entity>
+            </applicability>
+            <requirements>
+                <property dataType="IFCLABEL" cardinality="required">
+                    <propertySet>
+                        <simpleValue>Pset_SpaceCommon</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>Category</simpleValue>
+                    </baseName>
+                    <value>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Basement" />
+                            <xs:enumeration value="Bathroom" />
+                            <xs:enumeration value="Cabin" />
+                            <xs:enumeration value="Chowk" />
+                            <xs:enumeration value="Classroom" />
+                            <xs:enumeration value="CombinedBathWC" />
+                            <xs:enumeration value="Courtyard" />
+                            <xs:enumeration value="Creche" />
+                            <xs:enumeration value="Garage" />
+                            <xs:enumeration value="Habitable" />
+                            <xs:enumeration value="Kitchen" />
+                            <xs:enumeration value="Mezzanine" />
+                            <xs:enumeration value="Office" />
+                            <xs:enumeration value="Shop" />
+                            <xs:enumeration value="Stilt" />
+                            <xs:enumeration value="Store" />
+                            <xs:enumeration value="WaterCloset" />
+                            <xs:enumeration value="Workroom" />
+                            <xs:enumeration value="Workspace" />
+                        </xs:restriction>
+                    </value>
+                </property>
+            </requirements>
+        </specification>
+        <specification name="Doors declare Pset_DoorCommon.FireExit" ifcVersion="IFC4" instructions="Enables MBBL2016-4.24.7.2#b, MBBL2016-4.24.7.2#c, MBBL2016-4.24.7.2#f, MBBL2016-5.4.1#b, MBBL2016-5.4.1#b2, MBBL2016-5.4.1#c, MBBL2016-5.4.2#1: door rules apply to exit doors (FireExit = TRUE).">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCDOOR</simpleValue>
+                    </name>
+                </entity>
+            </applicability>
+            <requirements>
+                <property dataType="IFCBOOLEAN" cardinality="required">
+                    <propertySet>
+                        <simpleValue>Pset_DoorCommon</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>FireExit</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+        <specification name="Exit doors carry Qto_DoorBaseQuantities.Width" ifcVersion="IFC4" instructions="Enables MBBL2016-4.24.7.2#b, MBBL2016-5.4.1#b.">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCDOOR</simpleValue>
+                    </name>
+                </entity>
+                <property dataType="IFCBOOLEAN">
+                    <propertySet>
+                        <simpleValue>Pset_DoorCommon</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>FireExit</simpleValue>
+                    </baseName>
+                    <value>
+                        <simpleValue>TRUE</simpleValue>
+                    </value>
+                </property>
+            </applicability>
+            <requirements>
+                <property dataType="IFCLENGTHMEASURE" cardinality="required">
+                    <propertySet>
+                        <simpleValue>Qto_DoorBaseQuantities</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>Width</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+        <specification name="Exit doors carry Qto_DoorBaseQuantities.Height" ifcVersion="IFC4" instructions="Enables MBBL2016-5.4.1#b2.">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCDOOR</simpleValue>
+                    </name>
+                </entity>
+                <property dataType="IFCBOOLEAN">
+                    <propertySet>
+                        <simpleValue>Pset_DoorCommon</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>FireExit</simpleValue>
+                    </baseName>
+                    <value>
+                        <simpleValue>TRUE</simpleValue>
+                    </value>
+                </property>
+            </applicability>
+            <requirements>
+                <property dataType="IFCLENGTHMEASURE" cardinality="required">
+                    <propertySet>
+                        <simpleValue>Qto_DoorBaseQuantities</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>Height</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+        <specification name="Exit doors declare OperationType" ifcVersion="IFC4" instructions="Enables MBBL2016-4.24.7.2#c, MBBL2016-4.24.7.2#f, MBBL2016-5.4.1#c, MBBL2016-5.4.2#1.">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCDOOR</simpleValue>
+                    </name>
+                </entity>
+                <property dataType="IFCBOOLEAN">
+                    <propertySet>
+                        <simpleValue>Pset_DoorCommon</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>FireExit</simpleValue>
+                    </baseName>
+                    <value>
+                        <simpleValue>TRUE</simpleValue>
+                    </value>
+                </property>
+            </applicability>
+            <requirements>
+                <attribute cardinality="required">
+                    <name>
+                        <simpleValue>OperationType</simpleValue>
+                    </name>
+                </attribute>
+            </requirements>
+        </specification>
+        <specification name="Buildings declare Pset_BuildingCommon.OccupancyType" ifcVersion="IFC4" instructions="Enables MBBL2016-4.17.2#A. The stair rule also needs IfcStairFlight Body geometry (its width is computed; not expressible in IDS).">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <entity>
+                    <name>
+                        <simpleValue>IFCBUILDING</simpleValue>
+                    </name>
+                </entity>
+            </applicability>
+            <requirements>
+                <property dataType="IFCLABEL" cardinality="required">
+                    <propertySet>
+                        <simpleValue>Pset_BuildingCommon</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>OccupancyType</simpleValue>
+                    </baseName>
+                </property>
+            </requirements>
+        </specification>
+    </specifications>
+</ids>

@@ -101,8 +101,8 @@ After the fix: `docs/screenshots/viewer-sample_*.png`.
 
 **Design world: a diazo whiteprint.** Warm print paper, deep ink, one accent in diazo blue-violet, and a dark light-table
 for the 3D stage. Tokens live in `src/styles/tokens.css` (colour, type scale, spacing, radius, elevation, motion).
-Every text colour pair was checked numerically for WCAG AA. Fonts: IBM Plex Serif, Sans and Mono (OFL), latin subsets
-self-hosted in `public/fonts/` (about 140 KB), so nothing is fetched at runtime. Verdicts are always colour, icon and word.
+Every text colour pair was checked numerically for WCAG AA. Fonts: Instrument Serif for headings and IBM Plex Sans and Mono (OFL), latin subsets
+self-hosted in `public/fonts/`, so nothing is fetched at runtime. Verdicts are always colour, icon and word.
 State grammar: pressed = inverted ink, disabled = half-tone, focus = a diazo ring. Plain words first ("Room", "Door");
 IFC terms sit behind "Details for experts". Glossary tooltips: IFC, IDS, BCF, gate, unchecked.
 
@@ -127,3 +127,27 @@ built from each element's real mesh (failed outlines pulse unless reduced motion
 (3D, plan, front), fly-to on selection with the rest dimmed, reset, optional auto-orbit, a hover tooltip. Quality
 defaults to Low on devices with 4 or fewer cores, 4 GB or less memory, or narrow screens. Not built: a storey filter
 and a section slider. The That Open logo overlay is hidden; That Open Engine is credited in the stage caption.
+
+## Landing page: navigation, buttons, footer documents and weaker devices
+
+**Navigation.** A floating bar holds the NIYAM wordmark and the section pills (a gooey, animated pill follows the active
+section). Below 1100 px wide it becomes a frosted strip with the wordmark and a hamburger that opens a full-screen menu
+of plain section names. The bar stays visible while the hero is in view; further down it hides after 3 seconds without
+activity or when scrolling down, and returns on scroll up, when the cursor nears the top edge, or on a key press. It
+stays put while it has pointer or keyboard focus and while the mobile menu is open.
+
+**One button for the whole project.** `src/Button.tsx` wraps `src/SpecularButton.jsx` (React Bits, with an `as` prop so a
+router link, anchor or label can be a button). Every action button on the landing page and the dashboard uses it, in the
+heading ink colour; `primary` fills it, `tone="light"` is for dark surfaces. All buttons draw their edge light through a
+single shared WebGL context into their own 2D canvas, so any number can be on screen (separate contexts per button
+exceeded the browser limit and showed broken white boxes). Toggles, chips, list rows and the viewer toolbar are not
+action buttons and keep their own styling. Two buttons side by side always share one width and height.
+
+**Documents in the footer.** The eight documents are offered as PDFs (`public/downloads/*.pdf`), built from the
+repository's Markdown by `npm run docs:pdf` (`scripts/build-pdfs.mjs`: Markdown to styled HTML to A4 PDF through the
+Chromium that Playwright already installs). The PDFs are committed, so a normal build needs no Chromium. The three data
+files (readiness IDS, review sheet CSV, gate rejection JSON) are copied unchanged by `scripts/sync-downloads.mjs`.
+
+**Weaker devices.** `src/perf.ts` marks a device as low-end (4 or fewer cores, 4 GB or less memory, data saver, or reduced
+motion) and adds an `lite` class to the page. There the buttons are plain CSS, blur filters and the large glow shapes are
+switched off, the navigation uses fewer particles, and the 3D view defaults to Low quality.

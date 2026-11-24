@@ -1,6 +1,15 @@
-/* NIYAM design tokens: a diazo whiteprint world. Warm print paper, deep ink, diazo blue-violet line work,
-   a dark light-table for the 3D stage. Every colour pair used for text is AA on its ground (checked numerically). */
+/* NIYAM design tokens — premium architectural intelligence platform.
+   Foundation: warm whiteprint paper, deep navy, blueprint blue, muted gold.
+   Morphism: Paper Morphism primary, subtle Glassmorphism secondary, restrained Aurora. */
 
+/* ─── Fonts ─────────────────────────────────────────────────────────────────── */
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/instrument-serif-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 @font-face { font-family: "Plex Sans"; src: url("/fonts/ibm-plex-sans-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Plex Sans"; src: url("/fonts/ibm-plex-sans-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
 @font-face { font-family: "Plex Sans"; src: url("/fonts/ibm-plex-sans-latin-600-normal.woff2") format("woff2"); font-weight: 600; font-display: swap; }
@@ -10,64 +19,112 @@
 @font-face { font-family: "Plex Mono"; src: url("/fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: swap; }
 
 :root {
-  /* paper and ink */
-  --paper: #f3eddf;          /* whiteprint paper */
-  --paper-2: #e9e2cf;        /* shaded paper, table stripes */
-  --paper-3: #ddd4bd;        /* folds, rules on paper-2 */
-  --panel: #fbf8f0;          /* a fresh sheet laid on the paper */
-  --ink: #1c2230;            /* text: 13.6:1 on paper */
-  --ink-2: #505768;          /* secondary text: 6.2:1 */
-  --ink-3: #5e6270;          /* tertiary text, captions: 4.8:1 */
-  --rule: #c9bfa5;           /* hairlines on paper */
-  --rule-strong: #a99f86;
+  /* ─── Paper & Ink ─────────────────────────────────────────────────────────── */
+  --paper:          #F5F0E4;   /* warm ivory — whiteprint paper */
+  --paper-2:        #EDE6D0;   /* slightly deeper, table stripes */
+  --paper-3:        #E0D7BE;   /* fold creases, strong rules */
+  --paper-4:        #D4C9A8;   /* deep crease lines */
+  --panel:          #FBF8F1;   /* fresh sheet on the paper */
+  --panel-glass:    rgba(251,248,241,0.78); /* glassmorphism panel */
+  --panel-glass-2:  rgba(251,248,241,0.55);
+  --ink:            #191F30;   /* deep navy ink — 13.9:1 on paper */
+  --ink-2:          #3D4559;   /* secondary text — 7.1:1 */
+  --ink-3:          #5A6478;   /* tertiary / captions — 5.2:1 on paper */
+  --rule:           #C8BFA3;   /* hairlines on paper */
+  --rule-strong:    #A99F84;   /* heavier rules */
 
-  /* diazo line: the one accent */
-  --line: #2e3a9f;           /* 8.1:1 on paper; white on it 9.5:1 */
-  --line-hover: #24307f;
-  --line-soft: #dcd9ec;      /* tint for selection, pressed fills */
-  --line-faint: #b7b6d6;     /* undeveloped print lines */
+  /* ─── Blueprint Blue (primary accent) ────────────────────────────────────── */
+  --line:           #3447C7;   /* blueprint blue — 8.2:1 on paper */
+  --line-hover:     #2538A8;
+  --line-dark:      #1E2B8A;
+  --line-soft:      #DDE0F5;   /* tint for selections */
+  --line-faint:     #B4BBE8;   /* undeveloped lines */
+  --line-glow:      rgba(52,71,199,0.18);
 
-  /* verdicts: always paired with an icon and a text label */
-  --fail: #a8241b;  --fail-bg: #f6ddd6;  --fail-fill: #c4321f;
-  --warn: #7f4a00;  --warn-bg: #f7e6c2;  --warn-fill: #d99a1e;
-  --pass: #2d5e40;  --pass-bg: #dfe9dc;  --pass-fill: #8f969e;
-  --oos: #565b66;   --oos-bg: #e6e1d4;   --oos-fill: #c9c4b8;
+  /* ─── Muted Gold (secondary accent) ──────────────────────────────────────── */
+  --gold:           #B18B51;
+  --gold-light:     #D4AE76;
+  --gold-bg:        #F5EDD8;
 
-  /* the light table (3D stage) */
-  --stage: #191c22;
-  --stage-2: #242830;
-  --stage-ink: #e9e4d6;
-  --stage-ink-2: #a7a294;
+  /* ─── Deep Navy (section backgrounds) ────────────────────────────────────── */
+  --navy:           #191F30;
+  --navy-2:         #222840;
+  --navy-3:         #2D3454;
+  --navy-ink:       #EDE8DC;
+  --navy-ink-2:     #A8A49C;
 
-  /* type */
-  --font-sans: "Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-serif: "Plex Serif", Georgia, "Times New Roman", serif;
-  --font-mono: "Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
-  --step--1: 0.8125rem;   /* 13 */
-  --step-0: 1rem;         /* 16 body */
-  --step-1: 1.125rem;     /* 18 lead */
-  --step-2: 1.375rem;     /* 22 */
-  --step-3: 1.75rem;      /* 28 */
-  --step-4: clamp(2rem, 1.4rem + 2.2vw, 2.75rem);
-  --step-5: clamp(2.5rem, 1.6rem + 3.6vw, 4.25rem);
-  --measure: 66ch;
+  /* ─── Verdicts — always paired with an icon and a text label ─────────────── */
+  /* text colours clear 4.5:1 on their own tint; the fills stay vivid for the 3D view */
+  --fail:           #A83224;   --fail-bg:  #F5DDD8;   --fail-fill: #C94335;
+  --warn:           #8A5200;   --warn-bg:  #F7E8C4;   --warn-fill: #D99A1E;
+  --pass:           #2F6247;   --pass-bg:  #DDE9DC;   --pass-fill: #8F969E;
+  --oos:            #565B66;   --oos-bg:   #E6E1D4;   --oos-fill:  #C9C4B8;
 
-  /* space: 4 px base */
-  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 72px; --s-9: 112px;
+  /* ─── Light table (3D stage) ──────────────────────────────────────────────── */
+  --stage:          #191C22;
+  --stage-2:        #242830;
+  --stage-ink:      #EDE8DC;
+  --stage-ink-2:    #A7A294;
+  /* controls and edges on the light table, so the dark region is themeable too */
+  --stage-line:     #4A4F59;
+  --stage-hover:    #343943;
+  --stage-focus:    #9AA4FF;
+  --stage-edge:     #0B0D10;
+  --stage-tip:      rgb(25 28 34 / 92%);
+  --stage-card:     rgb(25 28 34 / 95%);
+  --stage-swatch:   rgb(255 255 255 / 35%);
 
-  /* shape and depth */
-  --radius-1: 3px;
-  --radius-2: 6px;
-  --radius-3: 10px;
-  --shadow-1: 0 1px 1px rgb(40 32 12 / 8%), 0 2px 6px rgb(40 32 12 / 6%);
-  --shadow-2: 0 2px 4px rgb(40 32 12 / 8%), 0 10px 28px rgb(40 32 12 / 12%);
-  --focus: 0 0 0 2px var(--panel), 0 0 0 4px var(--line);
+  /* ─── Typography ──────────────────────────────────────────────────────────── */
+  --font-heading: "Instrument Serif", "Plex Serif", Georgia, "Times New Roman", serif;
+  --font-serif:   "Plex Serif", Georgia, "Times New Roman", serif;
+  --font-sans:    "Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:    "Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 
-  /* motion */
-  --dur-1: 120ms;
-  --dur-2: 220ms;
-  --dur-3: 480ms;
-  --dur-print: 1400ms;       /* a sheet's lines developing */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Type scale — fluid, editorial, never clamp-floored too aggressively */
+  --step--2:  0.75rem;    /* 12 — technical labels */
+  --step--1:  0.875rem;   /* 14 — navigation, captions */
+  --step-0:   1.0625rem;  /* 17 — body text */
+  --step-1:   1.1875rem;  /* 19 — lead paragraphs */
+  --step-2:   clamp(1.375rem, 1.1rem + 1.1vw, 1.75rem);    /* 22→28 — card headings */
+  --step-3:   clamp(1.75rem,  1.3rem + 1.7vw, 2.375rem);   /* 28→38 — secondary headings */
+  --step-4:   clamp(2.375rem, 1.6rem + 3.0vw, 3.75rem);    /* 38→60 — section headings */
+  --step-5:   clamp(3.0rem,   1.8rem + 5.0vw, 5.5rem);     /* 48→88 — hero H1 */
+  --step-6:   clamp(3.5rem,   2.0rem + 6.5vw, 6.5rem);     /* 56→104 — maximum display */
+
+  --measure:        66ch;
+  --measure-narrow: 46ch;
+
+  /* ─── Space (4px base) ────────────────────────────────────────────────────── */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px;  --s-4: 16px;  --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 72px;  --s-9: 112px; --s-10: 160px;
+
+  /* ─── Shape & Depth ───────────────────────────────────────────────────────── */
+  --radius-1: 4px;
+  --radius-2: 8px;
+  --radius-3: 14px;
+  --radius-pill: 999px;
+
+  /* Paper morphism shadows — warm, low-contrast, layered */
+  --shadow-paper-1: 0 1px 2px rgba(28,24,12,0.07), 0 2px 8px rgba(28,24,12,0.05);
+  --shadow-paper-2: 0 2px 6px rgba(28,24,12,0.08), 0 8px 28px rgba(28,24,12,0.10);
+  --shadow-paper-3: 0 4px 12px rgba(28,24,12,0.10), 0 20px 60px rgba(28,24,12,0.14);
+  /* Keep old names as aliases for app.css compatibility */
+  --shadow-1: var(--shadow-paper-1);
+  --shadow-2: var(--shadow-paper-2);
+  /* Glass panels */
+  --shadow-glass:   0 4px 24px rgba(52,71,199,0.08), 0 1px 4px rgba(28,24,12,0.06);
+  /* Blueprint glow */
+  --shadow-blue:    0 0 0 1px rgba(52,71,199,0.15), 0 4px 24px rgba(52,71,199,0.12);
+
+  --focus:          0 0 0 2px var(--panel), 0 0 0 4px var(--line);
+
+  /* ─── Motion ──────────────────────────────────────────────────────────────── */
+  --dur-1:     120ms;
+  --dur-2:     220ms;
+  --dur-3:     420ms;
+  --dur-4:     640ms;
+  --dur-print: 1400ms;
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }

@@ -6,6 +6,7 @@ import {
   type AuditResult, type Sample,
 } from "./api";
 import { DetailPanel, EmptyState, Legend, RuleList, SAMPLES, StartPanel, SummaryStrip, Tour, VerdictBadge } from "./components";
+import Button from "./Button";
 import { IconReset, IconUnchecked } from "./icons";
 import {
   LARGE_MODEL_BYTES, elementsByExpressId, errorRules, formatBytes, paintByLocalId, plainNoun, plainSummary, translucentLocalIds,
@@ -48,6 +49,7 @@ export default function App({ initialSample = null }: { initialSample?: string |
   const [quality, setQuality] = useState<Quality>("low");
   const [hover, setHover] = useState<{ x: number; y: number; name: string; detail: string } | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLElement>(null);
   const viewerRef = useRef<Viewer | null>(null);
   const maps = useRef({ localByExpress: new Map<number, number>(), expressByLocal: new Map<number, number>() });
   const runToken = useRef(0);
@@ -131,6 +133,15 @@ export default function App({ initialSample = null }: { initialSample?: string |
     void run({ name: `${name}.ifc`, size, sample: name }, fetchSampleBytes(name), auditSample(name));
   }, [samples, run]);
 
+  // On a phone the load panel fills the first screen: choosing a model brings the light table into view.
+  // Instant, not smooth: the page is still growing while the audit runs, which would interrupt an animation,
+  // so it scrolls again once the result lands.
+  useEffect(() => {
+    if (phase === "idle" || !window.matchMedia("(max-width: 760px)").matches) return;
+    const stage = stageRef.current;
+    if (stage) window.scrollTo({ top: stage.getBoundingClientRect().top + window.scrollY, behavior: "instant" });
+  }, [phase]);
+
   // deep link: /app?sample=sample_a_mm opens that sample once the sample list is known
   useEffect(() => {
     if (autoStarted.current || !initialSample || !samples.some((s) => s.name === initialSample)) return;
@@ -192,14 +203,20 @@ export default function App({ initialSample = null }: { initialSample?: string |
     <div className={`dash ${leftOpen ? "" : "left-closed"}`}>
       <a href="#verdicts" className="skip-link">Skip to the verdicts</a>
       <header className="dash-top">
-        <button type="button" className="btn small icon-only" aria-expanded={leftOpen} aria-controls="left-panel"
+        <Button size="sm" aria-expanded={leftOpen} aria-controls="left-panel"
                 onClick={() => setLeftOpen(!leftOpen)} title={leftOpen ? "Hide the load panel" : "Show the load panel"}>
           <span className="hamburger" aria-hidden="true" /><span className="visually-hidden">{leftOpen ? "Hide" : "Show"} the load panel</span>
-        </button>
+        </Button>
         <Link to="/" className="brand" translate="no">NIYAM</Link>
-        <span className="dash-title">Check a building model</span>
-        {draftRules && <span className="draft-badge" title="The rule encodings have not been reviewed by a person yet."><IconUnchecked />Draft rules, not human-reviewed</span>}
-        <Link to="/" className="btn small ghost">About NIYAM</Link>
+        <h1 className="dash-title">Check a building model</h1>
+        {draftRules && (
+          <span className="draft-badge" title="The rule encodings have not been reviewed by a person yet.">
+            <IconUnchecked />
+            <span className="draft-long">Draft rules, not human-reviewed</span>
+            <span className="draft-short">Draft rules</span>
+          </span>
+        )}
+        <Button as={Link} to="/" size="sm">About <span className="about-niyam">NIYAM</span></Button>
       </header>
 
       <div className="dash-body">
@@ -218,7 +235,7 @@ export default function App({ initialSample = null }: { initialSample?: string |
           <StartPanel samples={samples} busy={phase === "working"} current={file?.sample ?? null} onFile={onFile} onSample={onSample} />
         </aside>
 
-        <section className="dash-stage" aria-labelledby="stage-h" data-tour="stage">
+        <section ref={stageRef} className="dash-stage" aria-labelledby="stage-h" data-tour="stage">
           <h2 id="stage-h" className="visually-hidden">3D model</h2>
           <p className="visually-hidden" id="viewport-summary" data-testid="viewport-summary">{textAlternative}</p>
           <div className="stage-tools" role="toolbar" aria-label="3D view controls">
@@ -227,10 +244,12 @@ export default function App({ initialSample = null }: { initialSample?: string |
                 <button key={p} type="button" className="tool" disabled={!ready} onClick={() => preset(p)}>{p === "iso" ? "3D" : p === "plan" ? "Plan" : "Front"}</button>
               ))}
             </div>
-            <button type="button" className="tool" disabled={!ready} onClick={() => void resetView()}><IconReset />Reset view</button>
-            <button type="button" className="tool" aria-pressed={onlyIssues} disabled={!ready || issueCount === 0} onClick={() => void toggleOnlyIssues()}>Show only issues</button>
+            <button type="button" className="tool" disabled={!ready} onClick={() => void resetView()}><IconReset />Reset</button>
+            <button type="button" className="tool" aria-pressed={onlyIssues} disabled={!ready || issueCount === 0} onClick={() => void toggleOnlyIssues()}>Only issues</button>
             <span className="tool-gap" />
-            <button type="button" className="tool" aria-pressed={orbit} disabled={!ready} onClick={() => { setOrbit(!orbit); viewerRef.current?.setAutoOrbit(!orbit); }}>Auto-orbit</button>
+            <span className="tool-break" aria-hidden="true" />
+            <button type="button" className="tool" aria-pressed={orbit} disabled={!ready} title="Keep the model turning"
+                    onClick={() => { setOrbit(!orbit); viewerRef.current?.setAutoOrbit(!orbit); }}>Orbit</button>
             <button type="button" className="tool" aria-pressed={atmosphere === "neutral"}
                     onClick={() => { const a = atmosphere === "golden" ? "neutral" : "golden"; setAtmosphere(a); viewerRef.current?.setAtmosphere(a); }}>
               {atmosphere === "golden" ? "Neutral light" : "Golden hour"}

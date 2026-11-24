@@ -3,13 +3,19 @@ import { useEffect, useRef, useState } from "react";
 import type { SiteData } from "../data/buildSiteData";
 import type { Cell, Rate } from "../data/siteData";
 import siteJson from "../data/site-data.json";
-import { CONTEXT, REPO_DOCS, TEAM } from "../content/site";
+import { CONTEXT, DOC_GROUPS, TEAM } from "../content/site";
 import { Term } from "../glossary";
 import { IconFailed, IconOutOfScope, IconPassed, IconUnchecked } from "../icons";
 import { Link } from "../router";
 import { ForestChart, NumbersTable, PairedChart, StabilityChart, type ForestRow } from "./charts";
 import { apart, date, frac, harness, modelLabel, rateWithInterval, thousands } from "./format";
 import { HeroDrawing } from "./Hero";
+import { ProblemIllustration } from "./ProblemIllustration";
+import GooeyNav from "./GooeyNav";
+import Button from "../Button";
+import { isLowEnd } from "../perf";
+import CardSwap, { type CardSwapHandle } from "./CardSwap";
+import ArchitecturalJourney from "./ArchitecturalJourney";
 
 const site = siteJson as unknown as SiteData;
 const h = site.headline;
@@ -58,14 +64,17 @@ function RunStamp() {
   );
 }
 
-function Sheet({ id, sheet, title, children, className = "" }: { id: string; sheet: string; title: string; children: React.ReactNode; className?: string }) {
+function Sheet({ id, sheet, title, kicker, children, className = "", aside }: { id: string; sheet: string; title: string; kicker?: string; children: React.ReactNode; className?: string; aside?: React.ReactNode }) {
   return (
     <section id={id} className={`sheet ${className}`} data-sheet aria-labelledby={`${id}-h`}>
       <div className="sheet-inner">
+        <p className="sheet-id" aria-hidden="true">Sheet {sheet}</p>
+        {kicker && <p className="sheet-kicker">{kicker}</p>}
         <h2 id={`${id}-h`}>{title}</h2>
+        {aside && <div className="sheet-aside">{aside}</div>}
         {children}
       </div>
-      <p className="sheet-number mono" aria-hidden="true">Sheet {sheet}</p>
+      <p className="sheet-number mono" aria-hidden="true">{sheet}</p>
     </section>
   );
 }
@@ -82,7 +91,7 @@ function Takeaway({ say, caveat }: { say: React.ReactNode; caveat: React.ReactNo
 const VERDICT_ICON = { failed: IconFailed, unchecked: IconUnchecked, passed: IconPassed, out_of_scope: IconOutOfScope } as const;
 const VERDICT_WORD = { failed: "Fails", unchecked: "Could not be checked", passed: "Passes", out_of_scope: "Not in scope" } as const;
 
-function Verdict({ v }: { v: keyof typeof VERDICT_ICON }) {
+export function Verdict({ v }: { v: keyof typeof VERDICT_ICON }) {
   const Icon = VERDICT_ICON[v];
   return <span className={`badge verdict-${v}`}><Icon />{VERDICT_WORD[v]}</span>;
 }
@@ -93,199 +102,221 @@ function HeroSheet() {
     <header className="hero sheet" data-sheet data-developed="">
       <div className="hero-copy">
         <p className="draft-badge"><IconUnchecked />Draft rules, not human-reviewed</p>
-        <h1>Building bye‑laws, as checks a computer can run.</h1>
+        <h1>Building bye‑laws, as checks a <em>computer</em> can run.</h1>
         <p className="lead">
           NIYAM reads sentences from Indian building bye-laws, drafts a machine check for each with an AI model, keeps a
           draft only if it behaves correctly on test buildings, and then audits your <Term k="IFC">IFC</Term> building model
           in 3D. It is a research prototype: {site.units.total} draft rules, synthetic test buildings, no expert review yet.
         </p>
         <div className="btn-row hero-actions">
-          <Link to="/app" className="btn primary">Open the app</Link>
-          <Link to={SAMPLE_LINK} className="btn">Try a sample building</Link>
+          <Button as={Link} to="/app" primary>Open the app</Button>
+          <Button as={Link} to={SAMPLE_LINK}>Try a sample building</Button>
         </div>
-        <dl className="title-block">
-          <div><dt>Sources</dt><dd>MBBL 2016 · Telangana 2012</dd></div>
-          <div><dt>Clauses read</dt><dd className="num">{thousands(site.corpus.MBBL2016 + site.corpus.TGBR2012)}</dd></div>
-          <div><dt>Rules drafted</dt><dd className="num">{site.units.total}</dd></div>
-          <div><dt>Status</dt><dd>Research prototype</dd></div>
-        </dl>
       </div>
       <HeroDrawing />
+      <dl className="title-block hero-title-block">
+        <div><dt>Sources</dt><dd>MBBL 2016 · Telangana 2012</dd></div>
+        <div><dt>Clauses read</dt><dd className="num">{thousands(site.corpus.MBBL2016 + site.corpus.TGBR2012)}</dd></div>
+        <div><dt>Rules drafted</dt><dd className="num">{site.units.total}</dd></div>
+        <div><dt>Status</dt><dd>Research prototype</dd></div>
+      </dl>
     </header>
   );
 }
 
 /* ---------- 2. problem ---------- */
 function ProblemSheet() {
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
+
+  const toggleCard = (index: number) => {
+    setExpandedCard(expandedCard === index ? null : index);
+  };
+
   return (
-    <Sheet id="problem" sheet="A-02" title="Plans are still checked by reading">
+    <Sheet id="problem" sheet="A-02" title="Plans are still checked by reading" className="sheet-dark sheet-fullheight">
       <div className="two-col">
         <div className="prose">
           <p>
-            In most Indian cities, a building plan gets its permission after an officer reads 2D drawings against rules written
-            as prose: setbacks, room sizes, exit widths. The digital tools that exist keep the rules inside closed
-            software, so nobody outside can see how a clause was turned into a check.
+            In most Indian cities, officers manually compare 2D building plans against written rules covering setbacks, room sizes and exit widths. Existing digital tools keep these rules locked in proprietary software, hiding how regulations become checks.
           </p>
           <p>
-            There is no open, machine-readable version of India's bye-laws. NIYAM is an attempt to build one honestly:
-            every check points back to the sentence it came from, and every number about its accuracy says how it was measured.
+            India lacks an open, machine-readable version of its building bye-laws. NIYAM aims to change this through transparent, traceable checks, where every result links to its original clause and accuracy is measured openly.
           </p>
+          <div className="info-accordion">
+            <div 
+              className={`accordion-item ${expandedCard === 0 ? 'expanded' : ''}`}
+              onClick={() => toggleCard(0)}
+            >
+              <div className="accordion-header">
+                <div className="info-card-icon">🇮🇳</div>
+                <h4>India</h4>
+                <span className="accordion-toggle">{expandedCard === 0 ? '−' : '+'}</span>
+              </div>
+              <div className="accordion-content">
+                <p>{CONTEXT.nbc}</p>
+              </div>
+            </div>
+            
+            <div 
+              className={`accordion-item ${expandedCard === 1 ? 'expanded' : ''}`}
+              onClick={() => toggleCard(1)}
+            >
+              <div className="accordion-header">
+                <div className="info-card-icon">🇸🇬</div>
+                <h4>Singapore</h4>
+                <span className="accordion-toggle">{expandedCard === 1 ? '−' : '+'}</span>
+              </div>
+              <div className="accordion-content">
+                <p>{CONTEXT.singapore}</p>
+              </div>
+            </div>
+            
+            <div 
+              className={`accordion-item ${expandedCard === 2 ? 'expanded' : ''}`}
+              onClick={() => toggleCard(2)}
+            >
+              <div className="accordion-header">
+                <div className="info-card-icon"><img className="bsi-logo" src="/buildingsmart-logo.png" alt="" width="36" height="36" loading="lazy" /></div>
+                <h4>buildingSMART</h4>
+                <span className="accordion-toggle">{expandedCard === 2 ? '−' : '+'}</span>
+              </div>
+              <div className="accordion-content">
+                <p>{CONTEXT.ids}</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <ul className="context-list">
-          <li>{CONTEXT.nbc}</li>
-          <li>{CONTEXT.singapore}</li>
-          <li>{CONTEXT.ids}</li>
-        </ul>
+        <ProblemIllustration />
       </div>
     </Sheet>
   );
 }
 
 /* ---------- 3. what NIYAM is: the pipeline, stage by stage, with one real unit ---------- */
-const STAGES = [
-  { key: "clause", name: "Clause", line: "A sentence from the bye-law, quoted word for word." },
-  { key: "draft", name: "Draft", line: "An AI model writes a check for that sentence." },
-  { key: "gate", name: "Gate", line: "The draft must behave correctly on two test buildings." },
-  { key: "pack", name: "Rulepack", line: "Accepted drafts are stored, still marked as drafts." },
-  { key: "audit", name: "Audit", line: "The checks run on an uploaded IFC4 model." },
-  { key: "view", name: "3D view", line: "Every element is coloured by its verdict." },
-  { key: "bcf", name: "BCF", line: "Issues export to the tools designers already use." },
-] as const;
-
 function PipelineSheet() {
-  const [stage, setStage] = useState(0);
-  const ex = site.workedExample;
-  const failing = ex.sampleA.filter((d) => d.verdict === "failed");
-  const unchecked = ex.sampleA.filter((d) => d.verdict === "unchecked");
-  const detail: Record<(typeof STAGES)[number]["key"], React.ReactNode> = {
-    clause: <><p className="quote">“{ex.text}”</p><p className="meta">MBBL 2016, clause {ex.clauseId.split("-")[1]}, page {ex.page}</p></>,
-    draft: (
-      <>
-        <p>The check is an <Term k="IDS">IDS</Term> file: it applies to <code>{ex.ids.appliesTo}</code> and requires <code>{ex.ids.requires}</code>.</p>
-        <p className="meta">Shown: the stored rule <code>{ex.ids.file}</code> (a pilot written by hand in the same format the AI produces).</p>
-      </>
-    ),
-    gate: <p>Before it is kept, the check must pass a test building that follows the rule and fail one that breaks it. The next sheet shows a real draft that the <Term k="gate">gate</Term> turned back.</p>,
-    pack: <p>The accepted check joins the rulepack with <code>human_reviewed: false</code>. It stays a draft until a domain expert signs it off on the review sheet.</p>,
-    audit: (
-      <>
-        <p>On synthetic sample A, the expected results for this rule are:</p>
-        <ul className="verdict-list">
-          {ex.sampleA.filter((d) => d.verdict).map((d) => (
-            <li key={d.name}><Verdict v={d.verdict as keyof typeof VERDICT_ICON} /><span>{d.name}</span>
-              <span className="meta num">{d.widthM === null ? "no width in the model" : `${d.widthM} m`}{d.fireExit === null ? ", exit status missing" : d.fireExit ? "" : ", not an exit"}</span></li>
-          ))}
-        </ul>
-      </>
-    ),
-    view: <p>In the app, {failing.map((d) => d.name).join(" and ")} {failing.length === 1 ? "turns" : "turn"} red, {unchecked.length} door{unchecked.length === 1 ? "" : "s"} with missing data {unchecked.length === 1 ? "turns" : "turn"} amber, and selecting one explains why, with the clause beside it.</p>,
-    bcf: <p>Each failed or unchecked element becomes an issue in a <Term k="BCF">BCF</Term> file, with the element and a viewpoint, so a designer can open it in their own tool.</p>,
-  };
   return (
-    <Sheet id="what" sheet="A-03" title="One sentence, followed all the way through">
-      <p className="lede">NIYAM is a pipeline. Step through it with one real rule from the repository.</p>
-      <div className="pipeline">
-        <ol className="stage-list" role="tablist" aria-label="Pipeline stages">
-          {STAGES.map((s, i) => (
-            <li key={s.key} role="presentation">
-              <button type="button" role="tab" id={`stage-${s.key}`} aria-selected={stage === i} aria-controls="stage-panel"
-                      className={`stage ${stage === i ? "on" : ""} ${i < stage ? "done" : ""}`} onClick={() => setStage(i)}
-                      onKeyDown={(e) => {
-                        if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); setStage((stage + 1) % STAGES.length); }
-                        if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); setStage((stage + STAGES.length - 1) % STAGES.length); }
-                      }}>
-                <span className="stage-dot" aria-hidden="true" />
-                <span className="stage-name">{s.name}</span>
-                <span className="stage-line">{s.line}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-        <div className="stage-panel" id="stage-panel" role="tabpanel" aria-labelledby={`stage-${STAGES[stage]!.key}`}>
-          <h3>{STAGES[stage]!.name}</h3>
-          {detail[STAGES[stage]!.key]}
-          <div className="btn-row">
-            <button type="button" className="btn small" disabled={stage === 0} onClick={() => setStage(stage - 1)}>Previous</button>
-            <button type="button" className="btn small" disabled={stage === STAGES.length - 1} onClick={() => setStage(stage + 1)}>Next stage</button>
-          </div>
-        </div>
-      </div>
+    <Sheet id="what" sheet="A-03" title="One sentence, followed all the way through" className="sheet-pipeline-journey">
+      <ArchitecturalJourney />
     </Sheet>
   );
 }
 
 /* ---------- 4. the gate ---------- */
 const STAGE_PLAIN: Record<string, string> = {
-  xml_wellformed: "Is it well-formed XML?",
-  xsd_valid: "Is it a valid IDS 1.0 file?",
-  unit_safe_bounds: "Are its numbers safe across units (mm and m)?",
-  loads_in_ifctester: "Does the reference IDS checker load it?",
-  applicable_on_fixtures: "Does it apply to the elements it is about?",
-  verdict_pass_fixture: "Does the test building that follows the rule pass?",
-  verdict_fail_fixture: "Does the test building that breaks the rule fail?",
+  xml_wellformed: "Well-formed XML",
+  xsd_valid: "Valid IDS 1.0",
+  unit_safe_bounds: "Safe across mm and m",
+  loads_in_ifctester: "Loads in the checker",
+  applicable_on_fixtures: "Applies to the right elements",
+  verdict_pass_fixture: "Good building passes",
+  verdict_fail_fixture: "Bad building fails",
 };
+
+function GateBox({ g }: { g: NonNullable<typeof site.gateExample> }) {
+  return (
+    <figure className="test-strip">
+      <figcaption>
+        <strong>A real rejection.</strong> The draft applied the rule to every door, so the building that follows the
+        rule failed.
+      </figcaption>
+      <ol className="stations">
+        {g.stages.map((s: { stage: string; passed: boolean }) => (
+          <li key={s.stage} className={s.passed ? "ok" : "stop"}>
+            {s.passed ? <IconPassed /> : <IconFailed />}<span>{STAGE_PLAIN[s.stage] ?? s.stage}</span>
+            <span className="visually-hidden">{s.passed ? "passed" : "failed here"}</span>
+          </li>
+        ))}
+      </ol>
+      <p className="strip-label">Sent back, verbatim:</p>
+      <pre className="repair mono">{g.repair_message_head}</pre>
+      <Stamp>Run {g.run_id} · {modelLabel(g.model).split(" (")[0]} · {g.repair_rounds} repairs · {g.outcome === "needs_human" ? "needs a person" : g.outcome}</Stamp>
+    </figure>
+  );
+}
 
 function GateSheet() {
   const g = site.gateExample;
   return (
-    <Sheet id="gate" sheet="A-04" title="Why an AI draft is never trusted on its own">
-      <div className="two-col">
-        <div className="prose">
-          <p>
-            A language model can write a check that looks right and is wrong: it may test the wrong door, use the wrong
-            unit, or apply a rule to every element when the clause meant only some. So every draft goes through the{" "}
-            <Term k="gate">gate</Term>, a fixed series of stations. A draft that fails a station is sent back with the
-            reason, for up to {h.provenance.maxRepairs} repairs. If it never passes, a person has to look at it.
-          </p>
-          <p>
-            The gate uses two small test buildings per rule. Separate held-out buildings, which the gate never sees, are
-            used only to measure how often a passed draft is still wrong.
-          </p>
-        </div>
-        {g && (
-          <figure className="test-strip">
-            <figcaption>
-              <strong>A real rejection.</strong> {modelLabel(g.model)} drafted a check for {g.unit_id}
-              {" "}(“{site.units.list.find((u) => u.id === g.unit_id)?.text}”). It applied the rule to every door, but the
-              clause is about exits, so the test building that follows the rule, which has a lower door that is not an exit, failed.
-            </figcaption>
-            <ol className="stations">
-              {g.stages.map((s: { stage: string; passed: boolean }) => (
-                <li key={s.stage} className={s.passed ? "ok" : "stop"}>
-                  {s.passed ? <IconPassed /> : <IconFailed />}<span>{STAGE_PLAIN[s.stage] ?? s.stage}</span>
-                  <span className="visually-hidden">{s.passed ? "passed" : "failed here"}</span>
-                </li>
-              ))}
-            </ol>
-            <p className="strip-label">Sent back to the model, verbatim (test-building names masked):</p>
-            <pre className="repair mono">{g.repair_message_head}</pre>
-            <Stamp>Run {g.run_id} · attempt {g.attempt} · outcome after {g.repair_rounds} repairs: {g.outcome === "needs_human" ? "still rejected, needs a person" : g.outcome}</Stamp>
-          </figure>
-        )}
+    <Sheet
+      id="gate"
+      sheet="A-04"
+      title="Why an AI draft is never trusted on its own"
+      className="sheet-gate sheet-dark"
+      aside={g ? <GateBox g={g} /> : null}
+    >
+      <div className="prose">
+        <p>
+          A language model can write a check that looks right and is wrong: it may test the wrong door, use the wrong
+          unit, or apply a rule to every element when the clause meant only some. So every draft goes through the{" "}
+          <Term k="gate">gate</Term>, a fixed series of stations. A draft that fails a station is sent back with the
+          reason, for up to {h.provenance.maxRepairs} repairs. If it never passes, a person has to look at it.
+        </p>
+        <p>
+          The gate uses two small test buildings per rule. Separate held-out buildings, which the gate never sees, are
+          used only to measure how often a passed draft is still wrong.
+        </p>
       </div>
     </Sheet>
   );
 }
 
 /* ---------- 5. two kinds of rules ---------- */
+const SPEC_IDS = `<specification name="exit-door-width">
+  <entity name="IfcDoor" />
+  <property name="Width" value="900" />
+</specification>`;
+
+const SPEC_PY = `def check(room):
+    area = sum(face.area for face in room.faces)
+    return area >= 7.5`;
+
 function KindsSheet() {
   const ids = site.units.byTier["MBBL2016/ids"] ?? 0;
   const geo = (site.units.byTier["MBBL2016/geometric"] ?? 0) + (site.units.byTier["TGBR2012/geometric"] ?? 0);
   return (
-    <Sheet id="kinds" sheet="A-05" title="Two kinds of rules">
+    <Sheet id="kinds" sheet="A-05" title="Two kinds of rules" className="sheet-kinds">
+      <p className="kinds-lede">What the check has to read decides what it is: a value the model states, or a shape it
+        has to measure.</p>
+
       <div className="kinds">
-        <article className="kind">
-          <h3>Declared data: <Term k="IDS">IDS</Term></h3>
-          <p>When the rule is about something the model states, such as whether a door is an exit and how wide it is, the
-            check is an IDS 1.0 file. Any IDS-aware tool can run it, not just NIYAM.</p>
-          <p className="kind-count"><span className="num">{ids}</span> rules</p>
+        <article className="kind kind-declared">
+          <p className="kind-index">01 · Declared</p>
+          <div className="kind-top">
+            <h3>Stated by the model: <Term k="IDS">IDS</Term></h3>
+            <p className="kind-count"><span className="num">{ids}</span><span className="kind-count-label">rules</span></p>
+          </div>
+          <p className="kind-what">Whether a door is an exit, and how wide it is.</p>
+          <div className="spec">
+            <p className="spec-bar mono"><span>exit-door-width.ids</span><span>IDS 1.0</span></p>
+            <pre>{SPEC_IDS}</pre>
+          </div>
+          <p className="kind-say">A file any IDS-aware tool can run, not only NIYAM.</p>
         </article>
-        <article className="kind">
-          <h3>Measured from shape: sandboxed Python</h3>
-          <p>IDS cannot measure geometry. A room's floor area or height has to be computed from its shape, so these checks
-            are short Python functions that run in a sandbox with a fixed set of helpers and a time limit.</p>
-          <p className="kind-count"><span className="num">{geo}</span> rules</p>
+        <article className="kind kind-measured">
+          <p className="kind-index">02 · Measured</p>
+          <div className="kind-top">
+            <h3>Measured from shape: Python</h3>
+            <p className="kind-count"><span className="num">{geo}</span><span className="kind-count-label">rules</span></p>
+          </div>
+          <p className="kind-what">A room's floor area, computed from its geometry.</p>
+          <div className="spec">
+            <p className="spec-bar mono"><span>space_area_min.py</span><span>Sandbox</span></p>
+            <pre>{SPEC_PY}</pre>
+          </div>
+          <p className="kind-say">IDS cannot measure geometry, so this is a short function with fixed helpers and a time limit.</p>
         </article>
+      </div>
+
+      <div className="kind-axis">
+        <div className="axis-bar" aria-hidden="true">
+          <span className="axis-a" style={{ flexGrow: ids }} />
+          <span className="axis-b" style={{ flexGrow: geo }} />
+        </div>
+        <p className="axis-key mono">
+          <span><i className="axis-dot axis-dot-a" />{ids} declared</span>
+          <span><i className="axis-dot axis-dot-b" />{geo} measured</span>
+          <span className="axis-total">{site.units.total} draft rules</span>
+        </p>
       </div>
     </Sheet>
   );
@@ -309,7 +340,7 @@ function EvaluationSheet() {
   const uug = unitCell("ultra", "gated"), uuu = unitCell("ultra", "ungated");
   const p = h.provenance;
   return (
-    <Sheet id="evaluation" sheet="A-06" title="How often a wrong rule gets through">
+    <Sheet id="evaluation" sheet="A-06" title="How often a wrong rule gets through" className="sheet-eval">
       <div className="prose">
         <p>
           The question is simple: when a rule is accepted, is it right on buildings it has never seen? Each of
@@ -324,8 +355,8 @@ function EvaluationSheet() {
         <div className="figure-head">
           <h3>Wrong rules shipped</h3>
           <div className="segmented" role="radiogroup" aria-label="Count over">
-            <button type="button" role="radio" aria-checked={counted === "items"} className="btn small" aria-pressed={counted === "items"} onClick={() => setCounted("items")}>Every attempt</button>
-            <button type="button" role="radio" aria-checked={counted === "units"} className="btn small" aria-pressed={counted === "units"} onClick={() => setCounted("units")}>Per rule</button>
+            <Button role="radio" aria-checked={counted === "items"} size="sm" primary={counted === "items"} aria-pressed={counted === "items"} onClick={() => setCounted("items")}>Every attempt</Button>
+            <Button role="radio" aria-checked={counted === "units"} size="sm" primary={counted === "units"} aria-pressed={counted === "units"} onClick={() => setCounted("units")}>Per rule</Button>
           </div>
         </div>
         <p className="figure-note">
@@ -420,51 +451,82 @@ function NumbersTableOpen({ p }: { p: SiteData["headline"]["provenance"] }) {
 function TelanganaSheet() {
   const t = site.telangana;
   return (
-    <Sheet id="telangana" sheet="A-07" title="A second jurisdiction: Telangana">
-      <div className="two-col">
-        <div className="prose">
-          <p>
-            The {site.sources.TGBR2012} were read with the same pipeline: {site.corpus.TGBR2012} clauses, split by a
-            new reader of {site.telanganaSegmenterLines} lines of code. Only {t.unitsInRun} sentences fit a single-value
-            check once the condition in the rule's heading (it covers only buildings that are not high-rise) is set aside and noted for the reviewer:
-          </p>
-          <ul className="quotes">
-            {site.units.list.filter((u) => u.source === "TGBR2012").map((u) => <li key={u.id}>“{u.text}” <span className="meta mono">{u.id}</span></li>)}
-          </ul>
-          <p>
-            Few rules fit because most of the document governs plots and sites (setbacks, road widths), and it leaves room
-            sizes and heights to the National Building Code, which is not in the corpus.
-          </p>
-        </div>
-        <div>
-          <p className="case-label">Case study: {t.unitsInRun} rules, too few for rates. Counts only.</p>
+    <Sheet
+      id="telangana"
+      sheet="A-07"
+      title="Telangana"
+      kicker="A second jurisdiction"
+      className="sheet-telangana sheet-dark"
+      aside={
+        <div className="case-panel">
+          <div className="case-head">
+            <p className="case-label">Case study</p>
+            <p className="case-count mono"><b>{t.unitsInRun}</b> rules · too few for rates</p>
+          </div>
           <div className="table-wrap">
             <table className="data-table">
               <caption className="visually-hidden">Telangana case study counts</caption>
-              <thead><tr><th scope="col">Rule</th><th scope="col">Model</th><th scope="col">Mode</th><th scope="col">Shipped</th><th scope="col">Shipped and right</th></tr></thead>
+              <thead><tr><th scope="col">Rule</th><th scope="col">Model</th><th scope="col">Mode</th><th scope="col">Shipped</th><th scope="col">Correct</th></tr></thead>
               <tbody>
                 {t.caseStudy.map((c) => (
                   <tr key={`${c.unit}-${c.model}-${c.mode}`}>
-                    <th scope="row" className="mono">{c.unit}</th><td>{modelLabel(c.model).split(" (")[0]}</td><td>{c.mode}</td>
-                    <td className="num">{c.shipped} of {c.repeats}</td><td className="num">{c.shippedCorrect} of {c.repeats}</td>
+                    <th scope="row" className="mono">{c.unit}</th>
+                    <td className="cell-model" data-label="Model">{modelLabel(c.model).split(" (")[0]}</td>
+                    <td className="cell-mode" data-label="Mode"><span className="mode-tag mono">{c.mode}</span></td>
+                    <td className="num cell-count" data-label="Shipped">
+                      <span className="pips" aria-hidden="true">
+                        {Array.from({ length: c.repeats }, (_, i) => <i key={i} data-on={i < c.shipped ? "" : undefined} />)}
+                      </span>
+                      <span className="count-of">{c.shipped} of {c.repeats}</span>
+                    </td>
+                    <td className="num cell-count" data-label="Correct">
+                      <span className="pips pips-correct" aria-hidden="true">
+                        {Array.from({ length: c.repeats }, (_, i) => <i key={i} data-on={i < c.shippedCorrect ? "" : undefined} />)}
+                      </span>
+                      <span className="count-of">{c.shippedCorrect} of {c.repeats}</span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row">All rows</th><td /><td />
+                  <td className="num">{t.caseStudy.reduce((s, c) => s + c.shipped, 0)} of {t.caseStudy.reduce((s, c) => s + c.repeats, 0)}</td>
+                  <td className="num">{t.caseStudy.reduce((s, c) => s + c.shippedCorrect, 0)} of {t.caseStudy.reduce((s, c) => s + c.repeats, 0)}</td>
+                </tr>
+              </tfoot>
             </table>
           </div>
           <Stamp>Run {t.provenance.runId} · {date(t.provenance.date)} · {thousands(t.provenance.calls)} calls</Stamp>
         </div>
+      }
+    >
+      <div className="prose">
+        <p>
+          The {site.sources.TGBR2012} went through the same pipeline: {site.corpus.TGBR2012} clauses, read by a new
+          segmenter of {site.telanganaSegmenterLines} lines. Only {t.unitsInRun} sentences reduce to one value each,
+          once the high-rise condition in the heading is set aside for the reviewer:
+        </p>
+        <ul className="quotes">
+          {site.units.list.filter((u) => u.source === "TGBR2012").map((u) => <li key={u.id}>“{u.text}” <span className="meta mono">{u.id}</span></li>)}
+        </ul>
+        <p className="prose-foot">
+          Most of the document rules on plots — setbacks, road widths — and leaves room sizes and heights to the National
+          Building Code, which is not in the corpus.
+        </p>
       </div>
     </Sheet>
   );
 }
 
 /* ---------- 8. reality check ---------- */
+const AUDIT_HEAD: Record<string, string> = { File: "File", Rules: "Rules", passed: "Passed", failed: "Failed", unchecked: "Unchecked", out_of_scope: "Out of scope", "Rules that checked nothing": "Rules that checked nothing" };
+
 function RealitySheet() {
   const [, ...files] = site.realModels.files;
   const [auditHead, ...audit] = site.realModels.audit;
   return (
-    <Sheet id="reality" sheet="A-08" title="Reality check: two real models could not be checked">
+    <Sheet id="reality" sheet="A-08" title="Reality check: two real models could not be checked" className="sheet-reality">
       <div className="prose">
         <p>
           We ran the audit on two real exports from an authoring tool (a buildingSMART sample scene, exported from
@@ -476,11 +538,26 @@ function RealitySheet() {
       <div className="table-wrap">
         <table className="data-table">
           <caption className="visually-hidden">Audit of the real models</caption>
-          <thead><tr>{(auditHead ?? []).map((c) => <th key={c} scope="col">{c}</th>)}</tr></thead>
+          <thead><tr>{(auditHead ?? []).map((c) => <th key={c} scope="col">{AUDIT_HEAD[c] ?? c}</th>)}</tr></thead>
           <tbody>{audit.map((r) => <tr key={r.join("|")}>{r.map((c, i) => (i === 0 ? <th key={i} scope="row">{c}</th> : <td key={i} className="num">{c}</td>))}</tr>)}</tbody>
         </table>
       </div>
-      <p className="meta">Files: {files.map((f) => `${f[0]} (${f[3]}, ${f[2]})`).join("; ")}.</p>
+      <h3 className="sub">The files behind the audit</h3>
+      <div className="table-wrap">
+        <table className="data-table file-table">
+          <caption className="visually-hidden">The files, their schema and what they contain</caption>
+          <thead><tr><th scope="col">File</th><th scope="col">Schema</th><th scope="col">Tool</th><th scope="col">Unit</th><th scope="col">Doors</th><th scope="col">Rooms</th><th scope="col">Stairs</th></tr></thead>
+          <tbody>
+            {files.map((f) => (
+              <tr key={f[0]}>
+                <th scope="row">{f[0]}</th><td>{f[3]}</td><td>{f[4]}</td><td>{f[5]}</td>
+                <td className="num">{f[6]}</td><td className="num">{f[7]}</td><td className="num">{f[8]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="meta">Sources and licences: {files.map((f) => `${f[0]} (${f[2]})`).join("; ")}. All public.</p>
       <h3 className="sub">What to add to a model before submitting</h3>
       <p>NIYAM writes one <Term k="IDS">IDS</Term> file listing the data its rules need. Run it in any IDS checker first:</p>
       <ul className="readiness">
@@ -494,26 +571,72 @@ function RealitySheet() {
 }
 
 /* ---------- 9. demo ---------- */
+const icon = (d: string) => (
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
+);
 const DEMO = [
-  { src: "/screens/demo-1-load.png", step: "Choose sample A. The server audits it and the model appears on the light table." },
-  { src: "/screens/demo-2-select.png", step: "Select a red door. The panel says which rule it breaks, why, and quotes the clause." },
-  { src: "/screens/demo-3-issues.png", step: "Show only issues to hide everything that passed, then export the HTML report or BCF." },
+  { src: "/screens/demo-1-load.png", title: "Load a building", icon: icon("M8 11V2.5M4.5 6 8 2.5 11.5 6M2.5 10.5v3h11v-3"),
+    step: "Choose sample A. The server audits it and the model appears on the light table." },
+  { src: "/screens/demo-2-select.png", title: "Open a failing door", icon: icon("M3 2.5v11l3-3 2 3.5 1.5-.8-2-3.4H11L3 2.5Z"),
+    step: "Select a red door. The panel says which rule it breaks, why, and quotes the clause." },
+  { src: "/screens/demo-3-issues.png", title: "Show only issues", icon: icon("M2 3h12L9.5 8.5V13l-3-1.5V8.5L2 3Z"),
+    step: "Show only issues to hide everything that passed, then export the HTML report or BCF." },
 ];
 
 function DemoSheet() {
+  const [front, setFront] = useState(0);
+  const swap = useRef<CardSwapHandle>(null);
+  const frontRef = useRef(0);
+  frontRef.current = front;
+
+  // A step brings its card to the front by sending the cards in front of it to the back, one by one.
+  const show = (i: number) => {
+    const turns = (i - frontRef.current + DEMO.length) % DEMO.length;
+    for (let t = 0; t < turns; t++) window.setTimeout(() => swap.current?.next(), t * 130);
+  };
+
   return (
-    <Sheet id="demo" sheet="A-09" title="What the app looks like">
-      <ol className="demo">
-        {DEMO.map((d) => (
-          <li key={d.src}>
-            <img src={d.src} alt={`Dashboard screenshot: ${d.step}`} loading="lazy" width={1280} height={800} />
-            <p>{d.step}</p>
-          </li>
-        ))}
-      </ol>
-      <div className="btn-row center">
-        <Link to="/app" className="btn primary">Open the app</Link>
-        <Link to={SAMPLE_LINK} className="btn">Try sample A now</Link>
+    <Sheet id="demo" sheet="A-09" title="What the app looks like" className="sheet-demo">
+      <div className="demo">
+        <div className="demo-side">
+          <ol className="demo-steps">
+            {DEMO.map((d, i) => (
+              <li key={d.src}>
+                <button type="button" className="demo-step" aria-pressed={i === front} onClick={() => show(i)}>
+                  <span className="demo-num mono">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="demo-text">
+                    <span className="demo-title">{d.title}</span>
+                    <span className="demo-say">{d.step}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ol>
+          <div className="btn-row">
+            <Button as={Link} to="/app" primary>Open the app</Button>
+            <Button as={Link} to={SAMPLE_LINK}>Try sample A now</Button>
+          </div>
+        </div>
+
+        <figure className="demo-stack">
+          <div className="demo-swap">
+            <CardSwap
+              ref={swap}
+              items={DEMO.map((d) => ({ title: d.title, image: d.src, icon: d.icon, alt: `App screenshot: ${d.step}` }))}
+              width={680}
+              height={470}
+              cardDistance={44}
+              verticalDistance={50}
+              depth={80}
+              skewAmount={4}
+              visibleCards={3}
+              delay={5000}
+              theme="light"
+              onChange={setFront}
+            />
+          </div>
+          <figcaption className="demo-cap mono">Screenshots of the real app on synthetic sample building A. Drag, click or use the arrow keys.</figcaption>
+        </figure>
       </div>
     </Sheet>
   );
@@ -522,33 +645,60 @@ function DemoSheet() {
 /* ---------- 10. standards ---------- */
 function StandardsSheet() {
   return (
-    <Sheet id="standards" sheet="A-10" title="Open standards, open code">
-      <dl className="standards">
-        <div><dt><Term k="IFC">IFC4</Term></dt><dd>the building model NIYAM reads (IFC2X3 files are refused with an explanation)</dd></div>
-        <div><dt><Term k="IDS">IDS 1.0</Term></dt><dd>declared-data rules and the readiness file, runnable in other tools</dd></div>
-        <div><dt><Term k="BCF">BCF 2.1</Term></dt><dd>issues exported for design tools</dd></div>
-        <div><dt>MIT licence</dt><dd>for NIYAM's code. Clause text is quoted for research; the source PDFs are not redistributed. The two real models are CC BY 4.0 (buildingSMART).</dd></div>
-      </dl>
+    <Sheet id="standards" sheet="A-10" title="Open standards, open code" className="sheet-standards sheet-dark">
+      <div className="std-grid">
+        <div className="std-plate"><span className="std-index mono">01</span>
+          <p className="std-code"><Term k="IFC">IFC4</Term></p><p className="std-role">The model</p>
+          <p className="std-say">Read directly. IFC2X3 files are refused with an explanation instead of a wrong verdict.</p></div>
+        <div className="std-plate"><span className="std-index mono">02</span>
+          <p className="std-code"><Term k="IDS">IDS 1.0</Term></p><p className="std-role">The rules</p>
+          <p className="std-say">Declared-data rules and the readiness file, runnable in other tools.</p></div>
+        <div className="std-plate"><span className="std-index mono">03</span>
+          <p className="std-code"><Term k="BCF">BCF 2.1</Term></p><p className="std-role">The issues</p>
+          <p className="std-say">One issue per broken rule, exported into the design tool that drew the model.</p></div>
+        <div className="std-plate"><span className="std-index mono">04</span>
+          <p className="std-code">MIT</p><p className="std-role">The code</p>
+          <p className="std-say">NIYAM's own source. Clause text is quoted for research; the source PDFs are not redistributed.</p></div>
+      </div>
+      <p className="std-note">The two real models are CC BY 4.0 (buildingSMART), and the audit table on the previous sheet names them.</p>
     </Sheet>
   );
 }
 
-/* ---------- 11. limits ---------- */
+/* ---------- 11. limits ----------
+   The sheet is a plan drawing of what is not drawn: every limit is a void in
+   the plan, hatched like an unfilled area, and the sheet carries its revision
+   stamp. Nothing here is a list of excuses; it is the missing geometry. */
+const LIMITS = [
+  { title: "No rule is reviewed.", body: <>All {site.units.total} rules are drafts until a domain expert signs them off.</>, span: 6 },
+  { title: "Synthetic buildings.", body: "Every accuracy number comes from small generated test buildings.", span: 6 },
+  { title: "Small numbers.", body: <>{h.unitsInRun} rules ({site.units.distinct} distinct in all), {h.provenance.repeats} repeats, {h.provenance.models.length} models; every interval is wide.</>, span: 4 },
+  { title: "One value per rule.", body: "Each check tests one value of one element; ratios, distances and setbacks are not encoded.", span: 4 },
+  { title: "Conditions dropped.", body: "Building-type and use conditions in a clause are left out and noted for the reviewer.", span: 4 },
+  { title: "Disputed readings.", body: <>{site.units.readingDependent.length} rules depend on how a clause is read; they are listed first for review.</>, span: 7 },
+  { title: "No real building checked.", body: "The real exports we tried lacked the data.", span: 5 },
+];
+
 function LimitsSheet() {
   return (
-    <Sheet id="limits" sheet="A-11" title="What this does not show, yet">
-      <div className="two-col">
-        <ul className="limits">
-          <li><strong>No rule is reviewed.</strong> All {site.units.total} rules are drafts until a domain expert signs them off.</li>
-          <li><strong>Synthetic buildings.</strong> Every accuracy number comes from small generated test buildings.</li>
-          <li><strong>Small numbers.</strong> {h.unitsInRun} rules ({site.units.distinct} distinct in all), {h.provenance.repeats} repeats, {h.provenance.models.length} models; every interval is wide.</li>
-          <li><strong>One value per rule.</strong> Each check tests one value of one element; ratios, distances and setbacks are not encoded.</li>
-          <li><strong>Conditions dropped.</strong> Building-type and use conditions in a clause are left out and noted for the reviewer.</li>
-          <li><strong>Disputed readings.</strong> {site.units.readingDependent.length} rules depend on how a clause is read; they are listed first for review.</li>
-          <li><strong>No real building checked.</strong> The real exports we tried lacked the data.</li>
-        </ul>
-        <div>
-          <h3 className="sub">Next</h3>
+    <Sheet id="limits" sheet="A-11" title="What this does not show, yet" className="sheet-limits">
+      <div className="void-plan">
+        <div className="plan-bar mono">
+          <span>Plan of what is not drawn</span>
+          <span>{LIMITS.length} open</span>
+        </div>
+        <div className="plan-grid">
+          {LIMITS.map((l, i) => (
+            <article key={l.title} className="void-cell" style={{ "--span": l.span } as React.CSSProperties}>
+              <span className="void-id mono">L-{String(i + 1).padStart(2, "0")}</span>
+              <h3>{l.title}</h3>
+              <p>{l.body}</p>
+              <span className="void-mark" aria-hidden="true" />
+            </article>
+          ))}
+        </div>
+        <div className="plan-notes">
+          <div className="plan-notes-head mono">Open work · what comes next</div>
           <ol className="next">
             <li>Expert review of every rule, starting with the disputed ones.</li>
             <li>Site geometry, so setbacks and plot rules can be checked.</li>
@@ -556,48 +706,314 @@ function LimitsSheet() {
             <li>Tests on real exports from Revit, ArchiCAD and other tools.</li>
           </ol>
         </div>
+        <div className="plan-foot mono">
+          <span>Before expert review</span>
+          <span className="void-stamp">Draft — not signed off</span>
+        </div>
       </div>
     </Sheet>
   );
 }
 
 /* ---------- 12. team and footer ---------- */
-function Footer() {
-  const missing = <span className="placeholder">to be added</span>;
+type Viewing = { label: string; file: string; about?: string };
+
+function FileRow({ label, file, about, onView }: Viewing & { onView: (v: Viewing) => void }) {
+  const ext = file.split(".").pop()!.toUpperCase();
   return (
-    <footer className="site-footer">
-      <dl className="title-block footer-block">
-        <div><dt>Team</dt><dd>{TEAM.TEAM_NAME || missing}</dd></div>
-        <div><dt>Members</dt><dd>{TEAM.MEMBERS.length ? TEAM.MEMBERS.join(", ") : missing}</dd></div>
-        <div><dt>College</dt><dd>{TEAM.COLLEGE || missing}</dd></div>
-        <div><dt>Mentor</dt><dd>{TEAM.MENTOR || missing}</dd></div>
-      </dl>
-      <nav aria-label="Project documents">
-        <ul className="doc-links">{REPO_DOCS.map((d) => <li key={d.path}><span>{d.label}</span> <code>{d.path}</code></li>)}</ul>
-      </nav>
-      <p className="meta">NIYAM · research prototype · MIT licence · draft rules, not human-reviewed</p>
+    <li className="file-row">
+      <span className="file-ext mono" aria-hidden="true">{ext}</span>
+      <span className="file-label" title={file}><b>{label}</b>{about && <small>{about}</small>}</span>
+      <span className="file-actions">
+        <Button size="sm" onClick={() => onView({ label, file })}>
+          View<span className="visually-hidden"> {label}</span>
+        </Button>
+        <Button as="a" size="sm" primary href={`/downloads/${file}`} download={file} title={`Download ${file}`}>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 2v8M4.5 7 8 10.5 11.5 7M3 13.5h10" /></svg>
+          <span className="visually-hidden">Download {label}</span>
+        </Button>
+      </span>
+    </li>
+  );
+}
+
+/** A file shown on the page itself: PDFs in a frame, data files as plain text, both from the app's own /downloads folder. */
+function FileViewer({ viewing, onClose }: { viewing: Viewing | null; onClose: () => void }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [text, setText] = useState<string>("");
+  const [state, setState] = useState<"loading" | "ready" | "failed">("loading");
+  useEffect(() => {
+    const d = dialog.current;
+    if (!d) return;
+    if (!viewing) { if (d.open) d.close(); return; }
+    setState("loading");
+    setText("");
+    if (!d.open) d.showModal();
+    if (viewing.file.endsWith(".pdf")) { setState("ready"); return; }
+    let cancelled = false;
+    fetch(`/downloads/${viewing.file}`)
+      .then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.text(); })
+      .then((t) => {
+        if (cancelled) return;
+        let shown = t;
+        if (viewing.file.endsWith(".json")) { try { shown = JSON.stringify(JSON.parse(t), null, 2); } catch { /* show as is */ } }
+        setText(shown);
+        setState("ready");
+      })
+      .catch(() => { if (!cancelled) setState("failed"); });
+    return () => { cancelled = true; };
+  }, [viewing]);
+  return (
+    <dialog ref={dialog} className="file-viewer" aria-labelledby="viewer-h" onClose={onClose}
+            onClick={(e) => { if (e.target === dialog.current) onClose(); }}>
+      <div className="viewer-head">
+        <div>
+          <h2 id="viewer-h">{viewing?.label}</h2>
+          <p className="mono">{viewing?.file}</p>
+        </div>
+        <div className="viewer-actions">
+          {viewing && <Button as="a" size="sm" primary href={`/downloads/${viewing.file}`} download={viewing.file}>Download</Button>}
+          <Button size="sm" onClick={onClose}>Close</Button>
+        </div>
+      </div>
+      {viewing?.file.endsWith(".pdf") ? (
+        <iframe className="viewer-pdf" title={viewing.label} src={`/downloads/${viewing.file}#view=FitH`} />
+      ) : (
+        <pre className="viewer-body mono" tabIndex={0}>
+          {state === "loading" ? "Loading…" : state === "failed" ? "This file could not be loaded. Use Download instead." : text}
+        </pre>
+      )}
+    </dialog>
+  );
+}
+
+
+const initials = (name: string) => name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+
+const EXPLORE: [string, string][] = [["The problem", "problem"], ["How it works", "what"], ["Results", "evaluation"], ["The app", "demo"], ["What it does not show", "limits"], ["Documentation", "docs"]];
+
+function Footer() {
+  return (
+    <footer className="site-footer ft">
+      <div className="ft-inner">
+        <section className="ft-brand" aria-label="About NIYAM">
+          <p className="ft-mark" translate="no">NIYAM</p>
+          <p className="ft-tag">Building bye-laws as machine checks. A research prototype with draft rules.</p>
+          <div className="ft-actions">
+            <Button as={Link} to="/app" size="sm" primary>Open the app</Button>
+            <Button as={Link} to={SAMPLE_LINK} size="sm">Try a sample</Button>
+          </div>
+        </section>
+
+        <section className="ft-team" aria-labelledby="team-h">
+          <p className="ft-label mono">Built by</p>
+          <h2 id="team-h" className="ft-team-name">{TEAM.TEAM_NAME}</h2>
+          <p className="ft-college">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M1.5 6 8 2.5 14.5 6 8 9.5 1.5 6ZM4 7.6v3.2c0 .9 1.8 1.7 4 1.7s4-.8 4-1.7V7.6" /></svg>
+            {TEAM.COLLEGE}
+          </p>
+          <ul className="ft-members" aria-label="Team members">
+            {TEAM.MEMBERS.map((m, i) => (
+              <li key={m} className="ft-member">
+                <span className={`avatar avatar-${i % 5}`} aria-hidden="true">{initials(m)}</span>
+                <span>{m}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="ft-mentor">
+            <span className="avatar avatar-mentor" aria-hidden="true">{initials(TEAM.MENTOR.replace(/^Dr\.?\s*/, ""))}</span>
+            <span className="ft-mentor-text">
+              <span className="mentor-badge mono">Mentor</span>
+              <span className="ft-mentor-name">{TEAM.MENTOR}</span>
+              <span className="ft-mentor-role">{TEAM.MENTOR_ROLE}</span>
+            </span>
+          </div>
+        </section>
+
+        <nav className="ft-explore" aria-label="Explore this page">
+          <p className="ft-label mono">Explore</p>
+          <ul>
+            {EXPLORE.map(([label, id]) => (
+              <li key={id}>
+                <a href={`#${id}`} onClick={(e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); }}>{label}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <p className="ft-legal">
+          <span>A research prototype: the rules are drafts no expert has reviewed yet, so read every result as a lead to check, not as approval.</span>
+          <span>Open source under the MIT licence, built on the IFC4, IDS 1.0 and BCF 2.1 standards.</span>
+        </p>
+      </div>
     </footer>
   );
 }
 
+/* ---------- 12. documentation ---------- */
+function DocsSheet() {
+  const [viewing, setViewing] = useState<Viewing | null>(null);
+  return (
+    <Sheet id="docs" sheet="A-12" title="Read the documents" kicker="Documentation" className="sheet-docs">
+      <p className="docs-lede">
+        Everything behind the numbers on this page: method, results, limits and the files the tools use. Read a PDF here
+        or download it; the data files open as plain text.
+      </p>
+      <div className="docs-grid">
+        {DOC_GROUPS.map((g) => (
+          <section key={g.title} className={`docs-card${g === DOC_GROUPS[0] ? " docs-card--wide" : ""}`} aria-labelledby={`docs-${g.title.replace(/\W+/g, "-")}`}>
+            <h3 id={`docs-${g.title.replace(/\W+/g, "-")}`}>{g.title}</h3>
+            <p className="docs-blurb">{g.blurb}</p>
+            <ul className="file-list">{g.docs.map((d) => <FileRow key={d.file} {...d} onView={setViewing} />)}</ul>
+          </section>
+        ))}
+      </div>
+      <FileViewer viewing={viewing} onClose={() => setViewing(null)} />
+    </Sheet>
+  );
+}
+
+// Home first, so the hero has its own pill. No href: items are buttons and the address bar stays at "/".
+const NAV_SECTIONS: { label: string; id: string | null }[] = [
+  { label: "Home", id: null },
+  { label: "Problem", id: "problem" },
+  { label: "How it works", id: "what" },
+  { label: "The gate", id: "gate" },
+  { label: "Two kinds", id: "kinds" },
+  { label: "Results", id: "evaluation" },
+  { label: "Telangana", id: "telangana" },
+  { label: "Reality", id: "reality" },
+  { label: "Demo", id: "demo" },
+  { label: "Standards", id: "standards" },
+  { label: "Limits", id: "limits" },
+  { label: "Docs", id: "docs" },
+];
+const NAV_ITEMS = NAV_SECTIONS.map(({ label }) => ({ label }));
+
+const sectionTop = (id: string | null) => (id ? document.getElementById(id)!.getBoundingClientRect().top + window.scrollY : 0);
+
 export default function Landing() {
   useDevelop();
   const main = useRef<HTMLElement>(null);
+
+  // Follow the scroll: the pill moves to the section at the top of the viewport. While a click is
+  // scrolling the page, the clicked item stays active; afterwards the position is corrected once.
+  const [activeNav, setActiveNav] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dockHidden, setDockHidden] = useState(false);
+  const dockHold = useRef(false); // pointer or focus is on the bar, or the menu is open
+  const holdOpen = useRef(false);
+  holdOpen.current = menuOpen;
+  // Auto-hide bar (never while the hero at the top is in view): hides after 3 s without activity or when scrolling down; returns on scroll up or a cursor near the top.
+  useEffect(() => {
+    let timer = 0;
+    let lastY = window.scrollY;
+    const arm = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => { if (!dockHold.current && !holdOpen.current && window.scrollY > 80) setDockHidden(true); }, 3000);
+    };
+    const show = () => { setDockHidden(false); arm(); };
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (y < lastY - 2 || y <= 80) show();
+      else if (y > lastY + 2 && y > 80 && !holdOpen.current) { window.clearTimeout(timer); setDockHidden(true); }
+      lastY = y;
+    };
+    const onMove = (e: PointerEvent) => { if (e.clientY < 90) show(); else arm(); };
+    const onKey = () => show();
+    arm();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("touchstart", arm, { passive: true });
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("touchstart", arm);
+    };
+  }, []);
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    window.addEventListener("keydown", esc);
+    return () => { window.removeEventListener("keydown", esc); document.body.style.overflow = ""; };
+  }, [menuOpen]);
+  const pending = useRef<number | null>(null);
+  useEffect(() => {
+    let idle = 0;
+    const onScroll = () => {
+      window.clearTimeout(idle);
+      if (pending.current !== null) {
+        const wanted = pending.current;
+        idle = window.setTimeout(() => {
+          pending.current = null;
+          const off = sectionTop(NAV_SECTIONS[wanted]?.id ?? null) - window.scrollY;
+          if (Math.abs(off) > 2) window.scrollBy({ top: off, behavior: "instant" }); // layout moved while scrolling
+        }, 140);
+        return;
+      }
+      let found = 0;
+      NAV_SECTIONS.forEach((sec, i) => { if (sec.id && sectionTop(sec.id) <= window.scrollY + window.innerHeight * 0.35) found = i; });
+      setActiveNav(found);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => { window.removeEventListener("scroll", onScroll); window.clearTimeout(idle); };
+  }, []);
+  const goTo = (index: number) => {
+    pending.current = index;
+    setActiveNav(index);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: sectionTop(NAV_SECTIONS[index]?.id ?? null), behavior: reduce ? "instant" : "smooth" });
+  };
+
   useEffect(() => {
     document.title = "NIYAM: building bye-laws as machine checks";
   }, []);
+
   return (
     <div className="landing">
       <a href="#main" className="skip-link">Skip to content</a>
-      <nav className="topbar" aria-label="Main">
-        <Link to="/" className="brand" aria-label="NIYAM home"><span translate="no">NIYAM</span></Link>
-        <ul className="nav-links">
-          <li><a href="#what">How it works</a></li>
-          <li><a href="#evaluation">Results</a></li>
-          <li><a href="#limits">Limits</a></li>
-        </ul>
-        <Link to="/app" className="btn small primary">Open the app</Link>
-      </nav>
+
+      <div className={`gooey-dock${dockHidden && !menuOpen ? " gooey-dock--hidden" : ""}`}
+           onPointerEnter={() => { dockHold.current = true; }} onPointerLeave={() => { dockHold.current = false; }}
+           onFocus={() => { dockHold.current = true; }} onBlur={() => { dockHold.current = false; }}>
+       <div className="dock-bar">
+        <Link to="/" className="brand dock-brand" translate="no">NIYAM</Link>
+        <button type="button" className={`burger${menuOpen ? " open" : ""}`} aria-expanded={menuOpen} aria-controls="mobile-menu"
+                aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((o) => !o)}>
+          <span /><span /><span />
+        </button>
+        <GooeyNav
+          items={NAV_ITEMS}
+          activeIndex={activeNav}
+          onChange={goTo}
+          theme="light"
+          size="md"
+          frame={true}
+          particleCount={isLowEnd() ? 5 : 15}
+          spread={56}
+          animationTime={600}
+          timeVariance={300}
+          gooeyness={0.5}
+          wobble={0.5}
+          hoverEffect={true}
+        />
+       </div>
+      </div>
+
+      <div id="mobile-menu" className={`mobile-menu${menuOpen ? " open" : ""}`} hidden={!menuOpen}>
+        <nav className="mobile-menu-list" aria-label="Sections">
+          {NAV_ITEMS.map((it, i) => (
+            <button key={it.label} type="button" className={`mobile-menu-link${i === activeNav ? " current" : ""}`}
+                    onClick={() => { setMenuOpen(false); goTo(i); }}>{it.label}</button>
+          ))}
+          <Link to="/app" className="mobile-menu-link" onClick={() => setMenuOpen(false)}>Open the app</Link>
+        </nav>
+      </div>
+
       <main id="main" ref={main} tabIndex={-1}>
         <HeroSheet />
         <ProblemSheet />
@@ -610,6 +1026,23 @@ export default function Landing() {
         <DemoSheet />
         <StandardsSheet />
         <LimitsSheet />
+        <DocsSheet />
+        <section className="sheet sheet-cta" data-sheet aria-labelledby="cta-h">
+          <span className="cta-glow cta-glow-a" aria-hidden="true" />
+          <span className="cta-glow cta-glow-b" aria-hidden="true" />
+          <div className="sheet-inner cta-glass">
+            <p className="cta-kicker mono">Your turn</p>
+            <h2 id="cta-h">Try it on your building model.</h2>
+            <p>Upload an IFC4 file or open a sample building. The audit runs in seconds and exports BCF issues for your design tool.</p>
+            <div className="btn-row">
+              <Button as={Link} tone="light" to="/app" primary>Open the app</Button>
+              <Button as={Link} tone="light" to={SAMPLE_LINK}>Try a sample building</Button>
+            </div>
+            <ul className="cta-chips" aria-label="What you get">
+              <li>IFC4 upload</li><li>HTML report</li><li>BCF issues</li><li>JSON export</li>
+            </ul>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>

@@ -4,7 +4,10 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "docs:pdf": "node scripts/build-pdfs.mjs",
+    "predev": "node scripts/sync-downloads.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/sync-downloads.mjs",
     "build": "npm run typecheck && vite build",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
@@ -14,6 +17,8 @@
     "site-data": "node --experimental-strip-types --no-warnings scripts/build-site-data.ts"
   },
   "dependencies": {
+    "@hugeicons/core-free-icons": "4.4.0",
+    "@hugeicons/react": "1.1.10",
     "@thatopen/components": "3.6.0",
     "@thatopen/fragments": "3.6.0",
     "camera-controls": "3.1.2",
@@ -29,6 +34,7 @@
     "@types/react-dom": "19.3.0",
     "@types/three": "0.187.0",
     "@vitejs/plugin-react": "6.2.1",
+    "marked": "^15.0.12",
     "typescript": "7.0.2",
     "vite": "8.3.5",
     "vitest": "5.1.0"
