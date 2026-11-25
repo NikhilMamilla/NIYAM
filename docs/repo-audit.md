@@ -19,7 +19,6 @@ than this grouping; every path not named below was checked against the KEEP rule
 | `.impeccable/surfaces/frontend-src-app-tsx.md` | untrack (gitignore `.impeccable/`, alongside the already-ignored `.agents/`, `.claude/`, `.codex/`) | Agent-tooling scratch note from a design-review pass, not referenced by any source, test, script or doc (`grep -rl impeccable` outside the ignored tool directories finds nothing). Not needed by a juror or contributor. |
 | `docs/.gitkeep` | delete | `docs/` holds 22 real files; the placeholder has had no purpose since the folder stopped being empty. Not referenced anywhere. |
 | `eval/.gitkeep` | delete | `eval/` holds config files and `eval/results/`; same reasoning. |
-| `fixtures/.gitkeep` | delete | `fixtures/` holds `ifc/`, `heldout/`, `samples/`, `checks/`, `ids/`, `invalid/`, `real/`; same reasoning. |
 | `fixtures/ids/.gitkeep` | delete | `fixtures/ids/` holds 7 `.ids` files; same reasoning. |
 | `fixtures/ifc/.gitkeep` | delete | `fixtures/ifc/` holds 100+ dev fixtures; same reasoning. |
 | `rules/.gitkeep` | delete | `rules/` holds `corpus/`, `specs/`, `rulepack/`, `source/`; same reasoning. |
@@ -51,11 +50,11 @@ work without a build step.
 | Folder / pattern | Files | Why kept |
 |---|---|---|
 | `backend/app/**`, `backend/tests/**`, `backend/pyproject.toml` etc. | 235 | Backend source and its test suite (pytest). |
-| `fixtures/ifc/`, `fixtures/heldout/`, `fixtures/samples/`, `fixtures/checks/`, `fixtures/ids/`, `fixtures/invalid/`, `fixtures/real/` | 186 | Read by pytest and the geometric/IDS gate; `fixtures/invalid/` and `fixtures/real/` carry their own licence notes and are explicitly in the KEEP list. |
+| `fixtures/ifc/`, `fixtures/heldout/`, `fixtures/samples/`, `fixtures/checks/`, `fixtures/ids/`, `fixtures/invalid/`, `fixtures/real/` | 186 (184 after the two `.gitkeep` deletions) | Read by pytest and the geometric/IDS gate; `fixtures/invalid/` and `fixtures/real/` carry their own licence notes and are explicitly in the KEEP list. |
 | `frontend/src/**`, `frontend/e2e/**`, `frontend/public/**`, `frontend/*.json`/`*.ts` config | 107 | Frontend source, Playwright/vitest tests, and the landing page's served assets (screenshots, downloads, fonts, web-ifc wasm copy point). |
 | `submission/**` (deck PDF+PPTX, screens, samples, `deck-facts.md`, `demo-script.md`, `narration.md`, `email.md`, `how-to-run.md`, `CHECKLIST.md`) | 56 (57 minus the untracked video) | Explicitly in the KEEP list; this is the reviewer-facing package. |
-| `rules/**` | 33 (27 after the 6 `.gitkeep` deletions) | The corpus, rule specs and the shipped `rulepack/v0/`. |
-| `docs/**` (including `docs/review/` both review sheets, the AI review CSV and summary) | 24 (23 after the `.gitkeep` deletion) | Explicitly in the KEEP list; linked from README and the landing page's documentation sheet. |
+| `rules/**` | 33 (32 after the `.gitkeep` deletion) | The corpus, rule specs and the shipped `rulepack/v0/`. |
+| `docs/**` (including `docs/review/` both review sheets, the AI review CSV and summary, and `docs/product-brief.md` moved in from root) | 24 (23 after the `.gitkeep` deletion, 24 again once `product-brief.md` moves in) | Explicitly in the KEEP list; linked from README and the landing page's documentation sheet. |
 | `eval/**` (`eval/results/`, `rescore-after-mm-fix/`, example configs) | 22 (21 after the `.gitkeep` deletion) | Explicitly in the KEEP list; every number in `deck-facts.md` traces to one of these files via `check_numbers.py`. |
 | `scripts/**` | 16 | `check_numbers.py`, `check_images.py`, `check_public_ready.py`, the fixture/sample/figure builders, `demo.ps1`/`demo.sh`, the dev-server scripts, the re-score and BCF-validation scripts: all are run by tests, CI-equivalent checks, or `how-to-run.md`. |
 | Root: `README.md`, `LICENSE`, `THIRD_PARTY_NOTICES.md`, `CITATION.cff`, `STATUS.md`, `.gitignore`, `.env.example` | 7 | The allowed root set, plus `.env.example` (no values, referenced by `backend/app/eval/preflight.py`, `backend/tests/test_public_ready.py` and `docs/evaluation.md`). |
@@ -63,7 +62,7 @@ work without a build step.
 ## Summary
 
 - Untrack (kept on disk, gitignored): **2** paths (one video, one agent-tool note).
-- Delete (no purpose, nothing lost): **6** `.gitkeep` placeholders.
+- Delete (no purpose, nothing lost): **5** `.gitkeep` placeholders.
 - Move: **1** path (`PRODUCT.md` → `docs/product-brief.md`).
-- Keep unchanged: **680** paths.
+- Keep unchanged: **681** paths (689 total minus the 7 untracked/deleted minus the 1 moved).
 - No secret, key or personal path found; no history rewrite needed.
