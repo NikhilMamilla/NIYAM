@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="IBM Plex Sans, Segoe UI, Arial, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#191F30"/></marker></defs>
+<rect width="1600" height="900" fill="#F5F0E4"/>
+<text x="60" y="90" font-size="38" fill="#191F30" font-weight="600">NIYAM: from a bye-law sentence to a checked IFC model</text>
+<text x="60" y="132" font-size="22" fill="#3D4559">Every candidate rule, from a person or an LLM, must pass the gate on test models before it can be used.</text>
+<rect x="60.0" y="250" width="220" height="210" rx="6" fill="#FBF8F1" stroke="#191F30" stroke-width="1.5"/>
+<text x="78.0" y="290" font-size="15" fill="#5A6478">01</text>
+<text x="78.0" y="326" font-size="23" fill="#191F30" font-weight="600">Source text</text>
+<text x="78.0" y="372" font-size="16" fill="#3D4559">445 MBBL 2016</text>
+<text x="78.0" y="398" font-size="16" fill="#3D4559">55 Telangana 2012</text>
+<text x="78.0" y="424" font-size="16" fill="#3D4559">clauses</text>
+<rect x="312.0" y="250" width="220" height="210" rx="6" fill="#FBF8F1" stroke="#191F30" stroke-width="1.5"/>
+<text x="330.0" y="290" font-size="15" fill="#5A6478">02</text>
+<text x="330.0" y="326" font-size="23" fill="#191F30" font-weight="600">Rule units</text>
+<text x="330.0" y="372" font-size="16" fill="#3D4559">27 verbatim</text>
+<text x="330.0" y="398" font-size="16" fill="#3D4559">sentences:</text>
+<text x="330.0" y="424" font-size="16" fill="#3D4559">7 IDS, 20 geometric</text>
+<line x1="284.0" y1="355.0" x2="306.0" y2="355.0" stroke="#191F30" stroke-width="2" marker-end="url(#a)"/>
+<rect x="564.0" y="250" width="220" height="210" rx="6" fill="#FBF8F1" stroke="#191F30" stroke-width="1.5"/>
+<text x="582.0" y="290" font-size="15" fill="#5A6478">03</text>
+<text x="582.0" y="326" font-size="23" fill="#191F30" font-weight="600">Candidate check</text>
+<text x="582.0" y="372" font-size="16" fill="#3D4559">IDS 1.0 file or</text>
+<text x="582.0" y="398" font-size="16" fill="#3D4559">Python check, by</text>
+<text x="582.0" y="424" font-size="16" fill="#3D4559">hand or by an LLM</text>
+<line x1="536.0" y1="355.0" x2="558.0" y2="355.0" stroke="#191F30" stroke-width="2" marker-end="url(#a)"/>
+<rect x="816.0" y="250" width="220" height="210" rx="6" fill="#FBF8F1" stroke="#3447C7" stroke-width="3"/>
+<text x="834.0" y="290" font-size="15" fill="#5A6478">04</text>
+<text x="834.0" y="326" font-size="23" fill="#191F30" font-weight="600">Verifier gate</text>
+<text x="834.0" y="372" font-size="16" fill="#3D4559">schema, sandbox,</text>
+<text x="834.0" y="398" font-size="16" fill="#3D4559">pass and fail models;</text>
+<text x="834.0" y="424" font-size="16" fill="#3D4559">3 repairs, then a person</text>
+<line x1="788.0" y1="355.0" x2="810.0" y2="355.0" stroke="#191F30" stroke-width="2" marker-end="url(#a)"/>
+<rect x="1068.0" y="250" width="220" height="210" rx="6" fill="#FBF8F1" stroke="#191F30" stroke-width="1.5"/>
+<text x="1086.0" y="290" font-size="15" fill="#5A6478">05</text>
+<text x="1086.0" y="326" font-size="23" fill="#191F30" font-weight="600">Draft rulepack</text>
+<text x="1086.0" y="372" font-size="16" fill="#3D4559">v0: 6 rules</text>
+<text x="1086.0" y="398" font-size="16" fill="#3D4559">not reviewed by</text>
+<text x="1086.0" y="424" font-size="16" fill="#3D4559">an expert yet</text>
+<line x1="1040.0" y1="355.0" x2="1062.0" y2="355.0" stroke="#191F30" stroke-width="2" marker-end="url(#a)"/>
+<rect x="1320.0" y="250" width="220" height="210" rx="6" fill="#FBF8F1" stroke="#191F30" stroke-width="1.5"/>
+<text x="1338.0" y="290" font-size="15" fill="#5A6478">06</text>
+<text x="1338.0" y="326" font-size="23" fill="#191F30" font-weight="600">Audit</text>
+<text x="1338.0" y="372" font-size="16" fill="#3D4559">IFC4 model in,</text>
+<text x="1338.0" y="398" font-size="16" fill="#3D4559">verdicts out: JSON,</text>
+<text x="1338.0" y="424" font-size="16" fill="#3D4559">HTML report, BCF 2.1</text>
+<line x1="1292.0" y1="355.0" x2="1314.0" y2="355.0" stroke="#191F30" stroke-width="2" marker-end="url(#a)"/>
+<line x1="926.0" y1="460" x2="926.0" y2="550" stroke="#3447C7" stroke-width="2" stroke-dasharray="6 6" marker-end="url(#a)"/>
+<rect x="596.0" y="554" width="660" height="120" rx="6" fill="#FBF8F1" stroke="#3447C7" stroke-width="1.5"/>
+<text x="926.0" y="594" font-size="22" fill="#191F30" font-weight="600" text-anchor="middle">Evaluation, separately: held-out test buildings</text>
+<text x="926.0" y="630" font-size="18" fill="#3D4559" text-anchor="middle">the gate never sees them; they measure wrong_shipped</text>
+<text x="926.0" y="656" font-size="18" fill="#3D4559" text-anchor="middle">(run 2: 415 model calls, 2 open models, 3 repeats)</text>
+<text x="60" y="860" font-size="16" fill="#5A6478">Counts from rules/corpus/clause-ids.txt, docs/review/review-sheet.csv, rules/rulepack/v0/manifest.yaml and eval/results/ (scripts/check_numbers.py).</text>
+</svg>

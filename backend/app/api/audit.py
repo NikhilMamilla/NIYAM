@@ -37,9 +37,9 @@ def _audit_dir(settings: Settings, audit_id: uuid.UUID) -> Path:
     return path
 
 
-async def _run_audit(settings: Settings, store: Callable[[Path], Awaitable[None]]) -> dict:
+async def _run_audit(settings: Settings, store: Callable[[Path], Awaitable[None]], shown_name: str) -> dict:
     """Create a fresh audit folder, let `store` write model.ifc into it, audit it, write the exports.
-    Any failure removes the folder."""
+    The reports name the model `shown_name` (display only, never a path). Any failure removes the folder."""
     audit_id = uuid.uuid4()
     audit_dir = settings.audit_data_dir / str(audit_id)
     audit_dir.mkdir(parents=True)
@@ -49,6 +49,7 @@ async def _run_audit(settings: Settings, store: Callable[[Path], Awaitable[None]
         try:
             report = await run_in_threadpool(  # CPU bound
                 audit, model_path, get_rulepack(), geometric_timeout_s=settings.geometric_timeout_s)
+            report = report.model_copy(update={"ifc_file": shown_name})
             await run_in_threadpool(write_outputs, report, audit_dir)
         except InvalidIfcError as e:
             raise HTTPException(422, str(e)) from e
@@ -77,7 +78,7 @@ async def create_audit(file: UploadFile, settings: Settings = Depends(get_settin
                     raise HTTPException(413, f"file exceeds the {settings.max_upload_mb:g} MB upload limit")
                 out.write(chunk)
 
-    return await _run_audit(settings, store)
+    return await _run_audit(settings, store, Path((file.filename or "model.ifc").replace("\\", "/")).name)
 
 
 def _samples() -> dict[str, Path]:
@@ -111,7 +112,7 @@ async def audit_sample(name: str, settings: Settings = Depends(get_settings)):
     async def store(model_path: Path) -> None:
         shutil.copyfile(source, model_path)
 
-    return await _run_audit(settings, store)
+    return await _run_audit(settings, store, source.name)
 
 
 @router.get("/audit/{audit_id}")
