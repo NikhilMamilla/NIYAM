@@ -3,6 +3,10 @@
 Two real authoring-tool exports were run through the existing audit, with no LLM involved. **No compliance claim is
 made for any real building.** A rule that checks nothing says nothing about whether the building complies.
 
+<!-- site-data: summary. Landing sheet A-08 shows this paragraph verbatim (npm run site-data). -->
+We ran the audit on two real exports from an authoring tool (a buildingSMART sample scene, exported from SketchUp). Nothing passed and nothing failed. The rooms did not say what kind of room they are, and there were no doors or stairs, so every rule either found nothing to check or marked the rooms "could not be checked". That is the honest finding: the bottleneck is the data in the model, not the rules.
+<!-- /site-data: summary -->
+
 ## What we tried
 
 | File | Source | Licence | Schema | Tool | Length unit | IfcDoor | IfcSpace | IfcStairFlight |

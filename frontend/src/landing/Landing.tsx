@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { SiteData } from "../data/buildSiteData";
 import type { Cell, Rate } from "../data/siteData";
 import siteJson from "../data/site-data.json";
-import { COMPETITION, CONTEXT, DOC_GROUPS, TEAM } from "../content/site";
+import { COMPETITION, DOC_GROUPS, TEAM } from "../content/site";
 import { Term } from "../glossary";
 import { IconFailed, IconOutOfScope, IconPassed, IconUnchecked } from "../icons";
 import { Link } from "../router";
@@ -20,6 +20,8 @@ import ArchitecturalJourney from "./ArchitecturalJourney";
 const site = siteJson as unknown as SiteData;
 const h = site.headline;
 const SAMPLE_LINK = "/app?sample=sample_a_mm";
+/** A context fact from docs/sources.md, by its title there. */
+const fact = (title: string) => site.context.find((c) => c.title === title)!.text;
 
 const cell = (list: Cell[], model: "ultra" | "lightning", mode: "gated" | "ungated") =>
   list.find((c) => c.model.includes(model) && c.mode === mode)!;
@@ -174,7 +176,7 @@ function ProblemSheet() {
                 <span className="accordion-toggle">{expandedCard === 0 ? '−' : '+'}</span>
               </div>
               <div className="accordion-content">
-                <p>{CONTEXT.nbc}</p>
+                <p>{fact("India")}</p>
               </div>
             </div>
             
@@ -188,7 +190,7 @@ function ProblemSheet() {
                 <span className="accordion-toggle">{expandedCard === 1 ? '−' : '+'}</span>
               </div>
               <div className="accordion-content">
-                <p>{CONTEXT.singapore}</p>
+                <p>{fact("Singapore")}</p>
               </div>
             </div>
             
@@ -202,7 +204,7 @@ function ProblemSheet() {
                 <span className="accordion-toggle">{expandedCard === 2 ? '−' : '+'}</span>
               </div>
               <div className="accordion-content">
-                <p>{CONTEXT.ids}</p>
+                <p>{fact("buildingSMART")}</p>
               </div>
             </div>
           </div>
@@ -549,12 +551,7 @@ function RealitySheet() {
   return (
     <Sheet id="reality" sheet="A-08" title="Reality check: two real models could not be checked" className="sheet-reality">
       <div className="prose">
-        <p>
-          We ran the audit on two real exports from an authoring tool (a buildingSMART sample scene, exported from
-          SketchUp). Nothing passed and nothing failed. The rooms did not say what kind of room they are, and there were no
-          doors or stairs, so every rule either found nothing to check or marked the rooms “could not be checked”. That is
-          the honest finding: the bottleneck is the data in the model, not the rules.
-        </p>
+        <p>{site.realModelsSummary}</p>
       </div>
       <div className="table-wrap">
         <table className="data-table">
@@ -595,13 +592,24 @@ function RealitySheet() {
 const icon = (d: string) => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
 );
+// The images are written by e2e/shots.spec.ts (1440x900 set, copied into public/screens/); the README and
+// submission/screens/ use the same screenshots.
 const DEMO = [
-  { src: "/screens/demo-1-load.png", title: "Load a building", icon: icon("M8 11V2.5M4.5 6 8 2.5 11.5 6M2.5 10.5v3h11v-3"),
-    step: "Drop an IFC4 file, or choose sample A. The server audits it in a moment." },
+  { src: "/screens/demo-1-start.png", title: "Load a building", icon: icon("M8 11V2.5M4.5 6 8 2.5 11.5 6M2.5 10.5v3h11v-3"),
+    step: "Drop an IFC4 file, or open a sample. The start screen shows the three steps.",
+    alt: "The start screen: three numbered steps, a drop zone for an IFC4 file and one card per sample building." },
   { src: "/screens/demo-2-verdict.png", title: "Read the verdict", icon: icon("M2 3h12L9.5 8.5V13l-3-1.5V8.5L2 3Z"),
-    step: "The answer comes first, in plain words. Below it the 3D view colours every element by verdict." },
-  { src: "/screens/demo-3-select.png", title: "Open a failing door", icon: icon("M3 2.5v11l3-3 2 3.5 1.5-.8-2-3.4H11L3 2.5Z"),
-    step: "Select a red door. The panel says which rule it breaks, why, and quotes the clause." },
+    step: "The answer comes first, in plain words, above the 3D view that colours every element by verdict.",
+    alt: "Sample A audited: the plain-language verdict and counts at the top, the 3D view of the doors below it." },
+  { src: "/screens/demo-3-sample-d.png", title: "Rooms and stairs in 3D", icon: icon("M2 13.5h12M3.5 13.5V6L8 2.5 12.5 6v7.5M6.5 13.5v-4h3v4"),
+    step: "Sample D, a millimetre model, drawn at its real size, with failing rooms and stairs in red.",
+    alt: "Sample D in the 3D view at its real size: rooms and stair flights coloured by verdict." },
+  { src: "/screens/demo-4-clause.png", title: "Open a failing door", icon: icon("M3 2.5v11l3-3 2 3.5 1.5-.8-2-3.4H11L3 2.5Z"),
+    step: "Select a red door. The panel says which rule it breaks and why, and quotes the clause.",
+    alt: "Door A-G-03 selected: the detail panel shows the failed width rule, the reason and the clause text from page 100." },
+  { src: "/screens/demo-5-report.png", title: "Export the report", icon: icon("M4 2h5.5L12 4.5V14H4V2ZM9.5 2v2.5H12M6 8h4M6 10.5h4"),
+    step: "One self-contained HTML report per audit, plus BCF 2.1 issues and JSON.",
+    alt: "The HTML report of sample A: the summary and, per rule, the clause text and the failed and unchecked elements." },
 ];
 
 function DemoSheet() {
@@ -643,20 +651,20 @@ function DemoSheet() {
           <div className="demo-swap">
             <CardSwap
               ref={swap}
-              items={DEMO.map((d) => ({ title: d.title, image: d.src, icon: d.icon, alt: `App screenshot: ${d.step}` }))}
+              items={DEMO.map((d) => ({ title: d.title, image: d.src, icon: d.icon, alt: d.alt }))}
               width={680}
               height={470}
               cardDistance={44}
               verticalDistance={50}
               depth={80}
               skewAmount={4}
-              visibleCards={3}
+              visibleCards={DEMO.length}
               delay={5000}
               theme="light"
               onChange={setFront}
             />
           </div>
-          <figcaption className="demo-cap mono">Screenshots of the real app on synthetic sample building A. Drag, click or use the arrow keys.</figcaption>
+          <figcaption className="demo-cap mono">Screenshots of the real app on synthetic sample buildings A and D. Drag, click or use the arrow keys.</figcaption>
         </figure>
       </div>
     </Sheet>
@@ -730,10 +738,7 @@ function LimitsSheet() {
         <div className="plan-notes">
           <div className="plan-notes-head mono">Open work · what comes next</div>
           <ol className="next">
-            <li>Expert review of every rule, starting with the disputed ones.</li>
-            <li>Site geometry, so setbacks and plot rules can be checked.</li>
-            <li>The National Building Code in the corpus, for room sizes and heights.</li>
-            <li>Tests on real exports from Revit, ArchiCAD and other tools.</li>
+            {site.roadmap.map((r) => <li key={r}>{r}</li>)}
           </ol>
         </div>
         <div className="plan-foot mono">

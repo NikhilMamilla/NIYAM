@@ -1,6 +1,9 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { COMPETITION, CONTEXT, TEAM } from "../content/site";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { COMPETITION, TEAM } from "../content/site";
+import { block, titled } from "../data/buildSiteData";
 import siteJson from "../data/site-data.json";
 import type { SiteData } from "../data/buildSiteData";
 import { frac, pct, thousands } from "./format";
@@ -14,6 +17,24 @@ describe("landing page team", () => {
   it("names the team, every member, the college, the mentor and the competition", () => {
     for (const s of [`Team ${TEAM.TEAM_NAME}`, ...TEAM.MEMBERS, TEAM.COLLEGE, TEAM.MENTOR, TEAM.MENTOR_ROLE, COMPETITION.NAME, COMPETITION.FINALS])
       expect(text).toContain(s.replace(/&/g, " ").replace(/\s+/g, " "));
+  });
+});
+
+// Text the landing page shows from the documents: read the documents themselves, not site-data.json, so a page that
+// drifts from the docs (or a site-data.json that was not regenerated) fails here.
+const doc = (...p: string[]) => readFileSync(join(__dirname, "..", "..", "..", ...p), "utf-8");
+const flat = (s: string) => s.replace(/&/g, " ").replace(/\s+/g, " ").trim();
+
+describe("landing page text comes from the docs", () => {
+  it("shows every README statement, every sources.md context fact, the README roadmap and the real-models summary verbatim", () => {
+    const readme = doc("README.md");
+    const shown = [
+      ...titled(block(readme, "README.md", "statements")).flatMap((s) => [s.title, s.text]),
+      ...titled(block(doc("docs", "sources.md"), "docs/sources.md", "context")).map((s) => s.text),
+      ...block(readme, "README.md", "roadmap").match(/^- .+$/gm)!.map((l) => l.slice(2)),
+      block(doc("docs", "real-models.md"), "docs/real-models.md", "summary"),
+    ];
+    for (const s of shown) expect(text, s.slice(0, 60)).toContain(flat(s).replace(/"/g, " ").replace(/\s+/g, " ").trim());
   });
 });
 
@@ -50,7 +71,7 @@ describe("landing page numbers", () => {
       else if (v && typeof v === "object") Object.values(v).forEach(walk);
     };
     walk(site);
-    [CONTEXT, COMPETITION].forEach((o) => Object.values(o).forEach(addTokens));
+    Object.values(COMPETITION).forEach(addTokens);
     const tokens = (text.match(/\d[\d,.]*\d|\d/g) ?? []).map((t) => t.replace(/[.,]$/, ""));
     const stray = [...new Set(tokens.filter((t) => !allowed.has(t)))];
     expect(stray, `numbers on the page with no source: ${stray.join(", ")}`).toEqual([]);

@@ -7,6 +7,7 @@
    "rules/specs/*.yaml",
    "README.md",
    "docs/real-models.md",
+   "docs/sources.md",
    "docs/readiness/niyam-data-readiness.ids",
    "docs/examples/gate-rejection.json",
    "backend/app/corpus/extract_tgbr.py"
@@ -5500,5 +5501,26 @@
    "title": "Telangana is a case study",
    "text": "Only 2 Telangana units were turned into rules, from 55 ingested clauses, so Telangana is reported as a case study with counts, not as a headline rate."
   }
- ]
+ ],
+ "context": [
+  {
+   "title": "India",
+   "text": "India: BIS withdrew the National Building Code 2016 with effect from 30 April 2026 and replaced it with the advisory National Building Construction Standards 2026 (SP 7:2026)."
+  },
+  {
+   "title": "Singapore",
+   "text": "Singapore: from 1 October 2026, building plan submissions through CORENET X are mandatory for new projects of 5,000 m² gross floor area and above."
+  },
+  {
+   "title": "buildingSMART",
+   "text": "buildingSMART: IDS 1.0, published as a final standard in June 2024, is an open standard for machine-checkable information requirements."
+  }
+ ],
+ "roadmap": [
+  "Expert review of every rule, starting with the disputed ones.",
+  "Site geometry, so setbacks and plot rules can be checked.",
+  "The National Building Code in the corpus, for room sizes and heights.",
+  "Tests on real exports from Revit, ArchiCAD and other tools."
+ ],
+ "realModelsSummary": "We ran the audit on two real exports from an authoring tool (a buildingSMART sample scene, exported from SketchUp). Nothing passed and nothing failed. The rooms did not say what kind of room they are, and there were no doors or stairs, so every rule either found nothing to check or marked the rooms \"could not be checked\". That is the honest finding: the bottleneck is the data in the model, not the rules."
 }

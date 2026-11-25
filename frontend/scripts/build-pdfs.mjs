@@ -8,7 +8,7 @@ import { chromium } from "@playwright/test";
 
 const DOCS = [
   { src: "../README.md", title: "NIYAM: project overview", lead: "What NIYAM is, how it works, where it stands today, and how to run it." },
-  { src: "../docs/evaluation.md", title: "Evaluation: method and metrics", lead: "How rule compilation is scored on test buildings the verifier gate never sees, and what the first real run showed." },
+  { src: "../docs/evaluation.md", title: "Evaluation: method and metrics", lead: "How rule compilation is scored on test buildings the verifier gate never sees, and the headline run 2 table." },
   { src: "../docs/spec-backlog.md", title: "Rule specs and what they cannot express", lead: "Which bye-law sentences became machine checks, and why the rest do not fit a single-element template." },
   { src: "../docs/real-models.md", title: "Real IFC models: what the audit could check", lead: "Two real building models run through the audit, and the data they lack." },
   { src: "../docs/modelling-profile.md", title: "What a model must contain", lead: "The data an IFC model needs before NIYAM can check it." },

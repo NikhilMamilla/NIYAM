@@ -17,15 +17,7 @@ export const COMPETITION = {
   FINALS: "17 Dec 2026, IIT Bombay",
 };
 
-/**
- * Context facts for "The problem". Each is checked in docs/sources.md (sources and access dates); change the two
- * together.
- */
-export const CONTEXT = {
-  nbc: "India: BIS withdrew the National Building Code 2016 with effect from 30 April 2026 and replaced it with the advisory National Building Construction Standards 2026 (SP 7:2026).",
-  singapore: "Singapore: from 1 October 2026, building plan submissions through CORENET X are mandatory for new projects of 5,000 m² gross floor area and above.",
-  ids: "buildingSMART: IDS 1.0, published as a final standard in June 2024, is an open standard for machine-checkable information requirements.",
-};
+// The context facts for "The problem" (sheet A-02) live in docs/sources.md with their sources; site-data.json carries them.
 
 /** Files the footer offers for download. They are copied into public/downloads/ by scripts/sync-downloads.mjs. */
 export type Doc = { label: string; file: string; about: string };
@@ -43,7 +35,7 @@ export const DOC_GROUPS: { title: string; blurb: string; docs: Doc[] }[] = [
     title: "Method and results",
     blurb: "How rules are made, scored and tested.",
     docs: [
-      { label: "Evaluation: method and metrics", file: "evaluation.pdf", about: "How compilation is scored on held-out buildings the gate never sees, and what the first real run showed." },
+      { label: "Evaluation: method and metrics", file: "evaluation.pdf", about: "How compilation is scored on held-out buildings the gate never sees, and the headline run 2 table." },
       { label: "Rule specs and what they cannot express", file: "spec-backlog.pdf", about: "Which sentences became machine checks, and why the rest do not fit a single-element template." },
       { label: "Rule specs and the generator", file: "specgen.pdf", about: "How one small spec file becomes an IDS file or a Python check, and the five templates." },
       { label: "Real IFC models", file: "real-models.pdf", about: "Two real building models run through the audit, and the data they lack." },

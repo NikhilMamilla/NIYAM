@@ -92,7 +92,7 @@ python -m app.eval.cli report ../eval/runs/<id>/results.json   # eval/results/<i
 - **Hidden reasoning.** `HOSTED_LLM_EXTRA_BODY` / `OPEN_MODEL_EXTRA_BODY` (JSON) are merged into every request, e.g.
   to turn off thinking; they are recorded in `results.json` as `request_extras`.
 
-## The first real run, step by step
+## Running a real evaluation, step by step
 
 1. `cp eval/config.example.yaml eval/config.yaml` (gitignored). Name the models, keep `repeats: 1` and low budget
    caps for the first run, and optionally add `price_per_million_input` / `price_per_million_output` from the

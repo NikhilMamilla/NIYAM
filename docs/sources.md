@@ -1,9 +1,19 @@
 # Sources for the regulatory and standards facts
 
-Every dated or regulatory claim on the landing page (`frontend/src/content/site.ts`, `CONTEXT`) and in the README is
+Every dated or regulatory claim on the landing page (the block below, read by `npm run site-data`) and in the README is
 listed here with the page it was checked against. All pages were accessed on **25 November 2026**. "Primary" means the
 issuing body's own page; "secondary" means a report about it. Where only secondary sources could be read, the claim
 says so or is worded no more strongly than they support.
+
+## Shown on the landing page
+
+<!-- site-data: context. Landing sheet A-02 shows these three bullets verbatim (npm run site-data). -->
+- **India.** India: BIS withdrew the National Building Code 2016 with effect from 30 April 2026 and replaced it with the advisory National Building Construction Standards 2026 (SP 7:2026).
+- **Singapore.** Singapore: from 1 October 2026, building plan submissions through CORENET X are mandatory for new projects of 5,000 m² gross floor area and above.
+- **buildingSMART.** buildingSMART: IDS 1.0, published as a final standard in June 2024, is an open standard for machine-checkable information requirements.
+<!-- /site-data: context -->
+
+## Checked claims
 
 | Claim as shown | Status | Source(s) |
 |---|---|---|
