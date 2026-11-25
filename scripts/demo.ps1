@@ -1,12 +1,40 @@
 # Start the NIYAM API and web app, open the browser, and stop both on Ctrl+C.
-# Needs backend\.venv (pip install -e ".[dev]") and frontend\node_modules (npm ci).
+# Creates backend\.venv itself (with Python 3.11 or 3.12; never falls back to a newer default `python`).
+# Needs frontend\node_modules (npm ci).
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
-$python = Join-Path $root "backend\.venv\Scripts\python.exe"
+$venv = Join-Path $root "backend\.venv"
+$python = Join-Path $venv "Scripts\python.exe"
 $apiUrl = "http://127.0.0.1:8000"
 $appUrl = "http://localhost:5173"
 
-if (-not (Test-Path $python)) { Write-Host "backend\.venv not found: create it first (see README)"; exit 1 }
+# The backend needs Python 3.11 or 3.12 (requires-python = ">=3.11,<3.13" in backend\pyproject.toml).
+# `py` (the Windows launcher) picks an exact version; a bare `python` is used only if it is already 3.11 or 3.12.
+function Find-SupportedPython {
+    foreach ($spec in @("-3.11", "-3.12")) {
+        if (Get-Command py -ErrorAction SilentlyContinue) {
+            try { & py $spec --version *> $null; if ($LASTEXITCODE -eq 0) { return @("py", $spec) } } catch {}
+        }
+    }
+    if (Get-Command python -ErrorAction SilentlyContinue) {
+        $v = (& python -c "import sys; print(f'{sys.version_info[0]}.{sys.version_info[1]}')" 2>$null)
+        if ($v -eq "3.11" -or $v -eq "3.12") { return @("python") }
+    }
+    return $null
+}
+
+if (-not (Test-Path $python)) {
+    $launcher = Find-SupportedPython
+    if (-not $launcher) {
+        Write-Host "No Python 3.11 or 3.12 found: install one (e.g. from python.org) and re-run."
+        exit 1
+    }
+    Write-Host "Creating backend\.venv with $($launcher -join ' ')..."
+    $launcherArgs = @()
+    if ($launcher.Length -gt 1) { $launcherArgs = $launcher[1..($launcher.Length - 1)] }
+    & $launcher[0] @launcherArgs -m venv $venv
+    & $python -m pip install -q -e "$(Join-Path $root 'backend')[dev]"
+}
 if (-not (Test-Path (Join-Path $root "frontend\node_modules"))) { Write-Host "frontend\node_modules not found: run npm ci in frontend\"; exit 1 }
 
 $api = Start-Process -FilePath $python -ArgumentList "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8000" `
