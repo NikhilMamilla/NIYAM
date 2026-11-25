@@ -1,0 +1,13 @@
+sample_b_m.ifc (IFC4), rulepack v0
+rule               status           passed failed unchecked out_of_scope
+MBBL2016-5.4.2#1   noncompliant          5      1         2            2
+MBBL2016-5.4.1#b   noncompliant          5      1         2            2
+MBBL2016-5.4.1#c   noncompliant          4      2         2            2
+MBBL2016-4.5.2#1   nothing_checked       0      0         0            0
+MBBL2016-4.3.1.1#1 nothing_checked       0      0         0            0
+MBBL2016-4.17.2#A  nothing_checked       0      0         0            0
+overall checks     noncompliant         14      4         6            6
+doors affected: 4 with violations, 2 could not be fully checked, 4 clean (of 10)
+wrote ..\submission\samples\sample_b_m\report.json
+wrote ..\submission\samples\sample_b_m\report.html
+wrote ..\submission\samples\sample_b_m\issues.bcf

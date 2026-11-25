@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NIYAM audit report</title><style>
+body{font:15px/1.5 system-ui,sans-serif;margin:0 auto;max-width:1100px;padding:24px 16px;color:#1d1d1f;background:#fff}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:19px;margin:32px 0 6px}h3{font-size:15px;margin:18px 0 6px}
+.meta{color:#555}.note{background:#fff6e0;border:1px solid #e9c46a;padding:8px 12px;border-radius:6px}
+.badge{display:inline-block;padding:1px 8px;border-radius:10px;font-weight:600;font-size:13px}
+.noncompliant{background:#fde2e1;color:#9b1c1c}.incomplete{background:#fff1c2;color:#7a5200}
+.compliant{background:#dcf5e3;color:#11612f}.nothing_checked{background:#e8e8ed;color:#444}.error{background:#fde2e1;color:#9b1c1c;border:1px solid #9b1c1c}
+table{border-collapse:collapse;width:100%;margin:6px 0 12px;font-size:14px}
+th,td{border:1px solid #d8d8de;padding:5px 8px;text-align:left;vertical-align:top}th{background:#f3f3f6}
+pre{white-space:pre-wrap;background:#f6f6f8;padding:10px 12px;border-radius:6px;font:13px/1.45 ui-monospace,monospace}
+code{font:13px ui-monospace,monospace}
+</style></head><body>
+<h1>NIYAM audit report <span class="badge noncompliant">noncompliant</span></h1>
+<p class="meta">Model <code>sample_a_mm.ifc</code> (IFC4) &middot; rulepack v0</p>
+<p class="note">Rules MBBL2016-5.4.2#1, MBBL2016-5.4.1#b, MBBL2016-5.4.1#c, MBBL2016-4.5.2#1, MBBL2016-4.3.1.1#1, MBBL2016-4.17.2#A are draft encodings and not human-reviewed. Unchecked elements lack the data a rule needs; they are not passes.</p>
+<p><strong>Checks run: passed 17, failed 6, unchecked 7, out of scope 6</strong> (one check per rule and element).<br>
+<strong>Doors affected: 5 with violations, 3 could not be fully checked (of 12 in scope classes)</strong>, each counted once.</p>
+<table><tr><th>Rule</th><th>Status</th><th>Passed</th><th>Failed</th><th>Unchecked</th><th>Out of scope</th></tr><tr><td>MBBL2016-5.4.2#1</td><td><span class="badge noncompliant">noncompliant</span></td><td>7</td><td>1</td><td>2</td><td>2</td></tr><tr><td>MBBL2016-5.4.1#b</td><td><span class="badge noncompliant">noncompliant</span></td><td>5</td><td>2</td><td>3</td><td>2</td></tr><tr><td>MBBL2016-5.4.1#c</td><td><span class="badge noncompliant">noncompliant</span></td><td>5</td><td>3</td><td>2</td><td>2</td></tr><tr><td>MBBL2016-4.5.2#1</td><td><span class="badge nothing_checked">nothing_checked</span></td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>MBBL2016-4.3.1.1#1</td><td><span class="badge nothing_checked">nothing_checked</span></td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>MBBL2016-4.17.2#A</td><td><span class="badge nothing_checked">nothing_checked</span></td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td><strong>all checks</strong></td><td><span class="badge noncompliant">noncompliant</span></td><td>17</td><td>6</td><td>7</td><td>6</td></tr></table>
+<h2>MBBL2016-5.4.2#1 <span class="badge noncompliant">noncompliant</span></h2>
+<p class="meta">Clause MBBL2016-5.4.2, MBBL-2016 page 100 &middot; severity error &middot; draft rule, not human-reviewed &middot; passed 7, failed 1, unchecked 2, out of scope 2</p>
+<p><strong>Rule:</strong> Revolving door shall not be provided as a means of fire exit.</p>
+<h3>Clause text</h3><pre>5.4.2 Revolving Doors
+Revolving door shall not be provided as a means of fire exit.</pre>
+<h3>Failed elements (1)</h3>
+<table><tr><th>Name</th><th>Class</th><th>GlobalId</th><th>Reason</th></tr><tr><td>A-G-04 revolving exit</td><td>IfcDoor</td><td><code>0VPleGO_HT4gQeoARWLCk3</code></td><td>Operation type is REVOLVING, which this rule does not allow.<details><summary>Technical detail</summary>The attribute value should not have met the requirement (requirement: The OperationType shall not be REVOLVING)</details></td></tr></table>
+<h3>Unchecked elements (missing data) (2)</h3>
+<table><tr><th>Name</th><th>Class</th><th>GlobalId</th><th>Reason</th></tr><tr><td>A-1-04 door without FireExit</td><td>IfcDoor</td><td><code>159ORaADXIOA2kMOR7Pqy2</code></td><td>This door does not declare whether it is an exit door (Pset_DoorCommon.FireExit), so it is unknown whether the rule applies.<details><summary>Technical detail</summary>missing Pset_DoorCommon.FireExit: cannot tell whether the rule applies</details></td></tr><tr><td>A-1-05 revolving door without FireExit</td><td>IfcDoor</td><td><code>0Lax8mctXPMu4KFuh6_PwD</code></td><td>This door does not declare whether it is an exit door (Pset_DoorCommon.FireExit), so it is unknown whether the rule applies.<details><summary>Technical detail</summary>missing Pset_DoorCommon.FireExit: cannot tell whether the rule applies</details></td></tr></table>
+<h2>MBBL2016-5.4.1#b <span class="badge noncompliant">noncompliant</span></h2>
+<p class="meta">Clause MBBL2016-5.4.1, MBBL-2016 page 100 &middot; severity error &middot; draft rule, not human-reviewed &middot; passed 5, failed 2, unchecked 3, out of scope 2</p>
+<p><strong>Rule:</strong> No exit doorway shall be less than 1m in width.</p>
+<h3>Clause text</h3><pre>5.4.1 Doorways
+a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
+or passageway providing continuous and protected means of egress.
+b. No exit doorway shall be less than 1m in width. Doorways shall be not less than 2
+m in height. Doorways for bathrooms, water closet, stores etc. shall be not less than
+0.75m wide.
+c. Exit doorways shall open outwards, that is, away from the room but shall not
+obstruct the travel along any exit. No door, when opened, shall reduce the required
+width of stairway or landing to less than 0.9m, overhead or sliding doors shall not
+be installed.
+d. Exit door shall not open immediately upon a flight or stairs, a landing equal to at
+least the width of the door shall be provided in the stairway at each doorway, level
+of landing shall be the same as that of the floor which it serves.
+e. Exit doorways shall be openable from the side which they serve without the use of a
+key.
+f. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
+the direction of exit.</pre>
+<h3>Failed elements (2)</h3>
+<table><tr><th>Name</th><th>Class</th><th>GlobalId</th><th>Reason</th></tr><tr><td>A-G-03 narrow exit</td><td>IfcDoor</td><td><code>3yhQm5ybjNQvwAOshBdZHl</code></td><td>Declared width is 0.9 m; this rule requires at least 1 m.<details><summary>Technical detail</summary>The property value &quot;0.9&quot; does not match the requirements (requirement: Width data shall be {&#x27;minInclusive&#x27;: &#x27;1.0&#x27;} and in the dataset Qto_DoorBaseQuantities)</details></td></tr><tr><td>A-1-02 narrow sliding exit</td><td>IfcDoor</td><td><code>2NBBU0$KrOJeHWER03vAR3</code></td><td>Declared width is 0.8 m; this rule requires at least 1 m.<details><summary>Technical detail</summary>The property value &quot;0.8&quot; does not match the requirements (requirement: Width data shall be {&#x27;minInclusive&#x27;: &#x27;1.0&#x27;} and in the dataset Qto_DoorBaseQuantities)</details></td></tr></table>
+<h3>Unchecked elements (missing data) (3)</h3>
+<table><tr><th>Name</th><th>Class</th><th>GlobalId</th><th>Reason</th></tr><tr><td>A-1-04 door without FireExit</td><td>IfcDoor</td><td><code>159ORaADXIOA2kMOR7Pqy2</code></td><td>This door does not declare whether it is an exit door (Pset_DoorCommon.FireExit), so it is unknown whether the rule applies.<details><summary>Technical detail</summary>missing Pset_DoorCommon.FireExit: cannot tell whether the rule applies</details></td></tr><tr><td>A-1-05 revolving door without FireExit</td><td>IfcDoor</td><td><code>0Lax8mctXPMu4KFuh6_PwD</code></td><td>This door does not declare whether it is an exit door (Pset_DoorCommon.FireExit), so it is unknown whether the rule applies.<details><summary>Technical detail</summary>missing Pset_DoorCommon.FireExit: cannot tell whether the rule applies</details></td></tr><tr><td>A-1-06 exit without width quantity</td><td>IfcDoor</td><td><code>0GLiqFaf9TYg9X1VbfZxVB</code></td><td>This door is in scope of the rule but has no declared width (Qto_DoorBaseQuantities.Width), so the rule could not be checked.<details><summary>Technical detail</summary>missing required data: Qto_DoorBaseQuantities.Width</details></td></tr></table>
+<h2>MBBL2016-5.4.1#c <span class="badge noncompliant">noncompliant</span></h2>
+<p class="meta">Clause MBBL2016-5.4.1, MBBL-2016 page 100 &middot; severity error &middot; draft rule, not human-reviewed &middot; passed 5, failed 3, unchecked 2, out of scope 2</p>
+<p><strong>Rule:</strong> overhead or sliding doors shall not be installed</p>
+<h3>Clause text</h3><pre>5.4.1 Doorways
+a. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor
+or passageway providing continuous and protected means of egress.
+b. No exit doorway shall be less than 1m in width. Doorways shall be not less than 2
+m in height. Doorways for bathrooms, water closet, stores etc. shall be not less than
+0.75m wide.
+c. Exit doorways shall open outwards, that is, away from the room but shall not
+obstruct the travel along any exit. No door, when opened, shall reduce the required
+width of stairway or landing to less than 0.9m, overhead or sliding doors shall not
+be installed.
+d. Exit door shall not open immediately upon a flight or stairs, a landing equal to at
+least the width of the door shall be provided in the stairway at each doorway, level
+of landing shall be the same as that of the floor which it serves.
+e. Exit doorways shall be openable from the side which they serve without the use of a
+key.
+f. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding
+the direction of exit.</pre>
+<h3>Failed elements (3)</h3>
+<table><tr><th>Name</th><th>Class</th><th>GlobalId</th><th>Reason</th></tr><tr><td>A-G-05 sliding exit</td><td>IfcDoor</td><td><code>2eLf1vV9nPdRPqJvB$LMry</code></td><td>Operation type is SLIDING_TO_LEFT, which this rule does not allow (not allowed: SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING, ROLLINGUP).<details><summary>Technical detail</summary>The attribute value should not have met the requirement (requirement: The OperationType shall not be {&#x27;enumeration&#x27;: [&#x27;SLIDING_TO_LEFT&#x27;, &#x27;SLIDING_TO_RIGHT&#x27;, &#x27;DOUBLE_DOOR_SLIDING&#x27;, &#x27;ROLLINGUP&#x27;]})</details></td></tr><tr><td>A-1-01 rolling shutter exit</td><td>IfcDoor</td><td><code>2qbmg0pa5PaPR3H8wXV8a$</code></td><td>Operation type is ROLLINGUP, which this rule does not allow (not allowed: SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING, ROLLINGUP).<details><summary>Technical detail</summary>The attribute value should not have met the requirement (requirement: The OperationType shall not be {&#x27;enumeration&#x27;: [&#x27;SLIDING_TO_LEFT&#x27;, &#x27;SLIDING_TO_RIGHT&#x27;, &#x27;DOUBLE_DOOR_SLIDING&#x27;, &#x27;ROLLINGUP&#x27;]})</details></td></tr><tr><td>A-1-02 narrow sliding exit</td><td>IfcDoor</td><td><code>2NBBU0$KrOJeHWER03vAR3</code></td><td>Operation type is DOUBLE_DOOR_SLIDING, which this rule does not allow (not allowed: SLIDING_TO_LEFT, SLIDING_TO_RIGHT, DOUBLE_DOOR_SLIDING, ROLLINGUP).<details><summary>Technical detail</summary>The attribute value should not have met the requirement (requirement: The OperationType shall not be {&#x27;enumeration&#x27;: [&#x27;SLIDING_TO_LEFT&#x27;, &#x27;SLIDING_TO_RIGHT&#x27;, &#x27;DOUBLE_DOOR_SLIDING&#x27;, &#x27;ROLLINGUP&#x27;]})</details></td></tr></table>
+<h3>Unchecked elements (missing data) (2)</h3>
+<table><tr><th>Name</th><th>Class</th><th>GlobalId</th><th>Reason</th></tr><tr><td>A-1-04 door without FireExit</td><td>IfcDoor</td><td><code>159ORaADXIOA2kMOR7Pqy2</code></td><td>This door does not declare whether it is an exit door (Pset_DoorCommon.FireExit), so it is unknown whether the rule applies.<details><summary>Technical detail</summary>missing Pset_DoorCommon.FireExit: cannot tell whether the rule applies</details></td></tr><tr><td>A-1-05 revolving door without FireExit</td><td>IfcDoor</td><td><code>0Lax8mctXPMu4KFuh6_PwD</code></td><td>This door does not declare whether it is an exit door (Pset_DoorCommon.FireExit), so it is unknown whether the rule applies.<details><summary>Technical detail</summary>missing Pset_DoorCommon.FireExit: cannot tell whether the rule applies</details></td></tr></table>
+<h2>MBBL2016-4.5.2#1 <span class="badge nothing_checked">nothing_checked</span></h2>
+<p class="meta">Clause MBBL2016-4.5.2, MBBL-2016 page 70 &middot; severity error &middot; draft rule, not human-reviewed &middot; passed 0, failed 0, unchecked 0, out of scope 0</p>
+<p><strong>Rule:</strong> The area of a bathroom shall not be less than 1.8 m2</p>
+<h3>Clause text</h3><pre>4.5.2 Size
+The area of a bathroom shall not be less than 1.8 m2 with a minimum width of 1.2 m.
+The floor area of water-closet shall be 1.1 m2 with a minimum width of 0.9 m. If bath
+and water-closet are combined, its floor area shall not be less than 2.8 m2 with a
+minimum width of 1.2 m.</pre>
+<h3>Failed elements (0)</h3>
+<p>None.</p>
+<h3>Unchecked elements (missing data) (0)</h3>
+<p>None.</p>
+<h2>MBBL2016-4.3.1.1#1 <span class="badge nothing_checked">nothing_checked</span></h2>
+<p class="meta">Clause MBBL2016-4.3.1.1, MBBL-2016 page 69 &middot; severity error &middot; draft rule, not human-reviewed &middot; passed 0, failed 0, unchecked 0, out of scope 0</p>
+<p><strong>Rule:</strong> The height of all rooms for human habitation shall not be less than 2.75 m measured from the surface of the floor to the lowest point of the ceiling (bottom of slab)</p>
+<h3>Clause text</h3><pre>4.3.1.1 The height of all rooms for human habitation shall not be less than 2.75 m measured
+from the surface of the floor to the lowest point of the ceiling (bottom of slab)
+provided that the minimum clear headway under any beam shall not be less than 2.4 m.
+In the case of pitched roof, the average height of rooms shall not be less than 2.75 m.
+The minimum clear head room under a beam, folded plates or eaves shall be 2.4 m. In
+the case of air-conditioned rooms, a height of not less than 2.4 m measured from the
+surface of the floor to the lowest point of air-conditioning duct or the false ceiling shall
+be provided.</pre>
+<h3>Failed elements (0)</h3>
+<p>None.</p>
+<h3>Unchecked elements (missing data) (0)</h3>
+<p>None.</p>
+<h2>MBBL2016-4.17.2#A <span class="badge nothing_checked">nothing_checked</span></h2>
+<p class="meta">Clause MBBL2016-4.17.2, MBBL-2016 page 75 &middot; severity error &middot; draft rule, not human-reviewed &middot; passed 0, failed 0, unchecked 0, out of scope 0</p>
+<p><strong>Rule:</strong> The minimum width of staircase shall be as follows: A Residential buildings (dwellings) 1.0 m</p>
+<h3>Clause text</h3><pre>4.17.2 Minimum width
+The minimum width of staircase shall be as follows:
+A Residential buildings (dwellings) 1.0 m
+NOTE — For row housing with 2
+storeys, the min. width of shall be 0.75
+B Residential hotel buildings 1.5 m
+C Assembly buildings like auditoria, 2.0 m
+theatres and cinemas
+D Educational building 1.5 m
+E Institutional buildings 2.0 m
+F All other buildings 1.5 m</pre>
+<h3>Failed elements (0)</h3>
+<p>None.</p>
+<h3>Unchecked elements (missing data) (0)</h3>
+<p>None.</p>
+</body></html>
