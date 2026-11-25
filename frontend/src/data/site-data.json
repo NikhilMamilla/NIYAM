@@ -7,6 +7,7 @@
    "rules/specs/*.yaml",
    "README.md",
    "docs/real-models.md",
+   "docs/sources.md",
    "docs/readiness/niyam-data-readiness.ids",
    "docs/examples/gate-rejection.json",
    "backend/app/corpus/extract_tgbr.py"
@@ -5462,5 +5463,64 @@
     "verdict": "unchecked"
    }
   ]
- }
+ },
+ "statements": [
+  {
+   "title": "Decision aid",
+   "text": "NIYAM is a decision aid, not a legal approval tool: a result is a lead for a person to check, never a building approval."
+  },
+  {
+   "title": "A person decides what ships",
+   "text": "Rules are drafted from public bye-laws (MBBL 2016 and the Telangana Building Rules 2012 base text, amendments not applied), and a person approves what enters the rulepack. No domain expert has reviewed any rule yet."
+  },
+  {
+   "title": "Four verdicts",
+   "text": "Every element gets passed, failed, unchecked or out_of_scope. Missing data gives unchecked, never passed."
+  },
+  {
+   "title": "Headline metric: wrong_shipped",
+   "text": "wrong_shipped is the share of shipped rules that are wrong on held-out test buildings the gate never sees. In run 2, with the gate: 2/68 = 3% [1%, 10%] (nemotron-3-ultra) and 0/50 = 0% [0%, 7%] (nemotron-3.5-lightning); without it: 20/75 = 27% [18%, 38%] and 31/75 = 41% [31%, 53%]. Each figure is k/n = rate [Wilson 95% interval], counted over attempts, which are correlated across 3 repeats."
+  },
+  {
+   "title": "Re-scored after the millimetre fix",
+   "text": "Run 2 and the Telangana run were re-scored after the millimetre fix, and 0 of 240 geometric outcomes changed. This is a re-score of the stored candidates, not a re-run."
+  },
+  {
+   "title": "Where the fix was tested",
+   "text": "The millimetre fix was verified on a hand-written IFC file and on one SketchUp-exported file, not on Revit or ArchiCAD exports."
+  },
+  {
+   "title": "Real models lack the data",
+   "text": "On the two real buildingSMART models most rules return unchecked or find nothing to check, because the data they need (for example Pset_SpaceCommon.Category on rooms) is missing."
+  },
+  {
+   "title": "Post hoc, labelled",
+   "text": "The two reading-dependent units (MBBL2016-4.8.2#1, MBBL2016-5.4.1#b2) were flagged after seeing the results, and the sensitivity table without them is post hoc, not pre-registered."
+  },
+  {
+   "title": "Telangana is a case study",
+   "text": "Only 2 Telangana units were turned into rules, from 55 ingested clauses, so Telangana is reported as a case study with counts, not as a headline rate."
+  }
+ ],
+ "context": [
+  {
+   "title": "India",
+   "text": "India: BIS withdrew the National Building Code 2016 with effect from 30 April 2026 and replaced it with the advisory National Building Construction Standards 2026 (SP 7:2026)."
+  },
+  {
+   "title": "Singapore",
+   "text": "Singapore: from 1 October 2026, building plan submissions through CORENET X are mandatory for new projects of 5,000 m² gross floor area and above."
+  },
+  {
+   "title": "buildingSMART",
+   "text": "buildingSMART: IDS 1.0, published as a final standard in June 2024, is an open standard for machine-checkable information requirements."
+  }
+ ],
+ "roadmap": [
+  "Expert review of every rule, starting with the disputed ones.",
+  "Site geometry, so setbacks and plot rules can be checked.",
+  "The National Building Code in the corpus, for room sizes and heights.",
+  "Tests on real exports from Revit, ArchiCAD and other tools."
+ ],
+ "realModelsSummary": "We ran the audit on two real exports from an authoring tool (a buildingSMART sample scene, exported from SketchUp). Nothing passed and nothing failed. The rooms did not say what kind of room they are, and there were no doors or stairs, so every rule either found nothing to check or marked the rooms \"could not be checked\". That is the honest finding: the bottleneck is the data in the model, not the rules."
 }

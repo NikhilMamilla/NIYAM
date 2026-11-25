@@ -1,14 +1,53 @@
 # NIYAM
 
-NIYAM turns sentences from Indian building bye-laws (the MoHUA Model Building Bye-Laws 2016, and as a second
-source the Telangana Building Rules 2012 (G.O.Ms.No.168, original text, amendments not applied)) into
-machine checks: buildingSMART [IDS 1.0](https://github.com/buildingSMART/IDS) files for declared data and small
-sandboxed Python checks for values computed from geometry. Every candidate rule, whether written by a person or
-an LLM, must pass a verifier gate on test models before it can be used. It then audits IFC building models, shows
-the results beside the model in 3D, and exports HTML reports and BCF issues.
+**What.** NIYAM turns sentences from Indian building bye-laws into machine checks and runs them on IFC building
+models. Its sources are the MoHUA Model Building Bye-Laws 2016 and, as a second source, the Telangana Building Rules
+2012 (G.O.Ms.No.168, original text, amendments not applied). Declared data becomes buildingSMART
+[IDS 1.0](https://github.com/buildingSMART/IDS) files, and values computed from geometry become small sandboxed
+Python checks. Results appear beside the model in 3D and export as an HTML report, JSON and BCF 2.1 issues.
+
+**Why.** Plans in most Indian cities are still checked as 2D drawings against written rules, and where the check is
+automated the rules sit inside proprietary software. NIYAM keeps every check traceable to its clause and measures in
+the open how often a wrong check gets through.
+
+**Result.** An LLM drafts each check, and a verifier gate must accept it on test models before it ships. Headline
+run 2 compiled 25 MBBL units with 2 open models, 3 repeats each, 415 model calls. wrong_shipped is the share of
+shipped rules that are wrong on held-out test buildings the gate never sees:
+
+| Model | With the gate | Without the gate |
+|---|---|---|
+| nemotron-3-ultra-550b-a55b | 2/68 = 3% [1%, 10%] | 20/75 = 27% [18%, 38%] |
+| nemotron-3.5-lightning-30b-a3b | 0/50 = 0% [0%, 7%] | 31/75 = 41% [31%, 53%] |
+
+k/n = rate [Wilson 95% interval], over attempts correlated across repeats; per unit the gap holds
+(`eval/results/20261118T140452Z-5b7edb/summary.md`). The test buildings are synthetic, and no domain expert has
+reviewed any rule.
+
+**Run it** (Windows; Python 3.11 or 3.12, Node.js 20+): `cd backend; py -3.11 -m venv .venv; .venv\Scripts\Activate.ps1;
+pip install -e ".[dev]"; cd ..\frontend; npm ci; cd ..; .\scripts\demo.ps1`, then "Open sample A" at
+http://localhost:5173/app. Details are in [Quickstart](#quickstart).
+
+**For jurors:** [`submission/`](submission/) holds the deck facts with their sources (`submission/deck-facts.md`),
+the demo script, a run guide, the sample outputs with validated BCF files, and the slide screens.
+
+![Sample A audited: the plain-language verdict above the 3D view](submission/screens/03-verdict-sample-a.png)
 
 **Status: research prototype.** Every rule is a draft that no domain expert has reviewed yet, and all test
 buildings are synthetic.
+
+## What NIYAM is, and is not
+
+<!-- site-data: statements. The landing page shows these bullets verbatim (npm run site-data); keep them plain text. -->
+- **Decision aid.** NIYAM is a decision aid, not a legal approval tool: a result is a lead for a person to check, never a building approval.
+- **A person decides what ships.** Rules are drafted from public bye-laws (MBBL 2016 and the Telangana Building Rules 2012 base text, amendments not applied), and a person approves what enters the rulepack. No domain expert has reviewed any rule yet.
+- **Four verdicts.** Every element gets passed, failed, unchecked or out_of_scope. Missing data gives unchecked, never passed.
+- **Headline metric: wrong_shipped.** wrong_shipped is the share of shipped rules that are wrong on held-out test buildings the gate never sees. In run 2, with the gate: 2/68 = 3% [1%, 10%] (nemotron-3-ultra) and 0/50 = 0% [0%, 7%] (nemotron-3.5-lightning); without it: 20/75 = 27% [18%, 38%] and 31/75 = 41% [31%, 53%]. Each figure is k/n = rate [Wilson 95% interval], counted over attempts, which are correlated across 3 repeats.
+- **Re-scored after the millimetre fix.** Run 2 and the Telangana run were re-scored after the millimetre fix, and 0 of 240 geometric outcomes changed. This is a re-score of the stored candidates, not a re-run.
+- **Where the fix was tested.** The millimetre fix was verified on a hand-written IFC file and on one SketchUp-exported file, not on Revit or ArchiCAD exports.
+- **Real models lack the data.** On the two real buildingSMART models most rules return unchecked or find nothing to check, because the data they need (for example Pset_SpaceCommon.Category on rooms) is missing.
+- **Post hoc, labelled.** The two reading-dependent units (MBBL2016-4.8.2#1, MBBL2016-5.4.1#b2) were flagged after seeing the results, and the sensitivity table without them is post hoc, not pre-registered.
+- **Telangana is a case study.** Only 2 Telangana units were turned into rules, from 55 ingested clauses, so Telangana is reported as a case study with counts, not as a headline rate.
+<!-- /site-data: statements -->
 
 ## Pipeline
 
@@ -42,12 +81,12 @@ Pilot run 1's reports use the older format: no unit-level tables, no source sect
 
 ## Quickstart
 
-Requirements: Python 3.11, Node.js 20+, git.
+Requirements: Python 3.11 or 3.12 (the backend refuses 3.13 and newer: `requires-python = ">=3.11,<3.13"`), Node.js 20+, git. On Windows `py -3.11` picks the right one when several are installed.
 
 **Windows (PowerShell)**
 
 ```powershell
-cd backend; python -m venv .venv; .venv\Scripts\Activate.ps1; pip install -e ".[dev]"; pytest -q; cd ..
+cd backend; py -3.11 -m venv .venv; .venv\Scripts\Activate.ps1; pip install -e ".[dev]"; pytest -q; cd ..
 cd frontend; npm ci; npm test; cd ..
 .\scripts\demo.ps1          # starts API + web app, opens http://localhost:5173, Ctrl+C stops both
 ```
@@ -71,8 +110,8 @@ python -m app.audit.cli run ../fixtures/samples/sample_a_mm.ifc --out ../eval/ru
 
 It prints a per-rule table and writes `report.json`, `report.html` and `issues.bcf`. In the web app the landing
 page is at `/` and the checker at `/app`: pick "Sample A" (doors) or "Sample D" (rooms and stairs), or open
-`/app?sample=sample_a_mm` directly. Screenshots are in `docs/screenshots/` (`landing-desktop.png`,
-`app-sample-a.png`, `app-selected.png`).
+`/app?sample=sample_a_mm` directly. The final screenshots are in `submission/screens/` (1920x1080, with a
+1440x900 set), regenerated by `npx playwright test shots` in `frontend/`.
 
 ### What to add to your model before submitting
 
@@ -122,12 +161,23 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 - **Millimetre geometry before the fix.** Until branch fix-mm-units the geometry helpers scaled millimetre models
   twice (rooms 10^6 too small in area, 10^3 too low), and the fixtures stored millimetre shapes 1000x too large, so the
   two cancelled on every fixture. Fixed and regenerated (`STATUS.md`). Run 2 and the Telangana case study predate the
-  fix; their stored candidates were re-scored, not re-run, and no outcome changed (`eval/results/rescore-after-mm-fix/`).
+  fix; their stored candidates were re-scored, not re-run, and 0 of 240 geometric outcomes changed
+  (`eval/results/rescore-after-mm-fix/`). The fix was verified on a hand-written IFC file and one SketchUp export, not
+  on Revit or ArchiCAD exports.
 - **Small n.** 27 units: 25 MBBL (22 distinct), so every evaluation interval is wide, and 2 Telangana units, reported only as a case study with counts (`docs/evaluation.md`).
+
+## Roadmap
+
+<!-- site-data: roadmap. Landing sheet A-11 lists these verbatim (npm run site-data). -->
+- Expert review of every rule, starting with the disputed ones.
+- Site geometry, so setbacks and plot rules can be checked.
+- The National Building Code in the corpus, for room sizes and heights.
+- Tests on real exports from Revit, ArchiCAD and other tools.
+<!-- /site-data: roadmap -->
 
 ## More
 
-- `docs/evaluation.md`: metrics, held-out fixtures, the first real run.
+- `docs/evaluation.md`: metrics, held-out fixtures, and the headline run 2 table.
 - `docs/specgen.md` and `docs/spec-backlog.md`: rule specs and what they cannot express.
 - `docs/real-models.md`: two real IFC4 exports run through the audit, and what they lack.
 - `docs/geometric-gate.md`: the Python sandbox and what it does not enforce.
@@ -137,10 +187,27 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 - `cd frontend && npm run docs:pdf`: rebuilds the PDF versions of these documents that the landing page footer offers for reading and download.
 - `cd frontend && npm run site-data`: regenerates every number the landing page shows from committed results.
 - `python scripts/check_public_ready.py`: scans the tree and history for secrets and personal paths.
+- `python scripts/check_numbers.py [--tests]`: checks every number in the README, STATUS, docs, submission pack and
+  landing data against the committed results (also run by `backend/tests/test_check_numbers.py`).
+
+## Team
+
+Team **Abhyudaya**, B V Raju Institute of Technology (BVRIT), Narsapur, Telangana: Nikhil Mamilla, Yagna Sri Hasa,
+G Nikhitha, D Sahithi and G Sahithi. Mentor: Dr. Lanke Pallavi, Associate Professor & Associate HoD.
+
+Entry to the DBI 2026 Student Competition (CDCPIndia / buildingSMART India), theme "AI, Automation and Digital
+Workflows" (secondary: Integrated BIM and Information Management). Finals: 17 Dec 2026, IIT Bombay.
 
 ## License
 
 MIT (see `LICENSE`). Clause text is quoted from the publicly available MoHUA Model Building Bye-Laws 2016 and the
 Telangana Building Rules 2012 (G.O.Ms.No.168) for research purposes; the source PDFs are not redistributed
-(`rules/source/` is ignored). The two models in `fixtures/real/` are (C) buildingSMART International, CC BY 4.0
-(`fixtures/real/README.md`).
+(`rules/source/` is ignored). The two models in `fixtures/real/` are (C) buildingSMART International, CC BY 4.0,
+redistributed unmodified with attribution (`fixtures/real/README.md`). The official buildingSMART IDS test cases
+(CC BY-ND 4.0) are not redistributed: only findings from them are committed (`docs/notes-ids-official-testcases.md`).
+No other buildingSMART sample files are in the repository.
+
+The landing page's button, section nav and card-stack components were originally adapted from React Bits (MIT +
+Commons Clause) and have since been rewritten from scratch as original CSS/TypeScript, so the whole repository is
+MIT; every shipped package, font and data file is listed with its licence in `THIRD_PARTY_NOTICES.md`. To cite
+NIYAM, see `CITATION.cff`.

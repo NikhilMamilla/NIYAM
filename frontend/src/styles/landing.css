@@ -550,7 +550,7 @@ main:focus { outline: none; }
   color: rgba(255, 255, 255, 0.95);
 }
 
-.accordion-header h4 {
+.accordion-header h3 {
   font-family: var(--font-sans);
   font-size: var(--step-0);
   font-weight: 600;
@@ -717,15 +717,14 @@ main:focus { outline: none; }
   mix-blend-mode: luminosity;
   opacity: 0.92;
   transition: opacity var(--dur-3) var(--ease-out);
-  transform: scale(1.15);
+}
+@media (min-width: 1100px) {
+  /* only in the two-column layout is there room for the 1.15 scale; narrower it bled past the sheet */
+  .problem-img { transform: scale(1.15); }
 }
 
 .problem-img:hover {
   opacity: 1;
-}
-@media (max-width: 640px) {
-  /* the 1.15 scale would bleed past the sheet's padding on a phone */
-  .problem-img { transform: none; }
 }
 
 .problem-figure figcaption {
@@ -2320,7 +2319,11 @@ code {
 /* Side-by-side buttons: one width, one height */
 .btn-row:has(> .specular-button) { display: grid; grid-template-columns: repeat(2, 1fr); width: fit-content; max-width: 100%; align-items: stretch; }
 .btn-row > .specular-button { min-height: 52px; text-align: center; }
-@media (max-width: 560px) { .btn-row:has(> .specular-button) { width: 100%; } }
+@media (max-width: 560px) {
+  /* two equal columns that may shrink below the longer label, which then wraps (as in the CTA) */
+  .btn-row:has(> .specular-button) { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .btn-row > .specular-button { min-width: 0; padding: 12px 10px; white-space: normal; line-height: 1.2; }
+}
 
 /* ─── Mobile-only fixes ─────────────────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -2431,3 +2434,16 @@ code {
 .bsi-logo { display: block; width: 2.2rem; height: 2.2rem; object-fit: contain; background: #fff; border-radius: 8px; padding: 2px; filter: none; }
 
 .info-card-icon .flag { display: block; width: 2.2rem; height: auto; border-radius: 3px; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
+
+/* The README's "What NIYAM is, and is not" statements (site-data.json), in the hero and on sheet A-11. */
+.hero-aid { max-width: 52ch; margin: calc(-1 * var(--s-3)) 0 var(--s-5); font-size: var(--step--1); line-height: 1.5; color: var(--ink-2); }
+.hero-aid strong { color: var(--ink); }
+.statements { margin-top: var(--s-4); border: 1px solid var(--ink); background: var(--panel); padding: var(--s-4); box-shadow: var(--shadow-paper-1); }
+.statements h3 { margin: 0 0 var(--s-3); }
+.statements dl { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: var(--s-3) var(--s-4); }
+.statement dt { font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.statement dd { margin: 0; font-size: var(--step--1); line-height: 1.5; color: var(--ink-2); }
+.statements .meta { margin: var(--s-3) 0 0; }
+
+/* Long identifiers (TGBR2012-5#fxi, Pset_SpaceCommon.Category, ...) wrap instead of pushing past a phone's edge. */
+.quotes li, .readiness li, .quotes .meta, .readiness .meta { overflow-wrap: anywhere; min-width: 0; }

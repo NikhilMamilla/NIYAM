@@ -3,6 +3,10 @@
 Two real authoring-tool exports were run through the existing audit, with no LLM involved. **No compliance claim is
 made for any real building.** A rule that checks nothing says nothing about whether the building complies.
 
+<!-- site-data: summary. Landing sheet A-08 shows this paragraph verbatim (npm run site-data). -->
+We ran the audit on two real exports from an authoring tool (a buildingSMART sample scene, exported from SketchUp). Nothing passed and nothing failed. The rooms did not say what kind of room they are, and there were no doors or stairs, so every rule either found nothing to check or marked the rooms "could not be checked". That is the honest finding: the bottleneck is the data in the model, not the rules.
+<!-- /site-data: summary -->
+
 ## What we tried
 
 | File | Source | Licence | Schema | Tool | Length unit | IfcDoor | IfcSpace | IfcStairFlight |
@@ -44,13 +48,13 @@ with rulepack v0, re-run after the fix, gives the same counts as the table above
 verdicts and reasons as before it (the 27-rule pack was not re-run): the two room rules return "unchecked" because the
 rooms declare no Category, which each check reads before it calls a measuring helper, and the stair rule finds no
 IfcStairFlight, so the fixed geometry helpers are never reached on these two files and the missing data, not the unit,
-decides the verdict. Measured directly with the helpers,
+decides the verdict. Measured directly with the helpers (`tests/test_length_units.py`),
 the living room (geometry spanning 4.95 x 3.8 x 2.2 m):
 
 | | floor area | height |
 |---|---|---|
-| before the fix | 0.0000185 m2 | 0.0022 m |
-| after the fix | 18.5 m2 | 2.2 m |
+| before the fix | 0.000018495 m2 | 0.0022 m |
+| after the fix | 18.495 m2 | 2.2 m |
 
 ## What a real model must carry for NIYAM to check it
 

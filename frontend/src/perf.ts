@@ -1,4 +1,4 @@
-// One place that decides whether this device gets the lighter experience (no WebGL button light, no blur filters).
+// One place that decides whether this device gets the lighter experience (no blur filters, fewer particles).
 type Nav = Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
 
 export const isLowEnd = (): boolean => {

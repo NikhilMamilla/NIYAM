@@ -49,6 +49,7 @@ def test_audit_happy_path_and_downloads(client, data_dir):
     assert html.status_code == 200 and html.headers["content-type"].startswith("text/html")
     assert "attachment" not in html.headers["content-disposition"] and audit_id in html.headers["content-disposition"]
     assert "NIYAM audit report" in html.text
+    assert "<code>sample_a_mm.ifc</code>" in html.text  # the uploaded file's name, not the stored model.ifc
 
     bcf = client.get(f"/api/audit/{audit_id}/issues.bcf")
     assert bcf.status_code == 200 and bcf.headers["content-type"] == "application/octet-stream"
@@ -67,6 +68,7 @@ def test_client_filename_is_never_used_for_paths(client, data_dir):
     [audit_dir] = list(data_dir.iterdir())
     assert sorted(p.name for p in audit_dir.iterdir()) == ["issues.bcf", "model.ifc", "report.html", "report.json"]
     assert not (data_dir.parent / "evil name.ifc").exists()
+    assert json.loads((audit_dir / "report.json").read_text(encoding="utf-8"))["ifc_file"] == "evil name.ifc"  # shown, never a path
 
 
 def test_oversize_upload_rejected(data_dir):

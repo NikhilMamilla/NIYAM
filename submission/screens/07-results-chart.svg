@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="IBM Plex Sans, Segoe UI, Arial, sans-serif">
+<rect width="1600" height="900" fill="#F5F0E4"/>
+<text x="60" y="80" font-size="38" fill="#191F30" font-weight="600">With the gate, far fewer wrong rules reach the rulepack</text>
+<text x="60" y="122" font-size="22" fill="#3D4559">Run 2 (20261118T140452Z-5b7edb): 25 MBBL units x 3 repeats = 75 attempts per model and mode; dot = rate, bar = Wilson 95% interval</text>
+<text x="60" y="158" font-size="18" fill="#5A6478">Models: nemotron-3-ultra-550b-a55b and nemotron-3.5-lightning-30b-a3b (NVIDIA, open), temperature 0.0</text>
+<text x="360" y="220" font-size="21" fill="#191F30" font-weight="600">wrong_shipped: wrong on held-out / shipped (lower is better)</text>
+<line x1="360.0" y1="250" x2="360.0" y2="540" stroke="#C8BFA3" stroke-width="1"/>
+<text x="360.0" y="570" font-size="18" fill="#5A6478" text-anchor="middle">0%</text>
+<line x1="490.0" y1="250" x2="490.0" y2="540" stroke="#C8BFA3" stroke-width="1"/>
+<text x="490.0" y="570" font-size="18" fill="#5A6478" text-anchor="middle">25%</text>
+<line x1="620.0" y1="250" x2="620.0" y2="540" stroke="#C8BFA3" stroke-width="1"/>
+<text x="620.0" y="570" font-size="18" fill="#5A6478" text-anchor="middle">50%</text>
+<line x1="750.0" y1="250" x2="750.0" y2="540" stroke="#C8BFA3" stroke-width="1"/>
+<text x="750.0" y="570" font-size="18" fill="#5A6478" text-anchor="middle">75%</text>
+<line x1="880.0" y1="250" x2="880.0" y2="540" stroke="#C8BFA3" stroke-width="1"/>
+<text x="880.0" y="570" font-size="18" fill="#5A6478" text-anchor="middle">100%</text>
+<line x1="364.21365336236" y1="280" x2="412.54408309904" y2="280" stroke="#3447C7" stroke-width="4" stroke-linecap="round"/>
+<circle cx="375.29411764705884" cy="280" r="9" fill="#3447C7" stroke="#F5F0E4" stroke-width="2"/>
+<text x="426.54408309904" y="286" font-size="17" fill="#191F30" text-anchor="start">2/68 = 3% [1%, 10%]</text>
+<text x="336" y="286" font-size="18" fill="#191F30" text-anchor="end">nemotron-3-ultra, with gate</text>
+<line x1="453.4768308838" y1="350" x2="555.68015489204" y2="350" stroke="#8A5200" stroke-width="4" stroke-linecap="round"/>
+<circle cx="498.66666666666663" cy="350" r="9" fill="#D99A1E" stroke="#F5F0E4" stroke-width="2"/>
+<text x="569.68015489204" y="356" font-size="17" fill="#191F30" text-anchor="start">20/75 = 27% [18%, 38%]</text>
+<text x="336" y="356" font-size="18" fill="#191F30" text-anchor="end">nemotron-3-ultra, no gate</text>
+<line x1="360.0" y1="420" x2="397.10075154916" y2="420" stroke="#3447C7" stroke-width="4" stroke-linecap="round"/>
+<circle cx="360.0" cy="420" r="9" fill="#3447C7" stroke="#F5F0E4" stroke-width="2"/>
+<text x="411.10075154916" y="426" font-size="17" fill="#191F30" text-anchor="start">0/50 = 0% [0%, 7%]</text>
+<text x="336" y="426" font-size="18" fill="#191F30" text-anchor="end">nemotron-3.5-lightning, with gate</text>
+<line x1="520.56419147808" y1="490" x2="633.6941175243601" y2="490" stroke="#8A5200" stroke-width="4" stroke-linecap="round"/>
+<circle cx="574.9333333333334" cy="490" r="9" fill="#D99A1E" stroke="#F5F0E4" stroke-width="2"/>
+<text x="647.6941175243601" y="496" font-size="17" fill="#191F30" text-anchor="start">31/75 = 41% [31%, 53%]</text>
+<text x="336" y="496" font-size="18" fill="#191F30" text-anchor="end">nemotron-3.5-lightning, no gate</text>
+<text x="990" y="220" font-size="21" fill="#191F30" font-weight="600">Held-out correct / all attempts (higher is better)</text>
+<line x1="990.0" y1="250" x2="990.0" y2="540" stroke="#C8BFA3" stroke-width="1"/>
+<text x="990.0" y="570" font-size="18" fill="#5A6478" text-anchor="middle">0%</text>
+<line x1="1120.0" y1="250" x2="1120.0" y2="540" stroke="#C8BFA3" stroke-width="1"/>
+<text x="1120.0" y="570" font-size="18" fill="#5A6478" text-anchor="middle">25%</text>
+<line x1="1250.0" y1="250" x2="1250.0" y2="540" stroke="#C8BFA3" stroke-width="1"/>
+<text x="1250.0" y="570" font-size="18" fill="#5A6478" text-anchor="middle">50%</text>
+<line x1="1380.0" y1="250" x2="1380.0" y2="540" stroke="#C8BFA3" stroke-width="1"/>
+<text x="1380.0" y="570" font-size="18" fill="#5A6478" text-anchor="middle">75%</text>
+<line x1="1510.0" y1="250" x2="1510.0" y2="540" stroke="#C8BFA3" stroke-width="1"/>
+<text x="1510.0" y="570" font-size="18" fill="#5A6478" text-anchor="middle">100%</text>
+<line x1="1399.44987093556" y1="280" x2="1476.49446651572" y2="280" stroke="#3447C7" stroke-width="4" stroke-linecap="round"/>
+<circle cx="1447.6" cy="280" r="9" fill="#3447C7" stroke="#F5F0E4" stroke-width="2"/>
+<text x="1385.44987093556" y="286" font-size="17" fill="#191F30" text-anchor="end">66/75 = 88% [79%, 94%]</text>
+<line x1="1314.31984510796" y1="350" x2="1416.5231691162" y2="350" stroke="#8A5200" stroke-width="4" stroke-linecap="round"/>
+<circle cx="1371.3333333333333" cy="350" r="9" fill="#D99A1E" stroke="#F5F0E4" stroke-width="2"/>
+<text x="1300.31984510796" y="356" font-size="17" fill="#191F30" text-anchor="end">55/75 = 73% [62%, 82%]</text>
+<line x1="1278.17061579332" y1="420" x2="1386.71725150928" y2="420" stroke="#3447C7" stroke-width="4" stroke-linecap="round"/>
+<circle cx="1336.6666666666665" cy="420" r="9" fill="#3447C7" stroke="#F5F0E4" stroke-width="2"/>
+<text x="1264.17061579332" y="426" font-size="17" fill="#191F30" text-anchor="end">50/75 = 67% [55%, 76%]</text>
+<line x1="1236.30588247564" y1="490" x2="1349.43580852192" y2="490" stroke="#8A5200" stroke-width="4" stroke-linecap="round"/>
+<circle cx="1295.0666666666666" cy="490" r="9" fill="#D99A1E" stroke="#F5F0E4" stroke-width="2"/>
+<text x="1222.30588247564" y="496" font-size="17" fill="#191F30" text-anchor="end">44/75 = 59% [47%, 69%]</text>
+<circle cx="360" cy="630" r="9" fill="#3447C7"/><text x="378" y="636" font-size="19" fill="#191F30">With the gate</text>
+<circle cx="560" cy="630" r="9" fill="#D99A1E" stroke="#8A5200" stroke-width="2"/><text x="578" y="636" font-size="19" fill="#191F30">Without the gate</text>
+<text x="60" y="810" font-size="18" fill="#3D4559">Attempts are correlated across the 3 repeats, so these intervals overstate precision; counted per unit the gap holds (summary.md, Unit level).</text>
+<text x="60" y="840" font-size="18" fill="#3D4559">Synthetic test buildings; draft rules not reviewed by an expert; no difference between the two models may be claimed.</text>
+<text x="60" y="870" font-size="16" fill="#5A6478">Source: eval/results/20261118T140452Z-5b7edb/summary.md and summary.csv (labels copied verbatim).</text>
+</svg>

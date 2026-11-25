@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { SiteData } from "../data/buildSiteData";
 import type { Cell, Rate } from "../data/siteData";
 import siteJson from "../data/site-data.json";
-import { CONTEXT, DOC_GROUPS, TEAM } from "../content/site";
+import { COMPETITION, DOC_GROUPS, TEAM } from "../content/site";
 import { Term } from "../glossary";
 import { IconFailed, IconOutOfScope, IconPassed, IconUnchecked } from "../icons";
 import { Link } from "../router";
@@ -13,13 +13,14 @@ import { HeroDrawing } from "./Hero";
 import { ProblemIllustration } from "./ProblemIllustration";
 import GooeyNav from "./GooeyNav";
 import Button from "../Button";
-import { isLowEnd } from "../perf";
 import CardSwap, { type CardSwapHandle } from "./CardSwap";
 import ArchitecturalJourney from "./ArchitecturalJourney";
 
 const site = siteJson as unknown as SiteData;
 const h = site.headline;
 const SAMPLE_LINK = "/app?sample=sample_a_mm";
+/** A context fact from docs/sources.md, by its title there. */
+const fact = (title: string) => site.context.find((c) => c.title === title)!.text;
 
 const cell = (list: Cell[], model: "ultra" | "lightning", mode: "gated" | "ungated") =>
   list.find((c) => c.model.includes(model) && c.mode === mode)!;
@@ -108,6 +109,7 @@ function HeroSheet() {
           draft only if it behaves correctly on test buildings, and then audits your <Term k="IFC">IFC</Term> building model
           in 3D. It is a research prototype: {site.units.total} draft rules, synthetic test buildings, no expert review yet.
         </p>
+        <p className="hero-aid"><strong>{site.statements[0]!.title}.</strong> {site.statements[0]!.text}</p>
         <div className="btn-row hero-actions">
           <Button as={Link} to="/app" primary>Open the app</Button>
           <Button as={Link} to={SAMPLE_LINK}>Try a sample building</Button>
@@ -153,14 +155,14 @@ function ProblemSheet() {
   };
 
   return (
-    <Sheet id="problem" sheet="A-02" title="Plans are still checked by reading" className="sheet-dark sheet-fullheight">
+    <Sheet id="problem" sheet="A-02" title="Plans are still checked as drawings" className="sheet-dark sheet-fullheight">
       <div className="two-col">
         <div className="prose">
           <p>
-            In most Indian cities, officers manually compare 2D building plans against written rules covering setbacks, room sizes and exit widths. Existing digital tools keep these rules locked in proprietary software, hiding how regulations become checks.
+            In most Indian cities, building plans are submitted and checked as 2D drawings against written rules covering setbacks, room sizes and exit widths. Where the check is automated, the rules sit inside proprietary software, so no one outside can see how a regulation became a check.
           </p>
           <p>
-            India lacks an open, machine-readable version of its building bye-laws. NIYAM aims to change this through transparent, traceable checks, where every result links to its original clause and accuracy is measured openly.
+            India lacks an open, machine-readable version of its building bye-laws. NIYAM aims to change this through transparent, traceable checks, where every result links to its original clause and the rate of wrong rules is measured in the open.
           </p>
           <div className="info-accordion">
             <div 
@@ -169,11 +171,11 @@ function ProblemSheet() {
             >
               <div className="accordion-header">
                 <div className="info-card-icon"><FlagIndia /></div>
-                <h4>India</h4>
+                <h3>India</h3>
                 <span className="accordion-toggle">{expandedCard === 0 ? '−' : '+'}</span>
               </div>
               <div className="accordion-content">
-                <p>{CONTEXT.nbc}</p>
+                <p>{fact("India")}</p>
               </div>
             </div>
             
@@ -183,11 +185,11 @@ function ProblemSheet() {
             >
               <div className="accordion-header">
                 <div className="info-card-icon"><FlagSingapore /></div>
-                <h4>Singapore</h4>
+                <h3>Singapore</h3>
                 <span className="accordion-toggle">{expandedCard === 1 ? '−' : '+'}</span>
               </div>
               <div className="accordion-content">
-                <p>{CONTEXT.singapore}</p>
+                <p>{fact("Singapore")}</p>
               </div>
             </div>
             
@@ -197,11 +199,11 @@ function ProblemSheet() {
             >
               <div className="accordion-header">
                 <div className="info-card-icon"><img className="bsi-logo" src="/buildingsmart-logo.png" alt="" width="36" height="36" loading="lazy" /></div>
-                <h4>buildingSMART</h4>
+                <h3>buildingSMART</h3>
                 <span className="accordion-toggle">{expandedCard === 2 ? '−' : '+'}</span>
               </div>
               <div className="accordion-content">
-                <p>{CONTEXT.ids}</p>
+                <p>{fact("buildingSMART")}</p>
               </div>
             </div>
           </div>
@@ -272,7 +274,7 @@ function GateSheet() {
           reason, for up to {h.provenance.maxRepairs} repairs. If it never passes, a person has to look at it.
         </p>
         <p>
-          The gate uses two small test buildings per rule. Separate held-out buildings, which the gate never sees, are
+          The gate uses two small test buildings per rule. Separate <Term k="held-out">held-out</Term> buildings, which the gate never sees, are
           used only to measure how often a passed draft is still wrong.
         </p>
       </div>
@@ -373,10 +375,10 @@ function EvaluationSheet() {
 
       <div className="figure-block">
         <div className="figure-head">
-          <h3>Wrong rules shipped</h3>
+          <h3>Wrong rules shipped (<Term k="wrong_shipped">wrong_shipped</Term>)</h3>
           <div className="segmented" role="radiogroup" aria-label="Count over">
-            <Button role="radio" aria-checked={counted === "items"} size="sm" primary={counted === "items"} aria-pressed={counted === "items"} onClick={() => setCounted("items")}>Every attempt</Button>
-            <Button role="radio" aria-checked={counted === "units"} size="sm" primary={counted === "units"} aria-pressed={counted === "units"} onClick={() => setCounted("units")}>Per rule</Button>
+            <Button role="radio" aria-checked={counted === "items"} size="sm" primary={counted === "items"} onClick={() => setCounted("items")}>Every attempt</Button>
+            <Button role="radio" aria-checked={counted === "units"} size="sm" primary={counted === "units"} onClick={() => setCounted("units")}>Per rule</Button>
           </div>
         </div>
         <p className="figure-note">
@@ -436,7 +438,7 @@ function EvaluationSheet() {
           Excluded after seeing the results, because the spec's reading and the clause's literal text disagree
           ({h.posthoc.excluded.join(", ")}). Not a pre-registered analysis.
         </p>
-        <NumbersTable caption="Post-hoc sensitivity" head={["Model", "Mode", "Attempts", "Correct on held-out", "Wrong shipped"]}
+        <NumbersTable caption="Post-hoc sensitivity" head={["Model", "Mode", "Attempts", "Correct on held-out", "wrong_shipped"]}
                       rows={h.posthoc.all.map((c) => [modelLabel(c.model), c.mode, String(c.n), harness(c.heldoutCorrect), harness(c.wrongShipped)])} />
       </details>
       <p className="handoff">All of this is on synthetic test buildings. The next sheet asks whether the approach carries to a second jurisdiction.</p>
@@ -548,12 +550,7 @@ function RealitySheet() {
   return (
     <Sheet id="reality" sheet="A-08" title="Reality check: two real models could not be checked" className="sheet-reality">
       <div className="prose">
-        <p>
-          We ran the audit on two real exports from an authoring tool (a buildingSMART sample scene, exported from
-          SketchUp). Nothing passed and nothing failed. The rooms did not say what kind of room they are, and there were no
-          doors or stairs, so every rule either found nothing to check or marked the rooms “could not be checked”. That is
-          the honest finding: the bottleneck is the data in the model, not the rules.
-        </p>
+        <p>{site.realModelsSummary}</p>
       </div>
       <div className="table-wrap">
         <table className="data-table">
@@ -594,13 +591,24 @@ function RealitySheet() {
 const icon = (d: string) => (
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={d} /></svg>
 );
+// The images are written by e2e/shots.spec.ts (1440x900 set, copied into public/screens/); the README and
+// submission/screens/ use the same screenshots.
 const DEMO = [
-  { src: "/screens/demo-1-load.png", title: "Load a building", icon: icon("M8 11V2.5M4.5 6 8 2.5 11.5 6M2.5 10.5v3h11v-3"),
-    step: "Drop an IFC4 file, or choose sample A. The server audits it in a moment." },
+  { src: "/screens/demo-1-start.png", title: "Load a building", icon: icon("M8 11V2.5M4.5 6 8 2.5 11.5 6M2.5 10.5v3h11v-3"),
+    step: "Drop an IFC4 file, or open a sample. The start screen shows the three steps.",
+    alt: "The start screen: three numbered steps, a drop zone for an IFC4 file and one card per sample building." },
   { src: "/screens/demo-2-verdict.png", title: "Read the verdict", icon: icon("M2 3h12L9.5 8.5V13l-3-1.5V8.5L2 3Z"),
-    step: "The answer comes first, in plain words. Below it the 3D view colours every element by verdict." },
-  { src: "/screens/demo-3-select.png", title: "Open a failing door", icon: icon("M3 2.5v11l3-3 2 3.5 1.5-.8-2-3.4H11L3 2.5Z"),
-    step: "Select a red door. The panel says which rule it breaks, why, and quotes the clause." },
+    step: "The answer comes first, in plain words, above the 3D view that colours every element by verdict.",
+    alt: "Sample A audited: the plain-language verdict and counts at the top, the 3D view of the doors below it." },
+  { src: "/screens/demo-3-sample-d.png", title: "Rooms and stairs in 3D", icon: icon("M2 13.5h12M3.5 13.5V6L8 2.5 12.5 6v7.5M6.5 13.5v-4h3v4"),
+    step: "Sample D, a millimetre model, drawn at its real size, with failing rooms and stairs in red.",
+    alt: "Sample D in the 3D view at its real size: rooms and stair flights coloured by verdict." },
+  { src: "/screens/demo-4-clause.png", title: "Open a failing door", icon: icon("M3 2.5v11l3-3 2 3.5 1.5-.8-2-3.4H11L3 2.5Z"),
+    step: "Select a red door. The panel says which rule it breaks and why, and quotes the clause.",
+    alt: "Door A-G-03 selected: the detail panel shows the failed width rule, the reason and the clause text from page 100." },
+  { src: "/screens/demo-5-report.png", title: "Export the report", icon: icon("M4 2h5.5L12 4.5V14H4V2ZM9.5 2v2.5H12M6 8h4M6 10.5h4"),
+    step: "One self-contained HTML report per audit, plus BCF 2.1 issues and JSON.",
+    alt: "The HTML report of sample A: the summary and, per rule, the clause text and the failed and unchecked elements." },
 ];
 
 function DemoSheet() {
@@ -642,20 +650,20 @@ function DemoSheet() {
           <div className="demo-swap">
             <CardSwap
               ref={swap}
-              items={DEMO.map((d) => ({ title: d.title, image: d.src, icon: d.icon, alt: `App screenshot: ${d.step}` }))}
+              items={DEMO.map((d) => ({ title: d.title, image: d.src, icon: d.icon, alt: d.alt }))}
               width={680}
               height={470}
               cardDistance={44}
               verticalDistance={50}
               depth={80}
               skewAmount={4}
-              visibleCards={3}
+              visibleCards={DEMO.length}
               delay={5000}
               theme="light"
               onChange={setFront}
             />
           </div>
-          <figcaption className="demo-cap mono">Screenshots of the real app on synthetic sample building A. Drag, click or use the arrow keys.</figcaption>
+          <figcaption className="demo-cap mono">Screenshots of the real app on synthetic sample buildings A and D. Drag, click or use the arrow keys.</figcaption>
         </figure>
       </div>
     </Sheet>
@@ -691,17 +699,26 @@ function StandardsSheet() {
    stamp. Nothing here is a list of excuses; it is the missing geometry. */
 const LIMITS = [
   { title: "No rule is reviewed.", body: <>All {site.units.total} rules are drafts until a domain expert signs them off.</>, span: 6 },
-  { title: "Synthetic buildings.", body: "Every accuracy number comes from small generated test buildings.", span: 6 },
-  { title: "Small numbers.", body: <>{h.unitsInRun} rules ({site.units.distinct} distinct in all), {h.provenance.repeats} repeats, {h.provenance.models.length} models; every interval is wide.</>, span: 4 },
+  { title: "Synthetic buildings.", body: "Every rate on this page comes from small generated test buildings.", span: 6 },
+  { title: "Small numbers.", body: <>{h.unitsInRun} rules in the headline run ({h.unitsInRun - site.units.duplicates.length} distinct), {h.provenance.repeats} repeats, {h.provenance.models.length} models; every interval is wide.</>, span: 4 },
   { title: "One value per rule.", body: "Each check tests one value of one element; ratios, distances and setbacks are not encoded.", span: 4 },
   { title: "Conditions dropped.", body: "Building-type and use conditions in a clause are left out and noted for the reviewer.", span: 4 },
   { title: "Disputed readings.", body: <>{site.units.readingDependent.length} rules depend on how a clause is read; they are listed first for review.</>, span: 7 },
-  { title: "No real building checked.", body: "The real exports we tried lacked the data.", span: 5 },
+  { title: "No real building checked.", body: "The two real exports we tried lacked the data, so their rules returned unchecked or found nothing to check.", span: 5 },
 ];
 
 function LimitsSheet() {
   return (
     <Sheet id="limits" sheet="A-11" title="What this does not show, yet" className="sheet-limits">
+      <section className="statements" aria-labelledby="statements-h">
+        <h3 id="statements-h">What NIYAM is, and is not</h3>
+        <dl>
+          {site.statements.map((s) => (
+            <div key={s.title} className="statement"><dt>{s.title}</dt><dd>{s.text}</dd></div>
+          ))}
+        </dl>
+        <p className="meta">The same sentences open the project README.</p>
+      </section>
       <div className="void-plan">
         <div className="plan-bar mono">
           <span>Plan of what is not drawn</span>
@@ -720,10 +737,7 @@ function LimitsSheet() {
         <div className="plan-notes">
           <div className="plan-notes-head mono">Open work · what comes next</div>
           <ol className="next">
-            <li>Expert review of every rule, starting with the disputed ones.</li>
-            <li>Site geometry, so setbacks and plot rules can be checked.</li>
-            <li>The National Building Code in the corpus, for room sizes and heights.</li>
-            <li>Tests on real exports from Revit, ArchiCAD and other tools.</li>
+            {site.roadmap.map((r) => <li key={r}>{r}</li>)}
           </ol>
         </div>
         <div className="plan-foot mono">
@@ -827,7 +841,7 @@ function Footer() {
 
         <section className="ft-team" aria-labelledby="team-h">
           <p className="ft-label mono">Built by</p>
-          <h2 id="team-h" className="ft-team-name">{TEAM.TEAM_NAME}</h2>
+          <h2 id="team-h" className="ft-team-name">Team {TEAM.TEAM_NAME}</h2>
           <p className="ft-college">
             <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M1.5 6 8 2.5 14.5 6 8 9.5 1.5 6ZM4 7.6v3.2c0 .9 1.8 1.7 4 1.7s4-.8 4-1.7V7.6" /></svg>
             {TEAM.COLLEGE}
@@ -864,6 +878,7 @@ function Footer() {
         <p className="ft-legal">
           <span>A research prototype: the rules are drafts no expert has reviewed yet, so read every result as a lead to check, not as approval.</span>
           <span>Open source under the MIT licence, built on the IFC4, IDS 1.0 and BCF 2.1 standards.</span>
+          <span>Entry to the {COMPETITION.NAME}, theme “{COMPETITION.THEME}” (secondary: {COMPETITION.SECONDARY_THEME}). Finals {COMPETITION.FINALS}.</span>
         </p>
       </div>
     </footer>
@@ -1013,13 +1028,6 @@ export default function Landing() {
           theme="light"
           size="md"
           frame={true}
-          particleCount={isLowEnd() ? 5 : 15}
-          spread={56}
-          animationTime={600}
-          timeVariance={300}
-          gooeyness={0.5}
-          wobble={0.5}
-          hoverEffect={true}
         />
        </div>
       </div>

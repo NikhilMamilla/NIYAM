@@ -93,7 +93,7 @@ the old mapping).
 
 After the fix: `docs/screenshots/viewer-sample_*.png`.
 
-## Phase 13 redesign (branch ui-redesign)
+## Routes, design system and data
 
 **Routes.** A tiny History API router (`src/router.tsx`, no dependency): `/` is the landing page, `/app` the dashboard,
 `/app?sample=<name>` opens a sample. Back/forward and deep links work in `vite` and `vite preview`. The dashboard
@@ -111,15 +111,19 @@ results (`eval/results/*/results.json`), the review sheet, the specs, `docs/real
 gate rejection (`docs/examples/gate-rejection.json`, extracted by `scripts/extract_gate_example.py`) and writes
 `src/data/site-data.json`. Tests check it is current, that its Wilson intervals and counts equal the Python harness's
 CSVs and summaries, and that every number rendered on the landing page traces to it (a hand-typed statistic fails
-`src/landing/Landing.test.tsx`). Context facts in "The problem" (NBC/NBCS dates, Singapore) come from the project brief
-(`src/content/site.ts`) and should be checked against the official notifications before publishing.
+`src/landing/Landing.test.tsx`). The README's "What NIYAM is, and is not" statements are read into the same file and shown verbatim (hero and sheet
+A-11). Context facts in "The problem" (NBC/NBCS, CORENET X, IDS 1.0) live in `src/content/site.ts` and each is checked,
+with its source and access date, in `docs/sources.md`.
 
-**Dashboard.** Fixed regions (load, light table, verdicts); a plain summary sentence first ("2 doors break a rule..."),
-then the status, the distinct-element counts and, behind a disclosure, the per-rule checks; rule filters and search;
-a detail panel that says what is missing and offers the readiness IDS; exports (HTML report, BCF, JSON); a three-step
-empty state and a skippable first-use tour (remembered in localStorage, guarded by try/catch). The UI never says
-"Compliant": the statuses read "Breaks a rule", "Not fully checked", "No issues found", "Nothing checked". The backend's
-HTML report keeps its own wording (backend unchanged).
+**Dashboard: one page, top to bottom.** `/app` opens on a start screen: "Check a building model in three steps"
+with arrows between the steps, a drop zone ("Choose a file" or drop an `.ifc`) and one card per sample (A to E). Loading a
+model replaces it with one column: the headline verdict first, in plain words ("2 doors break a rule..."), with the
+status, the distinct-element counts, the per-rule checks behind a disclosure and the exports (HTML report, BCF, JSON);
+then the wide 3D stage; then the rules grid with filters and search. Selecting an element in the list or in 3D opens a
+detail slide-over that says which rule it breaks or what data is missing, quotes the clause and offers the readiness
+IDS. A "Back" button returns to the start screen. There is no tour and no menu. The UI never says "Compliant": the
+statuses read "Breaks a rule", "Not fully checked", "No issues found", "Nothing checked". The backend's HTML report
+keeps the engine's status names (`docs/audit.md`).
 
 **3D stage (`src/stage.ts`, `src/viewer.ts`).** Procedural sky dome, low warm sun with soft shadows (High quality only),
 a paving grid and fog sized to each model, ACES tone mapping, sRGB output; a "Neutral light" toggle. Verdict outlines are
@@ -130,20 +134,21 @@ and a section slider. The That Open logo overlay is hidden; That Open Engine is 
 
 ## Landing page: navigation, buttons, footer documents and weaker devices
 
-**Navigation.** A floating bar holds the NIYAM wordmark and the section pills (a gooey, animated pill follows the active
-section). Below 1100 px wide it becomes a frosted strip with the wordmark and a hamburger that opens a full-screen menu
+**Navigation.** A floating bar holds the NIYAM wordmark and the section pills (`src/landing/GooeyNav.tsx`: a pill
+behind the active item slides to it on a CSS transition, computed from the item's own `offsetLeft`/`offsetWidth`).
+Below 1100 px wide it becomes a frosted strip with the wordmark and a hamburger that opens a full-screen menu
 of plain section names. The bar stays visible while the hero is in view; further down it hides after 3 seconds without
 activity or when scrolling down, and returns on scroll up, when the cursor nears the top edge, or on a key press. It
 stays put while it has pointer or keyboard focus and while the mobile menu is open.
 
-**One button for the whole project.** `src/Button.tsx` wraps `src/SpecularButton.jsx` (React Bits, with an `as` prop so a
-router link, anchor or label can be a button). Every action button on the landing page and the dashboard uses it, in the
-heading ink colour; `primary` fills it, `tone="light"` is for dark surfaces. All buttons draw their edge light through a
-single shared WebGL context into their own 2D canvas, so any number can be on screen (separate contexts per button
-exceeded the browser limit and showed broken white boxes). Toggles, chips, list rows and the viewer toolbar are not
+**One button for the whole project.** `src/Button.tsx` wraps `src/SpecularButton.tsx`, an original component (an `as`
+prop lets a router link, anchor or label be a button). Every action button on the landing page and the dashboard uses
+it, in the heading ink colour; `primary` fills it, `tone="light"` is for dark surfaces. The edge light is a CSS
+radial-gradient masked down to the border, animated with `@keyframes` and brightened on hover/focus — no WebGL, no
+canvas, so any number of buttons can be on screen at once. Toggles, chips, list rows and the viewer toolbar are not
 action buttons and keep their own styling. Two buttons side by side always share one width and height.
 
-**Documents in the footer.** The eight documents are offered as PDFs (`public/downloads/*.pdf`), built from the
+**Documents (sheet A-12).** The documents are offered as PDFs (`public/downloads/*.pdf`), built from the
 repository's Markdown by `npm run docs:pdf` (`scripts/build-pdfs.mjs`: Markdown to styled HTML to A4 PDF through the
 Chromium that Playwright already installs). The PDFs are committed, so a normal build needs no Chromium. The three data
 files (readiness IDS, review sheet CSV, gate rejection JSON) are copied unchanged by `scripts/sync-downloads.mjs`.

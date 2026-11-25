@@ -48,14 +48,36 @@
 
 .specular-button svg { width: 1.1em; height: 1.1em; flex: none; }
 
-.specular-button__light {
+/* An ambient light ring: a radial-gradient masked down to a 1.5px border, brighter on hover/focus. Replaces
+   the WebGL shader of the original React Bits component with CSS alone. Its idle animation moves only
+   `opacity` (compositor-only), never the gradient position: that paints a fresh gradient every frame and
+   was costly with dozens of buttons animating on one long page. */
+.specular-button::before {
+  content: "";
   position: absolute;
-  inset: -24px;
+  inset: 0;
   z-index: 1;
-  display: block;
-  width: calc(100% + 48px);
-  height: calc(100% + 48px);
+  box-sizing: border-box;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: radial-gradient(90px circle at 15% 20%, var(--sb-line-color, #fff) 0%, transparent 72%);
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.4;
   pointer-events: none;
+  animation: specular-breathe 4s ease-in-out infinite;
+}
+.specular-button:hover::before,
+.specular-button:focus-visible::before { opacity: 0.85; animation-play-state: paused; }
+.specular-button:disabled::before,
+.specular-button[aria-disabled="true"]::before { opacity: 0.15; animation-play-state: paused; }
+@keyframes specular-breathe {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.6; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .specular-button::before { animation: none; }
 }
 
 .specular-button__label {

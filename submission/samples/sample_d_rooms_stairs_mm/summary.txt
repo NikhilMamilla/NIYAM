@@ -1,0 +1,13 @@
+sample_d_rooms_stairs_mm.ifc (IFC4), rulepack v0
+rule               status           passed failed unchecked out_of_scope
+MBBL2016-5.4.2#1   nothing_checked       0      0         0            0
+MBBL2016-5.4.1#b   nothing_checked       0      0         0            0
+MBBL2016-5.4.1#c   nothing_checked       0      0         0            0
+MBBL2016-4.5.2#1   noncompliant          2      1         2            4
+MBBL2016-4.3.1.1#1 noncompliant          1      1         2            5
+MBBL2016-4.17.2#A  noncompliant          1      1         2            1
+overall checks     noncompliant          4      3         6           10
+elements affected: 3 with violations, 5 could not be fully checked, 6 clean (of 14)
+wrote ..\submission\samples\sample_d_rooms_stairs_mm\report.json
+wrote ..\submission\samples\sample_d_rooms_stairs_mm\report.html
+wrote ..\submission\samples\sample_d_rooms_stairs_mm\issues.bcf

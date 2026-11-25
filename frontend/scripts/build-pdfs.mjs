@@ -8,7 +8,7 @@ import { chromium } from "@playwright/test";
 
 const DOCS = [
   { src: "../README.md", title: "NIYAM: project overview", lead: "What NIYAM is, how it works, where it stands today, and how to run it." },
-  { src: "../docs/evaluation.md", title: "Evaluation: method and metrics", lead: "How rule compilation is scored on test buildings the verifier gate never sees, and what the first real run showed." },
+  { src: "../docs/evaluation.md", title: "Evaluation: method and metrics", lead: "How rule compilation is scored on test buildings the verifier gate never sees, and the headline run 2 table." },
   { src: "../docs/spec-backlog.md", title: "Rule specs and what they cannot express", lead: "Which bye-law sentences became machine checks, and why the rest do not fit a single-element template." },
   { src: "../docs/real-models.md", title: "Real IFC models: what the audit could check", lead: "Two real building models run through the audit, and the data they lack." },
   { src: "../docs/modelling-profile.md", title: "What a model must contain", lead: "The data an IFC model needs before NIYAM can check it." },
@@ -22,7 +22,9 @@ const DOCS = [
   { src: "../docs/notes-geometric-spike.md", title: "Geometric tier spike", lead: "Which bye-law sentences compare a value that has to be computed from geometry." },
   { src: "../docs/notes-ifctester.md", title: "ifctester notes", lead: "Verified notes on building and running IDS files with ifctester." },
   { src: "../docs/corpus-candidates.md", title: "Corpus candidates", lead: "Keyword-scored candidate clauses from the bye-laws. Nothing here is selected; every clause stays a candidate until a person marks it." },
-  { src: "../STATUS.md", title: "Project status and open decisions", lead: "What is blocked, what changed in the redesign, and what still needs an owner decision." },
+  { src: "../STATUS.md", title: "Project status and known issues", lead: "What is final, what is still open, and the exact commands to reproduce the tests and the re-score." },
+  { src: "../THIRD_PARTY_NOTICES.md", title: "Third-party notices", lead: "Every shipped package, font, copied component and data file, with its licence and source." },
+  { src: "../docs/sources.md", title: "Sources for the regulatory facts", lead: "The pages behind each date and regulation on the landing page, with access dates." },
 ];
 
 const font = (name, file, weight) =>

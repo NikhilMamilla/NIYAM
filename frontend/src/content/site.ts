@@ -2,22 +2,22 @@
 
 /** Shown in the landing page footer. */
 export const TEAM = {
-  TEAM_NAME: "Team Abhyudaya",
+  TEAM_NAME: "Abhyudaya",
   MEMBERS: ["Nikhil Mamilla", "Yagna Sri Hasa", "G Nikhitha", "D Sahithi", "G Sahithi"],
-  COLLEGE: "B V Raju Institute of Technology",
+  COLLEGE: "B V Raju Institute of Technology (BVRIT), Narsapur, Telangana",
   MENTOR: "Dr. Lanke Pallavi",
   MENTOR_ROLE: "Associate Professor & Associate HoD",
 };
 
-/**
- * Context facts for "The problem". Source: the Phase 13 project brief (not from NIYAM's data); the owner should
- * confirm the wording and dates against the official notifications before publishing.
- */
-export const CONTEXT = {
-  nbc: "India: NBC 2016 has been replaced by the advisory NBCS 2026 (notified 30 April 2026).",
-  singapore: "Singapore: Digital BIM submissions for building approvals become mandatory from 1 October 2026.",
-  ids: "buildingSMART: IDS 1.0 provides an open standard for machine-checkable information requirements.",
+/** The competition this prototype is entered in. */
+export const COMPETITION = {
+  NAME: "DBI 2026 Student Competition (CDCPIndia / buildingSMART India)",
+  THEME: "AI, Automation and Digital Workflows",
+  SECONDARY_THEME: "Integrated BIM and Information Management",
+  FINALS: "17 Dec 2026, IIT Bombay",
 };
+
+// The context facts for "The problem" (sheet A-02) live in docs/sources.md with their sources; site-data.json carries them.
 
 /** Files the footer offers for download. They are copied into public/downloads/ by scripts/sync-downloads.mjs. */
 export type Doc = { label: string; file: string; about: string };
@@ -27,7 +27,7 @@ export const DOC_GROUPS: { title: string; blurb: string; docs: Doc[] }[] = [
     blurb: "What NIYAM is, where it stands, and how to run it.",
     docs: [
       { label: "Project overview", file: "README.pdf", about: "What NIYAM is, how it works, where it stands today, and how to run it." },
-      { label: "Project status and open decisions", file: "STATUS.pdf", about: "What is blocked, what changed in the redesign, and what still needs an owner decision." },
+      { label: "Project status and known issues", file: "STATUS.pdf", about: "What is final, what is still open, and the commands to reproduce the tests and the re-score." },
       { label: "Web app notes", file: "frontend.pdf", about: "The stack, the 3D view, the design system, and the checks to repeat in your own browser." },
     ],
   },
@@ -35,7 +35,7 @@ export const DOC_GROUPS: { title: string; blurb: string; docs: Doc[] }[] = [
     title: "Method and results",
     blurb: "How rules are made, scored and tested.",
     docs: [
-      { label: "Evaluation: method and metrics", file: "evaluation.pdf", about: "How compilation is scored on held-out buildings the gate never sees, and what the first real run showed." },
+      { label: "Evaluation: method and metrics", file: "evaluation.pdf", about: "How compilation is scored on held-out buildings the gate never sees, and the headline run 2 table." },
       { label: "Rule specs and what they cannot express", file: "spec-backlog.pdf", about: "Which sentences became machine checks, and why the rest do not fit a single-element template." },
       { label: "Rule specs and the generator", file: "specgen.pdf", about: "How one small spec file becomes an IDS file or a Python check, and the five templates." },
       { label: "Real IFC models", file: "real-models.pdf", about: "Two real building models run through the audit, and the data they lack." },
@@ -69,7 +69,9 @@ export const DOC_GROUPS: { title: string; blurb: string; docs: Doc[] }[] = [
       { label: "Review sheet for rule reviewers", file: "review-sheet.csv", about: "Every draft rule with the sentence, the check and blank decision columns." },
       { label: "Data readiness file (IDS 1.0)", file: "niyam-data-readiness.ids", about: "Open it against your model to see what data to add before auditing." },
       { label: "A real gate rejection", file: "gate-rejection.json", about: "One candidate rule the gate refused, with the reason." },
-      { label: "Licence (MIT)", file: "LICENSE", about: "Free to use, copy and change, with the licence notice kept." },
+      { label: "Licence (MIT)", file: "LICENSE", about: "Free to use, copy and change, with the licence notice kept; three copied UI components keep their own terms." },
+      { label: "Third-party notices", file: "THIRD_PARTY_NOTICES.pdf", about: "Every shipped package, font, component and data file, with its licence and source." },
+      { label: "Sources for the regulatory facts", file: "sources.pdf", about: "The pages behind each date and rule on this site, with access dates." },
     ],
   },
 ];

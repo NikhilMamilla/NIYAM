@@ -4,7 +4,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { hueStats } from "./pixels";
 
-const SHOTS = "../docs/screenshots";
+const SHOTS = "test-results/shots"; // debug screenshots only (gitignored); the published set comes from shots.spec.ts
 const SAMPLES: { label: RegExp; name: string; implausible: boolean }[] = [
   { label: /Sample A/, name: "sample_a_mm", implausible: false },
   { label: /Sample B/, name: "sample_b_m", implausible: false },

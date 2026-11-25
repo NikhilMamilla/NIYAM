@@ -56,3 +56,10 @@ def test_the_scanners_own_historic_test_inputs_are_recognised_exactly():
     # the same values anywhere else are still secrets: a real RSA key starts with exactly that header
     assert kinds("-----BEGIN RSA " + "PRIVATE KEY-----\n", "deploy/id_rsa") == [("secret", 1)]
     assert kinds(f"token = '{old_token}'\n", "app/settings.py") == [("secret", 1)]
+
+
+def test_provider_key_formats_used_by_this_project_are_found():
+    # built at run time so this file itself holds no key-shaped literal
+    for value in ["nvapi-" + "Qw7Er4Ty1Ui8Op5As2Df9Gh", "Bearer " + "eyJhbGciOi" + "JIUzI1NiJ9xyz12",
+                  "3f2a9c" + "0" * 26 + "." + "Ab3Cd5Ef7Gh9Ij1K"]:
+        assert kinds(f"X = '{value}'\n", "notes.md") == [("secret", 1)], value

@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { colourStats, hueStats } from "./pixels";
 
-const SHOTS = "../docs/screenshots";
+const SHOTS = "test-results/shots"; // debug screenshots only (gitignored); the published set comes from shots.spec.ts
 const SAMPLES = "../fixtures/samples";
 const RULE_IDS = ["MBBL2016-5.4.2", "MBBL2016-5.4.1", "MBBL2016-5.4.1", "MBBL2016-4.5.2", "MBBL2016-4.3.1.1",
   "MBBL2016-4.17.2"];
