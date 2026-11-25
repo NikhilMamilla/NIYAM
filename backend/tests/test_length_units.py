@@ -84,3 +84,12 @@ def test_fixture_builder_writes_shapes_in_the_project_unit(unit, tmp_path):
     coords = [c for point in solid.SweptArea.OuterCurve.Points.CoordList for c in point]
     assert solid.Depth == pytest.approx(2.75 * SCALE[unit])
     assert max(coords) == pytest.approx(3.5 * SCALE[unit])  # the room is 3.0 m x 3.5 m
+
+
+def test_real_sketchup_millimetre_export_measures_in_metres():
+    """The one real authoring-tool export: buildingSMART's Building-Architecture.ifc (SketchUp, millimetres)."""
+    from pathlib import Path
+    f = ifcopenshell.open(str(Path(__file__).resolve().parents[2] / "fixtures/real/buildingsmart/Building-Architecture.ifc"))
+    rooms = {s.Name: s for s in f.by_type("IfcSpace")}
+    assert h.space_floor_area_m2(f, rooms["living room"]) == pytest.approx(18.495, abs=1e-9)
+    assert h.element_height_m(f, rooms["living room"]) == pytest.approx(2.2, abs=1e-9)

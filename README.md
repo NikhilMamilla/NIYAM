@@ -10,6 +10,20 @@ the results beside the model in 3D, and exports HTML reports and BCF issues.
 **Status: research prototype.** Every rule is a draft that no domain expert has reviewed yet, and all test
 buildings are synthetic.
 
+## What NIYAM is, and is not
+
+<!-- site-data: statements. The landing page shows these bullets verbatim (npm run site-data); keep them plain text. -->
+- **Decision aid.** NIYAM is a decision aid, not a legal approval tool: a result is a lead for a person to check, never a building approval.
+- **A person decides what ships.** Rules are drafted from public bye-laws (MBBL 2016 and the Telangana Building Rules 2012 base text, amendments not applied), and a person approves what enters the rulepack. No domain expert has reviewed any rule yet.
+- **Four verdicts.** Every element gets passed, failed, unchecked or out_of_scope. Missing data gives unchecked, never passed.
+- **Headline metric: wrong_shipped.** wrong_shipped is the share of shipped rules that are wrong on held-out test buildings the gate never sees. In run 2, with the gate: 2/68 = 3% [1%, 10%] (nemotron-3-ultra) and 0/50 = 0% [0%, 7%] (nemotron-3.5-lightning); without it: 20/75 = 27% [18%, 38%] and 31/75 = 41% [31%, 53%]. Each figure is k/n = rate [Wilson 95% interval], counted over attempts, which are correlated across 3 repeats.
+- **Re-scored after the millimetre fix.** Run 2 and the Telangana run were re-scored after the millimetre fix, and 0 of 240 geometric outcomes changed. This is a re-score of the stored candidates, not a re-run.
+- **Where the fix was tested.** The millimetre fix was verified on a hand-written IFC file and on one SketchUp-exported file, not on Revit or ArchiCAD exports.
+- **Real models lack the data.** On the two real buildingSMART models most rules return unchecked or find nothing to check, because the data they need (for example Pset_SpaceCommon.Category on rooms) is missing.
+- **Post hoc, labelled.** The two reading-dependent units (MBBL2016-4.8.2#1, MBBL2016-5.4.1#b2) were flagged after seeing the results, and the sensitivity table without them is post hoc, not pre-registered.
+- **Telangana is a case study.** Only 2 Telangana units were turned into rules, from 55 ingested clauses, so Telangana is reported as a case study with counts, not as a headline rate.
+<!-- /site-data: statements -->
+
 ## Pipeline
 
 | Step | What happens |
@@ -122,7 +136,9 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 - **Millimetre geometry before the fix.** Until branch fix-mm-units the geometry helpers scaled millimetre models
   twice (rooms 10^6 too small in area, 10^3 too low), and the fixtures stored millimetre shapes 1000x too large, so the
   two cancelled on every fixture. Fixed and regenerated (`STATUS.md`). Run 2 and the Telangana case study predate the
-  fix; their stored candidates were re-scored, not re-run, and no outcome changed (`eval/results/rescore-after-mm-fix/`).
+  fix; their stored candidates were re-scored, not re-run, and 0 of 240 geometric outcomes changed
+  (`eval/results/rescore-after-mm-fix/`). The fix was verified on a hand-written IFC file and one SketchUp export, not
+  on Revit or ArchiCAD exports.
 - **Small n.** 27 units: 25 MBBL (22 distinct), so every evaluation interval is wide, and 2 Telangana units, reported only as a case study with counts (`docs/evaluation.md`).
 
 ## More

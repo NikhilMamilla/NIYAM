@@ -146,6 +146,9 @@ After `python -m app.corpus.cli review-import <sheet>`, the corpus DB is **not**
   artifacts, which is itself **not yet human-reviewed** (see `docs/review/review-sheet.csv`).
 - **Temperature 0 is not deterministic** across providers or even across calls of one provider; repeats are needed
   before trusting any single run.
+- **Post hoc.** Two units (MBBL2016-4.8.2#1, MBBL2016-5.4.1#b2) were flagged as reading-dependent after seeing the
+  results; summary.md's sensitivity table without them is labelled POST-HOC and is not pre-registered. The primary
+  tables include them.
 - The held-out truth for a unit encodes one reading of the clause; a model that reads the clause differently but
   defensibly is scored as wrong until a reviewer decides.
 

@@ -71,7 +71,16 @@ export function buildSiteData(root: string) {
     readiness: idsSpecifications(read("docs", "readiness", "niyam-data-readiness.ids")),
     telanganaSegmenterLines: read("backend", "app", "corpus", "extract_tgbr.py").split(/\r?\n/).filter((l) => l.trim()).length,
     workedExample: workedExample(read, units),
+    statements: statements(readme),
   };
+}
+
+/** The README's "What NIYAM is, and is not" bullets ("- **Title.** text"), shown verbatim on the landing page. */
+export function statements(readme: string) {
+  const block = readme.split("<!-- site-data: statements")[1]?.split("<!-- /site-data: statements -->")[0] ?? "";
+  const list = [...block.matchAll(/^- \*\*(.+?)\*\* (.+)$/gm)].map((m) => ({ title: m[1]!.replace(/\.$/, ""), text: m[2]!.trim() }));
+  if (list.length === 0) throw new Error("README.md: no site-data statements block");
+  return list;
 }
 
 /** One unit traced from clause to audit: MBBL2016-5.4.1#b, its rulepack v0 IDS and its verdicts on sample A. */

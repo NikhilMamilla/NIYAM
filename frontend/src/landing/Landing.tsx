@@ -108,6 +108,7 @@ function HeroSheet() {
           draft only if it behaves correctly on test buildings, and then audits your <Term k="IFC">IFC</Term> building model
           in 3D. It is a research prototype: {site.units.total} draft rules, synthetic test buildings, no expert review yet.
         </p>
+        <p className="hero-aid"><strong>{site.statements[0]!.title}.</strong> {site.statements[0]!.text}</p>
         <div className="btn-row hero-actions">
           <Button as={Link} to="/app" primary>Open the app</Button>
           <Button as={Link} to={SAMPLE_LINK}>Try a sample building</Button>
@@ -160,7 +161,7 @@ function ProblemSheet() {
             In most Indian cities, officers manually compare 2D building plans against written rules covering setbacks, room sizes and exit widths. Existing digital tools keep these rules locked in proprietary software, hiding how regulations become checks.
           </p>
           <p>
-            India lacks an open, machine-readable version of its building bye-laws. NIYAM aims to change this through transparent, traceable checks, where every result links to its original clause and accuracy is measured openly.
+            India lacks an open, machine-readable version of its building bye-laws. NIYAM aims to change this through transparent, traceable checks, where every result links to its original clause and the rate of wrong rules is measured in the open.
           </p>
           <div className="info-accordion">
             <div 
@@ -691,17 +692,26 @@ function StandardsSheet() {
    stamp. Nothing here is a list of excuses; it is the missing geometry. */
 const LIMITS = [
   { title: "No rule is reviewed.", body: <>All {site.units.total} rules are drafts until a domain expert signs them off.</>, span: 6 },
-  { title: "Synthetic buildings.", body: "Every accuracy number comes from small generated test buildings.", span: 6 },
+  { title: "Synthetic buildings.", body: "Every rate on this page comes from small generated test buildings.", span: 6 },
   { title: "Small numbers.", body: <>{h.unitsInRun} rules in the headline run ({h.unitsInRun - site.units.duplicates.length} distinct), {h.provenance.repeats} repeats, {h.provenance.models.length} models; every interval is wide.</>, span: 4 },
   { title: "One value per rule.", body: "Each check tests one value of one element; ratios, distances and setbacks are not encoded.", span: 4 },
   { title: "Conditions dropped.", body: "Building-type and use conditions in a clause are left out and noted for the reviewer.", span: 4 },
   { title: "Disputed readings.", body: <>{site.units.readingDependent.length} rules depend on how a clause is read; they are listed first for review.</>, span: 7 },
-  { title: "No real building checked.", body: "The real exports we tried lacked the data.", span: 5 },
+  { title: "No real building checked.", body: "The two real exports we tried lacked the data, so their rules returned unchecked or found nothing to check.", span: 5 },
 ];
 
 function LimitsSheet() {
   return (
     <Sheet id="limits" sheet="A-11" title="What this does not show, yet" className="sheet-limits">
+      <section className="statements" aria-labelledby="statements-h">
+        <h3 id="statements-h">What NIYAM is, and is not</h3>
+        <dl>
+          {site.statements.map((s) => (
+            <div key={s.title} className="statement"><dt>{s.title}</dt><dd>{s.text}</dd></div>
+          ))}
+        </dl>
+        <p className="meta">The same sentences open the project README.</p>
+      </section>
       <div className="void-plan">
         <div className="plan-bar mono">
           <span>Plan of what is not drawn</span>

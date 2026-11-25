@@ -4,7 +4,7 @@
 
 **What the bug was.** `backend/app/geometry/helpers.py` (`_mesh`) multiplied the vertices that ifcopenshell returns by
 the project length-unit scale (0.001 for millimetres). ifcopenshell 0.9 already returns metres, so a correctly written
-millimetre model (the usual Revit, ArchiCAD or SketchUp export) got room areas a million times too small and heights
+millimetre model (one that stores 2000 mm as 2000.0, as authoring tools do) got room areas a million times too small and heights
 a thousand times too small, and every room and stair rule failed it. The fixture builder (`geo_builders._prism`)
 multiplied by 1000 before calling `ifcopenshell.api`, which converts SI to project units itself, so every committed
 millimetre fixture stored its room and stair shapes 1000x too large. The two errors cancelled on every fixture,
@@ -12,8 +12,9 @@ which is why no test caught it.
 
 Verified independently, with an IFC4 file written by hand (plain entities, no project helpers): a 2000 x 1200 mm
 room extruded 2750 mm gave 0.0000024 m2 and 0.00275 m before the fix, 2.4 m2 and 2.75 m after, the same as the metre
-version of the file. The "living room" of the real buildingSMART model went from 0.0000185 m2 and 0.0022 m to
-18.5 m2 and 2.2 m (its geometry spans 4.95 x 3.8 x 2.2 m).
+version of the file. The fix was verified on that hand-written file and on one SketchUp export (below), not on Revit
+or ArchiCAD exports. The "living room" of the real buildingSMART model went from 0.000018495 m2 and 0.0022 m to
+18.495 m2 and 2.2 m (its geometry spans 4.95 x 3.8 x 2.2 m).
 
 **What changed.** `_mesh` no longer rescales. `_prism` passes metres to `ifcopenshell.api`. The existing generators
 regenerated the 41 millimetre fixtures that carry room or stair geometry (dev, held-out and sample D). No metre

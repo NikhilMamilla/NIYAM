@@ -2431,3 +2431,13 @@ code {
 .bsi-logo { display: block; width: 2.2rem; height: 2.2rem; object-fit: contain; background: #fff; border-radius: 8px; padding: 2px; filter: none; }
 
 .info-card-icon .flag { display: block; width: 2.2rem; height: auto; border-radius: 3px; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
+
+/* The README's "What NIYAM is, and is not" statements (site-data.json), in the hero and on sheet A-11. */
+.hero-aid { max-width: 52ch; margin: calc(-1 * var(--s-3)) 0 var(--s-5); font-size: var(--step--1); line-height: 1.5; color: var(--ink-2); }
+.hero-aid strong { color: var(--ink); }
+.statements { margin-top: var(--s-4); border: 1px solid var(--ink); background: var(--panel); padding: var(--s-4); box-shadow: var(--shadow-paper-1); }
+.statements h3 { margin: 0 0 var(--s-3); }
+.statements dl { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: var(--s-3) var(--s-4); }
+.statement dt { font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.statement dd { margin: 0; font-size: var(--step--1); line-height: 1.5; color: var(--ink-2); }
+.statements .meta { margin: var(--s-3) 0 0; }

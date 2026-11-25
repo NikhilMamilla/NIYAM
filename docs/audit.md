@@ -20,7 +20,9 @@ cannot be derived) and `reason_raw` (the ifctester or engine message). Only IFC4
 audited; other schemas are refused.
 
 Rule and audit status: `noncompliant` if anything failed; else `incomplete` if anything is
-unchecked; else `compliant` if at least one element was checked; else `nothing_checked`.
+unchecked; else `compliant` if at least one element was checked; else `nothing_checked`. These are engine status
+names: `compliant` only means every checked element passed the draft rules. It is not a legal finding or an
+approval (NIYAM is a decision aid), and the web app shows it as "No issues found".
 
 ## Summary: checks vs distinct elements
 

@@ -7,7 +7,7 @@ project / site / building with two storeys ("Ground floor", "First floor") and d
 the data the v0 rulepack reads (`Pset_DoorCommon.FireExit`, `IfcDoor.OperationType`,
 `Qto_DoorBaseQuantities.Width`). There is no geometry.
 
-They seed every case the pilot rules distinguish: compliant exit doors (including one at exactly
+They seed every case the pilot rules distinguish: exit doors that meet the rules (including one at exactly
 1.0 m), an exit door narrower than 1.0 m, revolving, sliding and overhead (`ROLLINGUP`) exit doors,
 non-exit doors that would break the rules but are out of scope, doors with no `FireExit` property
 (unchecked), and in sample A an exit door without a width quantity (unchecked for 5.4.1#b only).
