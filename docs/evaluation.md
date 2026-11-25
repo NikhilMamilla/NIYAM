@@ -136,8 +136,10 @@ After `python -m app.corpus.cli review-import <sheet>`, the corpus DB is **not**
 
 ## Limitations
 
-- **Tiny n.** Six pilot units (three IDS, three geometric). With n = 6 per cell a 6/6 rate has a 95% interval of
-  [61%, 100%]; no comparison at this size is evidence of a real difference. Repeats do not create new units.
+- **Small n.** Run 2 evaluates 25 MBBL units (22 distinct), 3 repeats each, so a cell has 75 items but only 25 units;
+  repeats of a unit are correlated and do not create new units. The unit-level wrong_shipped intervals are wide
+  (e.g. 1/23 = 4% [1%, 21%]), and no difference between the two models may be claimed. The Telangana run has 2 units
+  and is reported as a case study with counts only.
 - **Synthetic fixtures.** Dev and held-out models are small generated files, not real buildings; a rule correct on
   them can still fail on real authoring-tool output.
 - **Threshold encodings** are checked on synthetic IFCs only, against the reading of the clause in the gold
@@ -147,9 +149,20 @@ After `python -m app.corpus.cli review-import <sheet>`, the corpus DB is **not**
 - The held-out truth for a unit encodes one reading of the clause; a model that reads the clause differently but
   defensibly is scored as wrong until a reviewer decides.
 
-## Results table (template: fill only from real, non-dry runs)
+## Results: headline run 2 (`20261118T140452Z-5b7edb`)
 
-| model | mode | n | valid | dev_correct | heldout_correct | shipped | wrong_shipped | needs_human | mean repairs | mean tokens |
-|---|---|---|---|---|---|---|---|---|---|---|
-| | gated | | | | | | | | | |
-| | ungated | | | | | | | — | — | |
+Copied from `eval/results/20261118T140452Z-5b7edb/summary.md` (all 25 MBBL units, items correlated across repeats;
+the unit-level and distinct-rules views are in that file). 415 model calls, 1,423,180 tokens, temperature 0.0,
+3 repeats, max 3 repairs, dry_run=false.
+
+| model | mode | n | heldout_correct | shipped | wrong_shipped | needs_human |
+|---|---|---|---|---|---|---|
+| nemotron-3-ultra-550b-a55b (NVIDIA) | gated | 75 | 66/75 = 88% [79%, 94%] | 68/75 = 91% [82%, 95%] | 2/68 = 3% [1%, 10%] | 7/75 = 9% [5%, 18%] |
+| nemotron-3-ultra-550b-a55b (NVIDIA) | ungated | 75 | 55/75 = 73% [62%, 82%] | 75/75 = 100% [95%, 100%] | 20/75 = 27% [18%, 38%] | - |
+| nemotron-3.5-lightning-30b-a3b (NVIDIA) | gated | 75 | 50/75 = 67% [55%, 76%] | 50/75 = 67% [55%, 76%] | 0/50 = 0% [0%, 7%] | 25/75 = 33% [24%, 45%] |
+| nemotron-3.5-lightning-30b-a3b (NVIDIA) | ungated | 75 | 44/75 = 59% [47%, 69%] | 75/75 = 100% [95%, 100%] | 31/75 = 41% [31%, 53%] | - |
+
+Pilot run 1 (`20261118T133025Z-4c4519`, 1 repeat, 143 model calls) used an older report format. The Telangana case
+study (`20261118T180916Z-4b9c93`, 31 model calls) reports counts only. Run 2 and the Telangana run predate the
+millimetre fix; their stored candidates were re-scored, not re-run, and 0 of 240 geometric outcomes changed
+(`eval/results/rescore-after-mm-fix/`).

@@ -137,6 +137,8 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 - `cd frontend && npm run docs:pdf`: rebuilds the PDF versions of these documents that the landing page footer offers for reading and download.
 - `cd frontend && npm run site-data`: regenerates every number the landing page shows from committed results.
 - `python scripts/check_public_ready.py`: scans the tree and history for secrets and personal paths.
+- `python scripts/check_numbers.py [--tests]`: checks every number in the README, STATUS, docs, submission pack and
+  landing data against the committed results (also run by `backend/tests/test_check_numbers.py`).
 
 ## Team
 

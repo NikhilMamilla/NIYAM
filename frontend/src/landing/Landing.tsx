@@ -692,7 +692,7 @@ function StandardsSheet() {
 const LIMITS = [
   { title: "No rule is reviewed.", body: <>All {site.units.total} rules are drafts until a domain expert signs them off.</>, span: 6 },
   { title: "Synthetic buildings.", body: "Every accuracy number comes from small generated test buildings.", span: 6 },
-  { title: "Small numbers.", body: <>{h.unitsInRun} rules ({site.units.distinct} distinct in all), {h.provenance.repeats} repeats, {h.provenance.models.length} models; every interval is wide.</>, span: 4 },
+  { title: "Small numbers.", body: <>{h.unitsInRun} rules in the headline run ({h.unitsInRun - site.units.duplicates.length} distinct), {h.provenance.repeats} repeats, {h.provenance.models.length} models; every interval is wide.</>, span: 4 },
   { title: "One value per rule.", body: "Each check tests one value of one element; ratios, distances and setbacks are not encoded.", span: 4 },
   { title: "Conditions dropped.", body: "Building-type and use conditions in a clause are left out and noted for the reviewer.", span: 4 },
   { title: "Disputed readings.", body: <>{site.units.readingDependent.length} rules depend on how a clause is read; they are listed first for review.</>, span: 7 },
