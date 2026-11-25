@@ -6,7 +6,8 @@ NIYAM is frozen for the DBI 2026 Stage 2 deck. Everything below is final unless 
 
 - **Corpus and rules.** 445 MBBL 2016 clauses and 55 Telangana clauses (`rules/corpus/clause-ids.txt`); 27 verbatim
   units: 25 MBBL 2016 and 2 Telangana; rulepack v0: 6 rules (3 door IDS, 3 room/stair Python). Every rule is a draft;
-  no domain expert has reviewed one.
+  no human domain expert has reviewed the rules yet, though an AI second-opinion review (ChatGPT) is in
+  `docs/review/`.
 - **Results.** Pilot run 1 (`20261118T133025Z-4c4519`, 143 model calls), headline run 2 (`20261118T140452Z-5b7edb`,
   415 model calls) and the Telangana case study (`20261118T180916Z-4b9c93`, 31 model calls), all in `eval/results/`.
   `submission/deck-facts.md` lists every number the deck may use with its source file.

@@ -5471,7 +5471,7 @@
   },
   {
    "title": "A person decides what ships",
-   "text": "Rules are drafted from public bye-laws (MBBL 2016 and the Telangana Building Rules 2012 base text, amendments not applied), and a person approves what enters the rulepack. No domain expert has reviewed any rule yet."
+   "text": "Rules are drafted from public bye-laws (MBBL 2016 and the Telangana Building Rules 2012 base text, amendments not applied), and a person approves what enters the rulepack. No human domain expert has reviewed the rules yet; an AI second-opinion review (ChatGPT) is in [`docs/review/`](docs/review/)."
   },
   {
    "title": "Four verdicts",

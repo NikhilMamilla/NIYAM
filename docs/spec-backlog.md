@@ -34,6 +34,18 @@ corpus searches ("height", "area", "door", "clear opening", "headroom"). Nothing
 | 11.9.2 b (144) | fire lift floor area 1.4 sq m | a lift car is not an IfcSpace |
 | 11.29 j, 4.24.7.1 (157, 79) | aisle and ramp widths | no aisle or ramp template |
 
+## AI second-opinion review findings, not previously disclosed (docs/review/ai-review-summary.md)
+
+ChatGPT's second-opinion review (`docs/review/ai-review-chatgpt-2026-11-25.csv`) raised three points our own
+machine_reading had not written down. None change the spec, fixtures or truth files; they are future work for
+whoever reviews these units next.
+
+| Unit | What the reviewer found |
+|---|---|
+| MBBL2016-7.1#1 | 4.5 m workroom height excludes "room intended for storage, godowns and the like purposes", and the Authority may allow 3.66 m for a qualifying small factory (under 50 workers, flatted-factory/service-industry class); neither exclusion is encoded or disclosed |
+| MBBL2016-4.24.7.2#b | Listed as a duplicate of MBBL2016-5.4.1#b, but it is not a pure duplicate: it carries a 2 m exit-doorway width exception for assembly and institutional buildings that 5.4.1#b's wording lacks |
+| MBBL2016-4.5.1#1 | The clause measures "to the lowest point in the ceiling"; the current check uses the space's overall vertical extent, which can overstate height where the ceiling is sloped or has a lower portion |
+
 ## Reading-dependent units (found in evaluation run 20261118T140452Z-5b7edb)
 
 These units are encoded, but their spec reading departs from the literal clause text. They are listed first in the

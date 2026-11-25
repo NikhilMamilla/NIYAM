@@ -77,7 +77,7 @@ Run ids: pilot run 1 `20261118T133025Z-4c4519`, headline run 2 `20261118T140452Z
 
 ## Honest limitations
 
-- Decision aid, not a legal approval tool; no domain expert has reviewed any rule (`README.md`, statements).
+- Decision aid, not a legal approval tool; no human domain expert has reviewed the rules yet; an AI second-opinion review (ChatGPT) is in `docs/review/` (`README.md`, statements).
 - Every test building is synthetic; the two real files carry too little data to check (`docs/real-models.md`).
 - Small n: 25 MBBL units (22 distinct), 3 repeats; no model difference may be claimed (`R2/slides-data.md`).
 - Single-element thresholds only; building-type and use conditions are dropped and noted (`docs/spec-backlog.md`).

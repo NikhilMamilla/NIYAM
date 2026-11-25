@@ -39,7 +39,7 @@ buildings are synthetic.
 
 <!-- site-data: statements. The landing page shows these bullets verbatim (npm run site-data); keep them plain text. -->
 - **Decision aid.** NIYAM is a decision aid, not a legal approval tool: a result is a lead for a person to check, never a building approval.
-- **A person decides what ships.** Rules are drafted from public bye-laws (MBBL 2016 and the Telangana Building Rules 2012 base text, amendments not applied), and a person approves what enters the rulepack. No domain expert has reviewed any rule yet.
+- **A person decides what ships.** Rules are drafted from public bye-laws (MBBL 2016 and the Telangana Building Rules 2012 base text, amendments not applied), and a person approves what enters the rulepack. No human domain expert has reviewed the rules yet; an AI second-opinion review (ChatGPT) is in [`docs/review/`](docs/review/).
 - **Four verdicts.** Every element gets passed, failed, unchecked or out_of_scope. Missing data gives unchecked, never passed.
 - **Headline metric: wrong_shipped.** wrong_shipped is the share of shipped rules that are wrong on held-out test buildings the gate never sees. In run 2, with the gate: 2/68 = 3% [1%, 10%] (nemotron-3-ultra) and 0/50 = 0% [0%, 7%] (nemotron-3.5-lightning); without it: 20/75 = 27% [18%, 38%] and 31/75 = 41% [31%, 53%]. Each figure is k/n = rate [Wilson 95% interval], counted over attempts, which are correlated across 3 repeats.
 - **Re-scored after the millimetre fix.** Run 2 and the Telangana run were re-scored after the millimetre fix, and 0 of 240 geometric outcomes changed. This is a re-score of the stored candidates, not a re-run.
