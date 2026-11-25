@@ -168,5 +168,11 @@ Workflows" (secondary: Integrated BIM and Information Management). Finals: 17 De
 
 MIT (see `LICENSE`). Clause text is quoted from the publicly available MoHUA Model Building Bye-Laws 2016 and the
 Telangana Building Rules 2012 (G.O.Ms.No.168) for research purposes; the source PDFs are not redistributed
-(`rules/source/` is ignored). The two models in `fixtures/real/` are (C) buildingSMART International, CC BY 4.0
-(`fixtures/real/README.md`).
+(`rules/source/` is ignored). The two models in `fixtures/real/` are (C) buildingSMART International, CC BY 4.0,
+redistributed unmodified with attribution (`fixtures/real/README.md`). The official buildingSMART IDS test cases
+(CC BY-ND 4.0) are not redistributed: only findings from them are committed (`docs/notes-ids-official-testcases.md`).
+No other buildingSMART sample files are in the repository.
+
+Three UI components (Specular Button, Gooey Nav, Card Swap) are copied from React Bits under MIT + Commons Clause and
+are excluded from NIYAM's MIT grant; every shipped package, font and data file is listed with its licence in
+`THIRD_PARTY_NOTICES.md`. To cite NIYAM, see `CITATION.cff`.

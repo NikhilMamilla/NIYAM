@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use NIYAM, please cite it as below."
+title: "NIYAM: building bye-laws as machine checks (research prototype)"
+type: software
+license: MIT
+version: submission-v1
+date-released: 2026-11-25
+abstract: >-
+  NIYAM turns sentences from Indian building bye-laws (MBBL 2016 and the Telangana Building Rules 2012 base text)
+  into IDS 1.0 files and sandboxed Python checks, keeps a draft only if a verifier gate accepts it on test models,
+  and audits IFC4 models with HTML, JSON and BCF 2.1 output. A decision aid, not a legal approval tool.
+  Team Abhyudaya, entry to the DBI 2026 Student Competition (CDCPIndia / buildingSMART India); mentor Dr. Lanke Pallavi.
+keywords: [IFC, IDS, BCF, openBIM, automated compliance checking, building bye-laws, LLM]
+authors:
+  - given-names: Nikhil
+    family-names: Mamilla
+    affiliation: "B V Raju Institute of Technology (BVRIT), Narsapur, Telangana"
+  - name: "Yagna Sri Hasa"
+    affiliation: "B V Raju Institute of Technology (BVRIT), Narsapur, Telangana"
+  - name: "G Nikhitha"
+    affiliation: "B V Raju Institute of Technology (BVRIT), Narsapur, Telangana"
+  - name: "D Sahithi"
+    affiliation: "B V Raju Institute of Technology (BVRIT), Narsapur, Telangana"
+  - name: "G Sahithi"
+    affiliation: "B V Raju Institute of Technology (BVRIT), Narsapur, Telangana"
+contact:
+  - name: "Dr. Lanke Pallavi (mentor), Associate Professor & Associate HoD"
+    affiliation: "B V Raju Institute of Technology (BVRIT), Narsapur, Telangana"

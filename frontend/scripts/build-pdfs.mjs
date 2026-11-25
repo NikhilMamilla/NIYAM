@@ -22,7 +22,9 @@ const DOCS = [
   { src: "../docs/notes-geometric-spike.md", title: "Geometric tier spike", lead: "Which bye-law sentences compare a value that has to be computed from geometry." },
   { src: "../docs/notes-ifctester.md", title: "ifctester notes", lead: "Verified notes on building and running IDS files with ifctester." },
   { src: "../docs/corpus-candidates.md", title: "Corpus candidates", lead: "Keyword-scored candidate clauses from the bye-laws. Nothing here is selected; every clause stays a candidate until a person marks it." },
-  { src: "../STATUS.md", title: "Project status and open decisions", lead: "What is blocked, what changed in the redesign, and what still needs an owner decision." },
+  { src: "../STATUS.md", title: "Project status and known issues", lead: "What is final, what is still open, and the exact commands to reproduce the tests and the re-score." },
+  { src: "../THIRD_PARTY_NOTICES.md", title: "Third-party notices", lead: "Every shipped package, font, copied component and data file, with its licence and source." },
+  { src: "../docs/sources.md", title: "Sources for the regulatory facts", lead: "The pages behind each date and regulation on the landing page, with access dates." },
 ];
 
 const font = (name, file, weight) =>
