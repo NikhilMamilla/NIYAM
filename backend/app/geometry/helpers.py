@@ -87,11 +87,12 @@ def _mesh(model, element, world: bool):
         shape = ifcopenshell.geom.create_shape(settings, element)
     except Exception:  # no usable geometry: the value cannot be computed
         return None
-    scale = ifcopenshell.util.unit.calculate_unit_scale(model)  # geometry comes back in project length units
+    # ifcopenshell.geom already converts to SI: the vertices are in metres whatever the project length unit, so
+    # they are not scaled again (doing so made millimetre models 1000x too small; tests/test_length_units.py).
     v, f = shape.geometry.verts, shape.geometry.faces
     if not v or not f:
         return None
-    verts = [(v[i] * scale, v[i + 1] * scale, v[i + 2] * scale) for i in range(0, len(v), 3)]
+    verts = [(v[i], v[i + 1], v[i + 2]) for i in range(0, len(v), 3)]
     return verts, [tuple(f[i:i + 3]) for i in range(0, len(f), 3)]
 
 

@@ -6,7 +6,6 @@ element. Every pair exists in a millimetre and a metre project (`..._m.ifc`)."""
 from pathlib import Path
 
 import ifcopenshell
-import ifcopenshell.util.unit
 import numpy as np
 
 from app.fixtures.builders import FixturePair, _stabilise, guid, new_model, run, safe_name
@@ -35,10 +34,11 @@ def _body_context(f):
 
 
 def _prism(f, product, size_x_m: float, size_y_m: float, height_m: float, x_m: float) -> None:
-    """Extruded rectangle (size_x x size_y metres, height_m tall) with its corner x_m along X."""
-    k = 1.0 / ifcopenshell.util.unit.calculate_unit_scale(f)  # metres -> project length unit
-    poly = [(0.0, 0.0), (size_x_m * k, 0.0), (size_x_m * k, size_y_m * k), (0.0, size_y_m * k)]
-    rep = run(f, "geometry.add_slab_representation", context=_body_context(f), depth=height_m * k, polyline=poly)
+    """Extruded rectangle (size_x x size_y metres, height_m tall) with its corner x_m along X. The ifcopenshell.api
+    calls take SI metres and write the file in its own length unit (2.0 m is stored as 2000.0 in a millimetre
+    project), so nothing is converted here."""
+    poly = [(0.0, 0.0), (size_x_m, 0.0), (size_x_m, size_y_m), (0.0, size_y_m)]
+    rep = run(f, "geometry.add_slab_representation", context=_body_context(f), depth=height_m, polyline=poly)
     run(f, "geometry.assign_representation", product=product, representation=rep)
     matrix = np.eye(4)
     matrix[0, 3] = x_m
