@@ -13,7 +13,6 @@ import { HeroDrawing } from "./Hero";
 import { ProblemIllustration } from "./ProblemIllustration";
 import GooeyNav from "./GooeyNav";
 import Button from "../Button";
-import { isLowEnd } from "../perf";
 import CardSwap, { type CardSwapHandle } from "./CardSwap";
 import ArchitecturalJourney from "./ArchitecturalJourney";
 
@@ -1029,13 +1028,6 @@ export default function Landing() {
           theme="light"
           size="md"
           frame={true}
-          particleCount={isLowEnd() ? 5 : 15}
-          spread={56}
-          animationTime={600}
-          timeVariance={300}
-          gooeyness={0.5}
-          wobble={0.5}
-          hoverEffect={true}
         />
        </div>
       </div>

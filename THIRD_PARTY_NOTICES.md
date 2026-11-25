@@ -1,26 +1,13 @@
 # Third-party notices
 
-NIYAM's own source is MIT (`LICENSE`). The components, packages, fonts and data below keep their own licences.
-Versions are the ones pinned in `frontend/package-lock.json` (checked 25 November 2026 against each package's
-`package.json`; licence pages accessed the same day).
-
-## Copied UI components (React Bits): not covered by NIYAM's MIT licence
-
-Three components were copied from React Bits and adapted (themes, sizes, a router-aware `as` prop, low-end-device
-settings). Each folder exists upstream under `src/content/Components/` in https://github.com/DavidHDev/react-bits.
-
-| Component | Files here | Where used | Upstream |
-|---|---|---|---|
-| Specular Button | `frontend/src/SpecularButton.jsx`, `.css`, `.d.ts` (wrapped by `frontend/src/Button.tsx`) | every button on the landing page and in the app | `src/content/Components/SpecularButton` |
-| Gooey Nav | `frontend/src/landing/GooeyNav.jsx`, `.css`, `.d.ts` | landing page section navigation | `src/content/Components/GooeyNav` |
-| Card Swap | `frontend/src/landing/CardSwap.jsx`, `.css`, `.d.ts` | landing sheet A-09, "What the app looks like" | `src/content/Components/CardSwap` |
-
-**Licence: MIT + Commons Clause License Condition v1.0, Copyright (c) 2026 David Haz**
-(https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md). It allows use, including commercial use, as part of
-an application, website or product, but not selling, sublicensing or redistributing the components on their own.
-NIYAM uses them only inside its web app. **These files are therefore excluded from NIYAM's MIT grant**: anyone reusing
-NIYAM may use them as part of the app, but may not extract and redistribute them as components. A fully MIT
-repository would need these three replaced by original code (not done; see `STATUS.md`, Known issues).
+NIYAM's own source is MIT (`LICENSE`), including the landing page's button, section nav and card-stack
+components: `frontend/src/SpecularButton.tsx`, `frontend/src/landing/GooeyNav.tsx` and
+`frontend/src/landing/CardSwap.tsx` were originally adapted from the React Bits components of the same name
+(MIT + Commons Clause, which is not compatible with redistributing NIYAM's own source as MIT); they were
+rewritten from scratch as plain CSS/TypeScript, with no copied code, so the repository is fully MIT. The
+packages, fonts and data below keep their own licences. Versions are the ones pinned in
+`frontend/package-lock.json` (checked 25 November 2026 against each package's `package.json`; licence pages
+accessed the same day).
 
 ## Packages in the built frontend (`npm ls --omit=dev --all`)
 
@@ -33,8 +20,6 @@ repository would need these three replaced by original code (not done; see `STAT
 | web-ifc (and its `.wasm`, copied to `frontend/public/web-ifc/` at install) | 0.0.77 | MPL-2.0 | https://github.com/ThatOpen/engine_web-ifc | IFC parsing in the browser; unmodified |
 | camera-controls | 3.1.2 | MIT | https://github.com/yomotsu/camera-controls | 3D view camera |
 | three-mesh-bvh | 0.9.9 | MIT | https://github.com/gkjohnson/three-mesh-bvh | 3D picking (via @thatopen/components) |
-| @hugeicons/react | 1.1.10 | MIT | https://github.com/hugeicons/hugeicons | icons in Card Swap (sheet A-09) |
-| @hugeicons/core-free-icons | 4.4.0 | MIT, (c) 2025 Hugeicons | https://github.com/hugeicons/hugeicons | icons in Card Swap (sheet A-09) |
 | earcut | 3.2.4 | ISC | https://github.com/mapbox/earcut | via @thatopen/fragments |
 | flatbuffers | 25.2.10 | Apache-2.0 | https://github.com/google/flatbuffers | via @thatopen/fragments |
 | lru-cache | 11.1.0 | ISC | https://github.com/isaacs/node-lru-cache | via @thatopen/fragments |

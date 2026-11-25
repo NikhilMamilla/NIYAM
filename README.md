@@ -207,6 +207,7 @@ redistributed unmodified with attribution (`fixtures/real/README.md`). The offic
 (CC BY-ND 4.0) are not redistributed: only findings from them are committed (`docs/notes-ids-official-testcases.md`).
 No other buildingSMART sample files are in the repository.
 
-Three UI components (Specular Button, Gooey Nav, Card Swap) are copied from React Bits under MIT + Commons Clause and
-are excluded from NIYAM's MIT grant; every shipped package, font and data file is listed with its licence in
-`THIRD_PARTY_NOTICES.md`. To cite NIYAM, see `CITATION.cff`.
+The landing page's button, section nav and card-stack components were originally adapted from React Bits (MIT +
+Commons Clause) and have since been rewritten from scratch as original CSS/TypeScript, so the whole repository is
+MIT; every shipped package, font and data file is listed with its licence in `THIRD_PARTY_NOTICES.md`. To cite
+NIYAM, see `CITATION.cff`.

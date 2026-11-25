@@ -134,17 +134,18 @@ and a section slider. The That Open logo overlay is hidden; That Open Engine is 
 
 ## Landing page: navigation, buttons, footer documents and weaker devices
 
-**Navigation.** A floating bar holds the NIYAM wordmark and the section pills (a gooey, animated pill follows the active
-section). Below 1100 px wide it becomes a frosted strip with the wordmark and a hamburger that opens a full-screen menu
+**Navigation.** A floating bar holds the NIYAM wordmark and the section pills (`src/landing/GooeyNav.tsx`: a pill
+behind the active item slides to it on a CSS transition, computed from the item's own `offsetLeft`/`offsetWidth`).
+Below 1100 px wide it becomes a frosted strip with the wordmark and a hamburger that opens a full-screen menu
 of plain section names. The bar stays visible while the hero is in view; further down it hides after 3 seconds without
 activity or when scrolling down, and returns on scroll up, when the cursor nears the top edge, or on a key press. It
 stays put while it has pointer or keyboard focus and while the mobile menu is open.
 
-**One button for the whole project.** `src/Button.tsx` wraps `src/SpecularButton.jsx` (React Bits, with an `as` prop so a
-router link, anchor or label can be a button). Every action button on the landing page and the dashboard uses it, in the
-heading ink colour; `primary` fills it, `tone="light"` is for dark surfaces. All buttons draw their edge light through a
-single shared WebGL context into their own 2D canvas, so any number can be on screen (separate contexts per button
-exceeded the browser limit and showed broken white boxes). Toggles, chips, list rows and the viewer toolbar are not
+**One button for the whole project.** `src/Button.tsx` wraps `src/SpecularButton.tsx`, an original component (an `as`
+prop lets a router link, anchor or label be a button). Every action button on the landing page and the dashboard uses
+it, in the heading ink colour; `primary` fills it, `tone="light"` is for dark surfaces. The edge light is a CSS
+radial-gradient masked down to the border, animated with `@keyframes` and brightened on hover/focus — no WebGL, no
+canvas, so any number of buttons can be on screen at once. Toggles, chips, list rows and the viewer toolbar are not
 action buttons and keep their own styling. Two buttons side by side always share one width and height.
 
 **Documents (sheet A-12).** The documents are offered as PDFs (`public/downloads/*.pdf`), built from the
