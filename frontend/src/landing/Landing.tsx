@@ -596,11 +596,11 @@ const icon = (d: string) => (
 );
 const DEMO = [
   { src: "/screens/demo-1-load.png", title: "Load a building", icon: icon("M8 11V2.5M4.5 6 8 2.5 11.5 6M2.5 10.5v3h11v-3"),
-    step: "Choose sample A. The server audits it and the model appears on the light table." },
-  { src: "/screens/demo-2-select.png", title: "Open a failing door", icon: icon("M3 2.5v11l3-3 2 3.5 1.5-.8-2-3.4H11L3 2.5Z"),
+    step: "Drop an IFC4 file, or choose sample A. The server audits it in a moment." },
+  { src: "/screens/demo-2-verdict.png", title: "Read the verdict", icon: icon("M2 3h12L9.5 8.5V13l-3-1.5V8.5L2 3Z"),
+    step: "The answer comes first, in plain words. Below it the 3D view colours every element by verdict." },
+  { src: "/screens/demo-3-select.png", title: "Open a failing door", icon: icon("M3 2.5v11l3-3 2 3.5 1.5-.8-2-3.4H11L3 2.5Z"),
     step: "Select a red door. The panel says which rule it breaks, why, and quotes the clause." },
-  { src: "/screens/demo-3-issues.png", title: "Show only issues", icon: icon("M2 3h12L9.5 8.5V13l-3-1.5V8.5L2 3Z"),
-    step: "Show only issues to hide everything that passed, then export the HTML report or BCF." },
 ];
 
 function DemoSheet() {

@@ -46,20 +46,21 @@ test.describe("screenshots", () => {
   });
 
   test("demo images for the landing page (sample A)", async ({ page }) => {
-    await page.addInitScript(() => { try { window.localStorage.setItem("niyam.tour.done", "1"); } catch { /* ignore */ } });
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto("/app");
-    await openSample(page, /Sample A/);
+    await expect(page.getByTestId("empty-state")).toBeVisible();
+    await page.waitForTimeout(600);
     await page.screenshot({ path: `${DEMO}/demo-1-load.png` });
+    await openSample(page, /Sample A/);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: `${DEMO}/demo-2-verdict.png` });
     await page.locator("li.rule > details > summary").nth(1).click();
     await page.getByRole("button", { name: /A-G-03 narrow exit/ }).click();
-    await page.waitForTimeout(1500);
-    await page.screenshot({ path: `${DEMO}/demo-2-select.png` });
+    await page.locator(".dash-stage").scrollIntoViewIfNeeded();
+    await page.evaluate(() => document.querySelector(".dash-stage")!.scrollIntoView({ block: "start" }));
+    await page.waitForTimeout(1800);
+    await page.screenshot({ path: `${DEMO}/demo-3-select.png` });
     await page.screenshot({ path: `${SHOTS}/app-selected.png` });
-    await page.getByRole("button", { name: "Back to rules" }).click();
-    await page.getByRole("button", { name: "Only issues" }).click();
-    await page.waitForTimeout(1200);
-    await page.screenshot({ path: `${DEMO}/demo-3-issues.png` });
-    await page.screenshot({ path: `${SHOTS}/app-only-issues.png` });
   });
 });
