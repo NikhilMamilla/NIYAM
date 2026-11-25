@@ -82,8 +82,8 @@ fragments model, not by guessing. Two separate causes:
    4 km box; `e2e/viewer-framing.spec.ts` checks every sample is framed with the camera outside the model.
 2. **Data: sample D's file stores its room and stair shapes 1000x too large** (a 2.0 m room has a 2,000,000 mm
    profile), while their placements are correct. The viewer draws what the file contains, so these elements are
-   kilometres across and overlap. This is a backend unit-conversion bug that the fixtures compensate for; it is
-   documented in `STATUS.md` and not changed here. The viewer now shows a notice when audited elements are more
+   kilometres across and overlap. This was a backend unit-conversion bug that the fixtures compensated for; it is
+   fixed on branch fix-mm-units (`STATUS.md`), and sample D now draws at its real size. The viewer now shows a notice when audited elements are more
    than 200 m across ("NIYAM draws the file as it is").
 
 A third bug surfaced while checking the fix against sample E's truth file: room edge lines were matched to rooms by

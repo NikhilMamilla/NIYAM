@@ -1,33 +1,34 @@
 # Phase 13 status (branch ui-redesign)
 
-## Blocked: needs your decision (backend and fixtures, not changed on this branch)
+## Fixed on branch fix-mm-units: millimetre geometry was converted twice
 
-**Millimetre geometry is converted twice.** `backend/app/geometry/helpers.py` line 90 multiplies the vertices that
-ifcopenshell returns by the project length-unit scale (0.001 for millimetres), with the comment "geometry comes back
-in project length units". The installed ifcopenshell returns metres. The fixture builder writes the shapes of rooms
-and stairs in millimetre files 1000x too large, which cancels the error for every committed sample and fixture.
+**What the bug was.** `backend/app/geometry/helpers.py` (`_mesh`) multiplied the vertices that ifcopenshell returns by
+the project length-unit scale (0.001 for millimetres). ifcopenshell 0.9 already returns metres, so a correctly written
+millimetre model (the usual Revit, ArchiCAD or SketchUp export) got room areas a million times too small and heights
+a thousand times too small, and every room and stair rule failed it. The fixture builder (`geo_builders._prism`)
+multiplied by 1000 before calling `ifcopenshell.api`, which converts SI to project units itself, so every committed
+millimetre fixture stored its room and stair shapes 1000x too large. The two errors cancelled on every fixture,
+which is why no test caught it.
 
-Evidence (run in memory, nothing changed):
+Verified independently, with an IFC4 file written by hand (plain entities, no project helpers): a 2000 x 1200 mm
+room extruded 2750 mm gave 0.0000024 m2 and 0.00275 m before the fix, 2.4 m2 and 2.75 m after, the same as the metre
+version of the file. The "living room" of the real buildingSMART model went from 0.0000185 m2 and 0.0022 m to
+18.5 m2 and 2.2 m (its geometry spans 4.95 x 3.8 x 2.2 m).
 
-| Room D-B-01 in sample D | stored profile | helper area | helper height |
-|---|---|---|---|
-| as committed | 2,000,000 x 1,200,000 mm, 2,750,000 mm high | 2.4 m2 | 2.75 m |
-| correct millimetre geometry | 2,000 x 1,200 mm, 2,750 mm high | 0.0000024 m2 | 0.00275 m |
+**What changed.** `_mesh` no longer rescales. `_prism` passes metres to `ifcopenshell.api`. The existing generators
+regenerated the 41 millimetre fixtures that carry room or stair geometry (dev, held-out and sample D). No metre
+fixture, door fixture or truth file changed (truth is derived arithmetically from the specs). Regression tests:
+`backend/tests/test_length_units.py`. The pre-fix sample D is kept, never as a fixture, as
+`fixtures/invalid/misscaled_rooms_mm.ifc`, to check that the viewer's wrong-unit notice still appears.
 
-Consequences:
-
-- A correctly modelled millimetre IFC file (the usual case for Revit, ArchiCAD and SketchUp exports) gets room
-  areas a million times too small and heights a thousand times too small, so every room and stair rule fails it.
-  The real buildingSMART model was not affected only because its rooms have no Category (all unchecked).
-- Sample D (and the millimetre dev/held-out fixtures of geometric units) store their shapes 1000x too large, so the
-  3D view of sample D shows rooms kilometres across. The viewer now frames it, draws it as stored and says so.
-- Evaluation results are internally consistent (gold checks and candidates ran on the same fixtures), but the
-  geometric rules' behaviour on real millimetre models is wrong.
-
-Proposed fix (one change in each place, then regenerate the millimetre samples and fixtures and re-run the suite):
-drop the extra `scale` in `helpers.py` (`_verts`), and make the fixture builder write millimetre shapes in
-millimetres. This changes audit semantics, fixtures and possibly the gold behaviour, which this phase's rules
-forbid, so it was not done.
+**Effect on committed results.** The headline run 2 (`20261118T140452Z-5b7edb`) and the Telangana case study
+(`20261118T180916Z-4b9c93`) predate the fix. Their committed results are unchanged. Their stored final candidates
+were re-scored offline (a re-score, not a re-run: the generate-verify-repair loop was not replayed) in
+`eval/results/rescore-after-mm-fix/`. Before the fix the re-score reproduces every committed score (216 of 216 and
+24 of 24 geometric items); after it, no item changes outcome. That is expected: on the fixtures the builder's 1000x and
+the helper's 0.001 cancelled exactly, so every candidate saw the same metre values, and the gate's messages never
+include measured values. A live re-run would therefore face the same verdicts and messages; it would differ only by the
+models' own randomness.
 
 ## Done
 
@@ -41,7 +42,6 @@ forbid, so it was not done.
 
 ## Not done or limited
 
-- The millimetre double-scale bug above (blocked by the phase rules).
 - TEAM names, college and mentor on the landing page are placeholders in `frontend/src/content/site.ts`.
 - The regulatory dates in `CONTEXT` (same file) come from the brief and were not checked against sources.
 - Run backend pytest and Playwright one after the other: run at the same time on this machine they
@@ -49,5 +49,5 @@ forbid, so it was not done.
 
 ## Next
 
-- Decide on the millimetre fix, then regenerate samples and fixtures.
+- Review branch fix-mm-units; decide from the re-score whether a live re-run of run 2 is worth the calls.
 - Fill in the team details; review the landing copy.

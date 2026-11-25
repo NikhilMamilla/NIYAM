@@ -119,6 +119,10 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 - **Ignored conditions.** Building-type exceptions (e.g. 2 m doorways in assembly buildings), room-use conditions
   and second thresholds in the same sentence are dropped and only noted for the reviewer.
 - **Thresholds are checked against the text, not its meaning** (`docs/specgen.md`).
+- **Millimetre geometry before the fix.** Until branch fix-mm-units the geometry helpers scaled millimetre models
+  twice (rooms 10^6 too small in area, 10^3 too low), and the fixtures stored millimetre shapes 1000x too large, so the
+  two cancelled on every fixture. Fixed and regenerated (`STATUS.md`). Run 2 and the Telangana case study predate the
+  fix; their stored candidates were re-scored, not re-run, and no outcome changed (`eval/results/rescore-after-mm-fix/`).
 - **Small n.** 27 units: 25 MBBL (22 distinct), so every evaluation interval is wide, and 2 Telangana units, reported only as a case study with counts (`docs/evaluation.md`).
 
 ## More

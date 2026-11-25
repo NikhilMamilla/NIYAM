@@ -37,6 +37,18 @@ reported both spaces unchecked, each time for the same reason: "This space does 
 (Pset_SpaceCommon.Category), so it is unknown whether the rule applies." The door rules (5.4.1#b, #b2, #c, 5.4.2#1,
 4.24.7.2#b/#c/#f) and the stair rule (4.17.2#A) found no elements to check.
 
+### Room geometry before and after the millimetre fix
+
+Both files are millimetre projects. Before branch fix-mm-units the helpers scaled their geometry twice. The audit
+with rulepack v0, re-run after the fix, gives the same counts as the table above (the 27-rule pack was not re-run):
+the rooms are unchecked because they declare no Category, whatever their size. Measured directly with the helpers,
+the living room (geometry spanning 4.95 x 3.8 x 2.2 m):
+
+| | floor area | height |
+|---|---|---|
+| before the fix | 0.0000185 m2 | 0.0022 m |
+| after the fix | 18.5 m2 | 2.2 m |
+
 ## What a real model must carry for NIYAM to check it
 
 See `docs/modelling-profile.md` for the full profile.

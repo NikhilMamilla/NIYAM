@@ -13,6 +13,15 @@ def check(model, helpers):      # exactly this signature
 `helpers` (`backend/app/geometry/helpers.py`) returns SI values (metres, m²) or `None`; a helper never guesses.
 Elements the check does not return a finding for are reported `out_of_scope` by the audit.
 
+## Length units
+
+Every helper returns metres and square metres whatever the project length unit. `ifcopenshell.geom` already
+converts geometry to SI, so `_mesh` does not scale it again; declared quantities (`declared_quantity`) are stored in
+project units and are converted there. Until branch fix-mm-units `_mesh` did scale again, and the fixture builder
+wrote millimetre shapes 1000x too large, so the two cancelled on the fixtures while real millimetre models came out
+10^6 too small in area: see `STATUS.md`. `backend/tests/test_length_units.py` checks the helpers against IFC files
+written by hand, not by the fixture builder.
+
 ## What the gate checks (`app/verifier/geometric_gate.py`, `python -m app.verifier.cli check-geo <unit> <file>`)
 
 Stops at the first failing stage. Failure messages go through the same masking as the IDS gate.
