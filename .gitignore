@@ -46,3 +46,6 @@ frontend/playwright-report/
 eval/config.yaml
 eval/results/dryrun-*/
 dist/
+
+# Submission packaging: the samples zip is rebuilt from submission/samples/, not committed
+submission/NIYAM_samples.zip
