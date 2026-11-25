@@ -10,42 +10,45 @@ node_modules/
 /package.json
 /package-lock.json
 
-# Env
+# Test output / build output
+frontend/dist/
+frontend/public/web-ifc/
+frontend/test-results/
+frontend/playwright-report/
+dist/
+
+# Editor / OS junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets / local env
 .env
 .venv/
 
-# Corpus: source PDFs and local DB are never committed
+# Local data: corpus source PDFs, the local DB, compiler run outputs, the real evaluation config
 rules/source/*
 !rules/source/README.md
 backend/data/
+eval/runs/
+eval/config.yaml
+eval/results/dryrun-*/
 
-# IDE
-.vscode/
-.idea/
-
-# IFC caches / scratch
-*.ifc.cache
-*.bak
+# Large media / packaging: rebuilt locally, not committed
+submission/NIYAM_samples.zip
+submission/*.zip
+submission/video/*.webm
+submission/video/*.mp4
 
 # Claude Code / agent tooling (local, not project source)
 .agents/
 .claude/
 .codex/
+.impeccable/
 skills-lock.json
 
-# Compiler run outputs (not committed for now)
-eval/runs/
-
-# Frontend build and test output; web-ifc wasm is copied from node_modules on install
-frontend/dist/
-frontend/public/web-ifc/
-frontend/test-results/
-frontend/playwright-report/
-
-# evaluation: real config holds local choices; dry-run results are never results
-eval/config.yaml
-eval/results/dryrun-*/
-dist/
-
-# Submission packaging: the samples zip is rebuilt from submission/samples/, not committed
-submission/NIYAM_samples.zip
+# IFC caches / scratch
+*.ifc.cache
+*.bak

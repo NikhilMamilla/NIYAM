@@ -144,6 +144,41 @@ The report in `eval/results/dryrun-*/summary.md` starts with **"DRY RUN: synthet
 Its numbers only show that the pipeline works; never quote them. For a real run see `docs/evaluation.md`
 (preflight, plan with token estimate, then run).
 
+## Repository layout
+
+```
+.                       README, LICENSE, THIRD_PARTY_NOTICES.md, CITATION.cff, STATUS.md, .gitignore, .env.example
+backend/                FastAPI service: audit engine, verifier gate, LLM compiler, evaluation harness
+  app/                  the service's source
+  tests/                pytest
+docs/                   method, limits, sources, the rule review sheets and the AI second-opinion review
+  examples/             small committed JSON examples linked from the docs
+  readiness/            the generated data-readiness IDS
+  review/               review-sheet.csv/.md, the AI review CSV and summary
+  screenshots/          one diagnostic screenshot referenced by docs/frontend.md
+eval/                   evaluation configs and every committed run's results
+  results/              pilot run, headline run 2, Telangana case study, millimetre-fix re-score
+frontend/               the React/TypeScript landing page and audit app (Vite, Three.js)
+  e2e/                  Playwright tests, including the demo script and demo video recorder
+  public/               images, downloadable PDFs, the web-ifc wasm copy point
+  scripts/              build-time helpers (site-data, PDF/download sync)
+  src/                  the app's source
+fixtures/               synthetic IFC4 test buildings and expected answers
+  ifc/, heldout/        dev and held-out pairs per rule
+  checks/, ids/         the canonical check for each unit
+  samples/              the five demo buildings (A-E)
+  invalid/, real/       rejection-test files; two real buildingSMART exports
+rules/                  the clause corpus, hand-written specs, and the shipped rulepack
+  corpus/, specs/       ingested clauses; hand-written rule specs
+  rulepack/             the shipped rulepack (v0, 6 rules)
+  source/               bye-law source PDFs (gitignored; never committed)
+scripts/                check/build/dev scripts run from the repository root
+submission/             the DBI 2026 Stage 2 package for jurors
+  deck/                 slide deck (PDF, PPTX)
+  samples/, screens/    sample audits; slide screenshots
+  video/                demo narration script (the recording itself is local-only)
+```
+
 ## Limitations
 
 - **Synthetic fixtures.** Dev, held-out and sample models are small generated boxes, not real buildings. The only
