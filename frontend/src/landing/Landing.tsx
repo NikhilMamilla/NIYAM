@@ -172,7 +172,7 @@ function ProblemSheet() {
             >
               <div className="accordion-header">
                 <div className="info-card-icon"><FlagIndia /></div>
-                <h4>India</h4>
+                <h3>India</h3>
                 <span className="accordion-toggle">{expandedCard === 0 ? '−' : '+'}</span>
               </div>
               <div className="accordion-content">
@@ -186,7 +186,7 @@ function ProblemSheet() {
             >
               <div className="accordion-header">
                 <div className="info-card-icon"><FlagSingapore /></div>
-                <h4>Singapore</h4>
+                <h3>Singapore</h3>
                 <span className="accordion-toggle">{expandedCard === 1 ? '−' : '+'}</span>
               </div>
               <div className="accordion-content">
@@ -200,7 +200,7 @@ function ProblemSheet() {
             >
               <div className="accordion-header">
                 <div className="info-card-icon"><img className="bsi-logo" src="/buildingsmart-logo.png" alt="" width="36" height="36" loading="lazy" /></div>
-                <h4>buildingSMART</h4>
+                <h3>buildingSMART</h3>
                 <span className="accordion-toggle">{expandedCard === 2 ? '−' : '+'}</span>
               </div>
               <div className="accordion-content">
@@ -275,7 +275,7 @@ function GateSheet() {
           reason, for up to {h.provenance.maxRepairs} repairs. If it never passes, a person has to look at it.
         </p>
         <p>
-          The gate uses two small test buildings per rule. Separate held-out buildings, which the gate never sees, are
+          The gate uses two small test buildings per rule. Separate <Term k="held-out">held-out</Term> buildings, which the gate never sees, are
           used only to measure how often a passed draft is still wrong.
         </p>
       </div>
@@ -376,10 +376,10 @@ function EvaluationSheet() {
 
       <div className="figure-block">
         <div className="figure-head">
-          <h3>Wrong rules shipped</h3>
+          <h3>Wrong rules shipped (<Term k="wrong_shipped">wrong_shipped</Term>)</h3>
           <div className="segmented" role="radiogroup" aria-label="Count over">
-            <Button role="radio" aria-checked={counted === "items"} size="sm" primary={counted === "items"} aria-pressed={counted === "items"} onClick={() => setCounted("items")}>Every attempt</Button>
-            <Button role="radio" aria-checked={counted === "units"} size="sm" primary={counted === "units"} aria-pressed={counted === "units"} onClick={() => setCounted("units")}>Per rule</Button>
+            <Button role="radio" aria-checked={counted === "items"} size="sm" primary={counted === "items"} onClick={() => setCounted("items")}>Every attempt</Button>
+            <Button role="radio" aria-checked={counted === "units"} size="sm" primary={counted === "units"} onClick={() => setCounted("units")}>Per rule</Button>
           </div>
         </div>
         <p className="figure-note">
@@ -439,7 +439,7 @@ function EvaluationSheet() {
           Excluded after seeing the results, because the spec's reading and the clause's literal text disagree
           ({h.posthoc.excluded.join(", ")}). Not a pre-registered analysis.
         </p>
-        <NumbersTable caption="Post-hoc sensitivity" head={["Model", "Mode", "Attempts", "Correct on held-out", "Wrong shipped"]}
+        <NumbersTable caption="Post-hoc sensitivity" head={["Model", "Mode", "Attempts", "Correct on held-out", "wrong_shipped"]}
                       rows={h.posthoc.all.map((c) => [modelLabel(c.model), c.mode, String(c.n), harness(c.heldoutCorrect), harness(c.wrongShipped)])} />
       </details>
       <p className="handoff">All of this is on synthetic test buildings. The next sheet asks whether the approach carries to a second jurisdiction.</p>

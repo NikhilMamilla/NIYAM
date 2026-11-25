@@ -10,7 +10,7 @@ const site = siteJson as unknown as SiteData;
 const ex   = site.workedExample;
 
 const STAGES = [
-  { key: "clause",   num: "01", name: "Clause",   img: "/journey/stage-01-clause.png",   alt: "Blueprint of exit doorway with ≥ 1.0 m width annotation" },
+  { key: "clause",   num: "01", name: "Clause",   img: "/journey/stage-01-clause.webp",   alt: "Blueprint of exit doorway with ≥ 1.0 m width annotation" },
   { key: "draft",    num: "02", name: "Draft",    img: "/journey/stage-02-draft.png",    alt: "Blueprint doorway with open door and ≥ 1.0 m dimension" },
   { key: "gate",     num: "03", name: "Gate",     img: "/journey/stage-03-gate.png",     alt: "Two test buildings: one passing (1.2 m), one failing (0.8 m)" },
   { key: "rulepack", num: "04", name: "Rulepack", img: "/journey/stage-04-rulepack.png", alt: "Card file box with rule cards filed in a rulepack" },

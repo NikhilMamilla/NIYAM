@@ -6,6 +6,8 @@ export const GLOSSARY = {
   IDS: "Information Delivery Specification 1.0: a buildingSMART standard for saying which data a model must contain, as an XML file any IDS checker can run.",
   BCF: "BIM Collaboration Format 2.1: a standard file of issues (with the element and a viewpoint) that design tools can import.",
   gate: "The verifier gate: a rule drafted by an AI model is only kept if it is valid, loads, applies to test buildings, passes the test building that follows the rule and fails the one that breaks it.",
+  "held-out": "Held-out test buildings: a second pair of small test models per rule, with different values and the other length unit, that the gate never sees. They are used only to score whether a shipped rule is right.",
+  wrong_shipped: "wrong_shipped: of the rules that were shipped (kept), the share that are wrong on the held-out test buildings, shown as k/n with a 95% Wilson interval. Lower is better.",
   unchecked: "Unchecked: the rule applies to this element, but the model lacks the data needed to decide (for example a door without a width). It is never counted as a pass.",
 } as const;
 
