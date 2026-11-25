@@ -13,7 +13,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 test.use({ viewport: { width: 1920, height: 1080 }, video: "on" });
 
 // Cumulative end time (seconds from page load) of each shot in the demo script's Time column.
-const SHOT_END_S = [10, 20, 35, 50, 65, 75, 85];
+const SHOT_END_S = [10, 20, 35, 50, 65, 75, 85] as const;
 
 test("demo video: silent recording of the demo script, one shot per narration line", async ({ page }) => {
   test.setTimeout(180_000);

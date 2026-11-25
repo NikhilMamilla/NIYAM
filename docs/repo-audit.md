@@ -5,7 +5,7 @@ Inventory: `git ls-files` on `main` before this branch's changes gave **689 trac
 tracked file exceeds 5 MB. No caches (`__pycache__`, `.pytest_cache`, `node_modules`, `dist`, `build`,
 `*.egg-info`, `test-results`, `playwright-report`, `.vite`), editor/OS junk (`.vscode`, `.idea`, `.DS_Store`,
 `Thumbs.db`, `desktop.ini`), logs, scratch/backup files (`*.orig`, `*.bak`, `*~`), `eval/runs/`, `.env` (only
-`.env.example`, which holds no values), or absolute local paths (`C:\Users...`, `D:\Desktop...`) were found tracked.
+`.env.example`, which holds no values), or absolute local Windows user/desktop paths were found tracked.
 
 This file records every decision that is not a plain "keep as committed source": the 9 exceptions below, and the
 bulk categories everything else falls into. Writing one row per file for all 689 would not be more informative
