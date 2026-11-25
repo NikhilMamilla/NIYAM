@@ -1,4 +1,4 @@
-# Status: submission-v1 (branch final-lock), 25 November 2026
+# Status: submission-v2 (branch final-lock), 25 November 2026
 
 NIYAM is frozen for the DBI 2026 Stage 2 deck. Everything below is final unless listed under Known issues.
 
@@ -49,27 +49,29 @@ geometric items); after it, no item changes outcome, because on the fixtures the
 
 ## Known issues
 
-1. **React Bits components are not MIT.** Specular Button, Gooey Nav and Card Swap are copied from React Bits under
-   MIT + Commons Clause (`THIRD_PARTY_NOTICES.md`). They may be used inside the app but not redistributed as
-   components, so the repository is not entirely MIT. Replacing them with original code was not done.
-2. **NBCS 2026 date from secondary sources.** The Gazette of India notice could not be fetched (TLS certificate
+1. **NBCS 2026 date from secondary sources.** The Gazette of India notice could not be fetched (TLS certificate
    error); the 30 April 2026 withdrawal rests on two agreeing secondary reports (`docs/sources.md`). The OBPS / AutoDCR
    sentence is softened and not verified verbatim; the IDS 1.0 year comes from Wikipedia (the release page showed the
    day, not the year).
-3. **Telangana amendments.** The units use the 2012 base text; a 2026 amendment is reported to raise the high-rise
-   threshold from 18 m to 21 m, which TGBR2012-5's heading depends on. Not applied, not reviewed.
-4. **Landing page performance.** Lighthouse on the built landing page (25 November 2026): desktop Performance 58,
-   Accessibility 100, Best Practices 100, SEO 100; mobile Performance 47, Accessibility 100, Best Practices 100, SEO 100.
-   Main-thread blocking time (desktop 970 ms, mobile 4,110 ms) comes mostly from the WebGL buttons and the animated
-   navigation; not fixed.
-5. **BCF viewpoints** carry component selections only (no camera, no snapshot); the files pass the BCF 2.1 schemas
+2. **Telangana amendments.** The units use the 2012 base text; a 2026 amendment is reported to raise the high-rise
+   threshold from 18 m to 21 m, which Rule 5's heading depends on. TGBR2012-5#fxi is unaffected either way (its
+   9 sq.m minimum also holds under Telangana's own high-rise courtyard rule); TGBR2012-5#c's 2.5 m stilt-floor
+   minimum is unverified either way, because no Telangana high-rise stilt-floor rule is in the ingested corpus to
+   compare against (`docs/sources.md`). Not applied, not reviewed.
+3. **Landing page performance.** Lighthouse on the built landing page (25 November 2026): desktop Performance 65,
+   Accessibility 100, Best Practices 100, SEO 100; mobile Performance 45, Accessibility 100, Best Practices 100, SEO 100
+   (up from 58/47 before this stage, after switching the button's idle light from an animated gradient position to
+   an opacity pulse, which is compositor-only). The remaining main-thread cost (desktop 520 ms, mobile ~4 s of
+   blocking time) is page weight (1,822 DOM elements, one long single-page site) and a pre-existing non-composited
+   animation on the demo-step buttons (sheet A-09, unrelated to this stage); not investigated further.
+4. **BCF viewpoints** carry component selections only (no camera, no snapshot); the files pass the BCF 2.1 schemas
    but were not opened in a third-party BCF viewer.
-6. **Python version.** The backend needs Python 3.11 or 3.12 (`requires-python = ">=3.11,<3.13"`); on a machine whose
-   default `python` is 3.13 the clean-clone install fails until `py -3.11` is used (the run guides now say so).
-7. **No hosted deployment.** NIYAM runs only locally (`submission/how-to-run.md`).
-8. **Run backend pytest and Playwright one after the other**: run at the same time on this machine they produced
+5. **No hosted deployment.** NIYAM runs only locally (`submission/how-to-run.md`). `scripts/demo.ps1` now creates
+   `backend\.venv` itself with Python 3.11 or 3.12 if it is missing (never a newer default `python`); confirmed in a
+   clean clone on a machine whose default `python` is 3.13.
+6. **Run backend pytest and Playwright one after the other**: run at the same time on this machine they produced
    failures that passed when re-run alone (cause not investigated).
-9. **Coverage.** The Stage 1 target of 40 to 60 clauses is not met (25 MBBL units; `docs/spec-backlog.md`).
+7. **Coverage.** The Stage 1 target of 40 to 60 clauses is not met (25 MBBL units; `docs/spec-backlog.md`).
 
 ## Reproduce
 
@@ -102,9 +104,10 @@ output is committed as `eval/results/rescore-after-mm-fix/before.json`.
 | Backend | pytest: 534 passed |
 | Frontend unit | vitest: 41 passed |
 | Types and build | tsc clean; `npm run build` built |
-| End-to-end | Playwright: 27 passed (workers=1) |
+| End-to-end | Playwright: 28 passed (workers=1) |
 | check_public_ready | no secrets in the tree or the full history; 0 personal-path and 0 file warnings |
-| check_numbers --tests | 1,063 numbers checked in 30 files, 0 mismatches |
+| check_numbers --tests | 1,067 numbers checked in 30 files, 0 mismatches |
 | check_images | 30 referenced images, 29 published files, 0 problems |
+| Clean-clone install | confirmed on a true `git clone` of this branch, default `python` 3.13: `scripts/demo.ps1` created `backend\.venv` with `py -3.11` and both servers came up; a sample audit ran correctly |
 
 Before this branch, `main` at `8a10194` had 527 passing in pytest and 39 in vitest.
