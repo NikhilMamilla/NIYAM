@@ -10,6 +10,8 @@ async function settle(page: Page) {
 }
 
 async function openSample(page: Page, label: RegExp) {
+  // samples are on the start screen only (one-page dashboard): go back to it when a model is already loaded
+  if (await page.getByRole("button", { name: "Back" }).count()) await page.getByRole("button", { name: "Back" }).click();
   await page.getByRole("button", { name: label }).first().click();
   await expect(page.locator(".viewport")).toHaveAttribute("data-view-state", "ready", { timeout: 170_000 });
   await page.waitForTimeout(2200); // fly-in and highlights
