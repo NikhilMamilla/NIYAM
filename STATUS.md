@@ -42,7 +42,6 @@ models' own randomness.
 
 ## Not done or limited
 
-- TEAM names, college and mentor on the landing page are placeholders in `frontend/src/content/site.ts`.
 - The regulatory dates in `CONTEXT` (same file) come from the brief and were not checked against sources.
 - Run backend pytest and Playwright one after the other: run at the same time on this machine they
   produced three failures (cause not investigated) that all passed when re-run alone.

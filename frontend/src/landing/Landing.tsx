@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { SiteData } from "../data/buildSiteData";
 import type { Cell, Rate } from "../data/siteData";
 import siteJson from "../data/site-data.json";
-import { CONTEXT, DOC_GROUPS, TEAM } from "../content/site";
+import { COMPETITION, CONTEXT, DOC_GROUPS, TEAM } from "../content/site";
 import { Term } from "../glossary";
 import { IconFailed, IconOutOfScope, IconPassed, IconUnchecked } from "../icons";
 import { Link } from "../router";
@@ -827,7 +827,7 @@ function Footer() {
 
         <section className="ft-team" aria-labelledby="team-h">
           <p className="ft-label mono">Built by</p>
-          <h2 id="team-h" className="ft-team-name">{TEAM.TEAM_NAME}</h2>
+          <h2 id="team-h" className="ft-team-name">Team {TEAM.TEAM_NAME}</h2>
           <p className="ft-college">
             <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M1.5 6 8 2.5 14.5 6 8 9.5 1.5 6ZM4 7.6v3.2c0 .9 1.8 1.7 4 1.7s4-.8 4-1.7V7.6" /></svg>
             {TEAM.COLLEGE}
@@ -864,6 +864,7 @@ function Footer() {
         <p className="ft-legal">
           <span>A research prototype: the rules are drafts no expert has reviewed yet, so read every result as a lead to check, not as approval.</span>
           <span>Open source under the MIT licence, built on the IFC4, IDS 1.0 and BCF 2.1 standards.</span>
+          <span>Entry to the {COMPETITION.NAME}, theme “{COMPETITION.THEME}” (secondary: {COMPETITION.SECONDARY_THEME}). Finals {COMPETITION.FINALS}.</span>
         </p>
       </div>
     </footer>

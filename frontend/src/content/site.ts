@@ -2,11 +2,19 @@
 
 /** Shown in the landing page footer. */
 export const TEAM = {
-  TEAM_NAME: "Team Abhyudaya",
+  TEAM_NAME: "Abhyudaya",
   MEMBERS: ["Nikhil Mamilla", "Yagna Sri Hasa", "G Nikhitha", "D Sahithi", "G Sahithi"],
-  COLLEGE: "B V Raju Institute of Technology",
+  COLLEGE: "B V Raju Institute of Technology (BVRIT), Narsapur, Telangana",
   MENTOR: "Dr. Lanke Pallavi",
   MENTOR_ROLE: "Associate Professor & Associate HoD",
+};
+
+/** The competition this prototype is entered in. */
+export const COMPETITION = {
+  NAME: "DBI 2026 Student Competition (CDCPIndia / buildingSMART India)",
+  THEME: "AI, Automation and Digital Workflows",
+  SECONDARY_THEME: "Integrated BIM and Information Management",
+  FINALS: "17 Dec 2026, IIT Bombay",
 };
 
 /**

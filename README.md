@@ -138,6 +138,14 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 - `cd frontend && npm run site-data`: regenerates every number the landing page shows from committed results.
 - `python scripts/check_public_ready.py`: scans the tree and history for secrets and personal paths.
 
+## Team
+
+Team **Abhyudaya**, B V Raju Institute of Technology (BVRIT), Narsapur, Telangana: Nikhil Mamilla, Yagna Sri Hasa,
+G Nikhitha, D Sahithi and G Sahithi. Mentor: Dr. Lanke Pallavi, Associate Professor & Associate HoD.
+
+Entry to the DBI 2026 Student Competition (CDCPIndia / buildingSMART India), theme "AI, Automation and Digital
+Workflows" (secondary: Integrated BIM and Information Management). Finals: 17 Dec 2026, IIT Bombay.
+
 ## License
 
 MIT (see `LICENSE`). Clause text is quoted from the publicly available MoHUA Model Building Bye-Laws 2016 and the

@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { CONTEXT } from "../content/site";
+import { COMPETITION, CONTEXT, TEAM } from "../content/site";
 import siteJson from "../data/site-data.json";
 import type { SiteData } from "../data/buildSiteData";
 import { frac, pct, thousands } from "./format";
@@ -9,6 +9,13 @@ import Landing from "./Landing";
 const site = siteJson as unknown as SiteData;
 const html = renderToStaticMarkup(<Landing />);
 const text = html.replace(/<pre[\s\S]*?<\/pre>/g, " ").replace(/<[^>]+>/g, " ").replace(/&[a-z#0-9]+;/g, " ").replace(/\s+/g, " ");
+
+describe("landing page team", () => {
+  it("names the team, every member, the college, the mentor and the competition", () => {
+    for (const s of [`Team ${TEAM.TEAM_NAME}`, ...TEAM.MEMBERS, TEAM.COLLEGE, TEAM.MENTOR, TEAM.MENTOR_ROLE, COMPETITION.NAME, COMPETITION.FINALS])
+      expect(text).toContain(s.replace(/&/g, " ").replace(/\s+/g, " "));
+  });
+});
 
 describe("landing page numbers", () => {
   it("shows the headline run's wrong-shipped figures exactly as in site-data.json", () => {
@@ -43,7 +50,7 @@ describe("landing page numbers", () => {
       else if (v && typeof v === "object") Object.values(v).forEach(walk);
     };
     walk(site);
-    Object.values(CONTEXT).forEach(addTokens);
+    [CONTEXT, COMPETITION].forEach((o) => Object.values(o).forEach(addTokens));
     const tokens = (text.match(/\d[\d,.]*\d|\d/g) ?? []).map((t) => t.replace(/[.,]$/, ""));
     const stray = [...new Set(tokens.filter((t) => !allowed.has(t)))];
     expect(stray, `numbers on the page with no source: ${stray.join(", ")}`).toEqual([]);
