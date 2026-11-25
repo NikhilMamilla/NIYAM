@@ -21,6 +21,9 @@ KEY_PATTERNS = [
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"), re.compile(r"\bgh[pousr]_[A-Za-z0-9]{30,}"), re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}"),
     re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b"), re.compile(r"\bhf_[A-Za-z0-9]{30,}"), re.compile(r"\bglpat-[A-Za-z0-9_-]{20,}"),
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----"),
+    re.compile(r"\bnvapi-[A-Za-z0-9_-]{20,}"),                   # NVIDIA API keys (the open models)
+    re.compile(r"\bBearer\s+[A-Za-z0-9._~+/-]{20,}"),            # a pasted Authorization header
+    re.compile(r"\b[0-9a-f]{32}\.[A-Za-z0-9]{16}\b"),            # Z.ai / Zhipu key format (id.secret)
 ]
 ASSIGNED = re.compile(r"(?i)(?:key|token|secret|passw(?:or)?d)[\w-]*\s*[:=]\s*['\"]?([A-Za-z0-9_\-+/=.]{20,})")
 PERSONAL = re.compile(r"(?i)(?:[A-Z]:[\\/]+Users[\\/]+(?!<)[^\\/\s'\"]+|[A-Z]:[\\/]+Desktop|/home/(?!<)[a-z][\w.-]+|"
