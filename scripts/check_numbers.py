@@ -186,8 +186,11 @@ def check_text(rel: str, text: str, f: dict[str, int], rates: set[str]) -> tuple
                     raw = next(g for g in m.groups() if g is not None)
                     value = int(raw.replace(",", ""))
                     before = line[: m.start()]
+                    # a keyword right after the number, before any punctuation ("445 clauses from MBBL") wins
+                    ahead = [(mm.start(1), fact) for kw, fact in ctx.items()
+                             if (mm := re.match(rf"[^;:.,()]{{0,30}}?({kw})", line[m.end():]))]
                     hits = [(mm.end(), fact) for kw, fact in ctx.items() for mm in re.finditer(kw, before)]
-                    key = max(hits)[1] if hits else default
+                    key = min(ahead)[1] if ahead else max(hits)[1] if hits else default
                     if key in RUN_CTX.values():
                         key = f"run.{key}.{'calls' if 'calls' in pattern else 'tokens'}"
                     if key is None:  # no context: the number must be one of this claim's facts

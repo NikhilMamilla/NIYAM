@@ -18,13 +18,13 @@ export const COMPETITION = {
 };
 
 /**
- * Context facts for "The problem". Source: the Phase 13 project brief (not from NIYAM's data); the owner should
- * confirm the wording and dates against the official notifications before publishing.
+ * Context facts for "The problem". Each is checked in docs/sources.md (sources and access dates); change the two
+ * together.
  */
 export const CONTEXT = {
-  nbc: "India: NBC 2016 has been replaced by the advisory NBCS 2026 (notified 30 April 2026).",
-  singapore: "Singapore: Digital BIM submissions for building approvals become mandatory from 1 October 2026.",
-  ids: "buildingSMART: IDS 1.0 provides an open standard for machine-checkable information requirements.",
+  nbc: "India: BIS withdrew the National Building Code 2016 with effect from 30 April 2026 and replaced it with the advisory National Building Construction Standards 2026 (SP 7:2026).",
+  singapore: "Singapore: from 1 October 2026, building plan submissions through CORENET X are mandatory for new projects of 5,000 m² gross floor area and above.",
+  ids: "buildingSMART: IDS 1.0, published as a final standard in June 2024, is an open standard for machine-checkable information requirements.",
 };
 
 /** Files the footer offers for download. They are copied into public/downloads/ by scripts/sync-downloads.mjs. */
@@ -35,7 +35,7 @@ export const DOC_GROUPS: { title: string; blurb: string; docs: Doc[] }[] = [
     blurb: "What NIYAM is, where it stands, and how to run it.",
     docs: [
       { label: "Project overview", file: "README.pdf", about: "What NIYAM is, how it works, where it stands today, and how to run it." },
-      { label: "Project status and open decisions", file: "STATUS.pdf", about: "What is blocked, what changed in the redesign, and what still needs an owner decision." },
+      { label: "Project status and known issues", file: "STATUS.pdf", about: "What is final, what is still open, and the commands to reproduce the tests and the re-score." },
       { label: "Web app notes", file: "frontend.pdf", about: "The stack, the 3D view, the design system, and the checks to repeat in your own browser." },
     ],
   },
@@ -77,7 +77,9 @@ export const DOC_GROUPS: { title: string; blurb: string; docs: Doc[] }[] = [
       { label: "Review sheet for rule reviewers", file: "review-sheet.csv", about: "Every draft rule with the sentence, the check and blank decision columns." },
       { label: "Data readiness file (IDS 1.0)", file: "niyam-data-readiness.ids", about: "Open it against your model to see what data to add before auditing." },
       { label: "A real gate rejection", file: "gate-rejection.json", about: "One candidate rule the gate refused, with the reason." },
-      { label: "Licence (MIT)", file: "LICENSE", about: "Free to use, copy and change, with the licence notice kept." },
+      { label: "Licence (MIT)", file: "LICENSE", about: "Free to use, copy and change, with the licence notice kept; three copied UI components keep their own terms." },
+      { label: "Third-party notices", file: "THIRD_PARTY_NOTICES.pdf", about: "Every shipped package, font, component and data file, with its licence and source." },
+      { label: "Sources for the regulatory facts", file: "sources.pdf", about: "The pages behind each date and rule on this site, with access dates." },
     ],
   },
 ];

@@ -154,11 +154,11 @@ function ProblemSheet() {
   };
 
   return (
-    <Sheet id="problem" sheet="A-02" title="Plans are still checked by reading" className="sheet-dark sheet-fullheight">
+    <Sheet id="problem" sheet="A-02" title="Plans are still checked as drawings" className="sheet-dark sheet-fullheight">
       <div className="two-col">
         <div className="prose">
           <p>
-            In most Indian cities, officers manually compare 2D building plans against written rules covering setbacks, room sizes and exit widths. Existing digital tools keep these rules locked in proprietary software, hiding how regulations become checks.
+            In most Indian cities, building plans are submitted and checked as 2D drawings against written rules covering setbacks, room sizes and exit widths. Where the check is automated, the rules sit inside proprietary software, so no one outside can see how a regulation became a check.
           </p>
           <p>
             India lacks an open, machine-readable version of its building bye-laws. NIYAM aims to change this through transparent, traceable checks, where every result links to its original clause and the rate of wrong rules is measured in the open.
