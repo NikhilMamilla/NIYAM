@@ -71,7 +71,7 @@ Run ids: pilot run 1 `20261118T133025Z-4c4519`, headline run 2 `20261118T140452Z
 | Fact | Source | Supports |
 |---|---|---|
 | 2 real buildingSMART IFC4 files (SketchUp, millimetres): Building-Architecture (0 doors, 2 spaces, 0 stair flights) and Building-Structural (0, 0, 0) | `docs/real-models.md` | "We tried real exports." |
-| With all 27 draft rules: Building-Architecture 0 passed, 0 failed, 38 unchecked; 8 rules checked nothing. Building-Structural: all 27 rules checked nothing | `docs/real-models.md` | "Nothing could pass or fail: the data was missing." |
+| With a one-off diagnostic pack of all 27 draft rules (not rulepack v0, never shipped — see Pipeline above for the 6 that ship): Building-Architecture 0 passed, 0 failed, 38 unchecked; 8 rules checked nothing. Building-Structural: all 27 rules checked nothing | `docs/real-models.md` | "Nothing could pass or fail: the data was missing." |
 | Why: the rooms declare no Pset_SpaceCommon.Category; there are no doors and no stair flights; no Pset_BuildingCommon.OccupancyType | `docs/real-models.md` | "The bottleneck is the data in the model, not the rules." |
 | NIYAM writes a data-readiness IDS (`docs/readiness/niyam-data-readiness.ids`) a modeller can run first | `docs/real-models.md` | "What to add before submitting." |
 
@@ -85,7 +85,8 @@ Run ids: pilot run 1 `20261118T133025Z-4c4519`, headline run 2 `20261118T140452Z
   (`R2/summary.md`, POST-HOC section).
 - Telangana: 2 units, base text of G.O.Ms.No.168 with amendments not applied (`docs/sources.md`).
 - The millimetre fix is verified on a hand-written file and one SketchUp export only.
-- Three UI components are React Bits code under MIT + Commons Clause (`THIRD_PARTY_NOTICES.md`).
+- The repository is MIT throughout; its landing-page button, nav and card-stack components were originally
+  adapted from React Bits (MIT + Commons Clause) and have since been rewritten as original code (`THIRD_PARTY_NOTICES.md`).
 
 ## Engineering checks
 
