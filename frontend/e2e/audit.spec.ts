@@ -143,23 +143,19 @@ test("deep link /app?sample= opens that sample", async ({ page }) => {
   await expect(page.getByTestId("overall-status")).toHaveText("Not fully checked", { timeout: 60_000 });
 });
 
-test("first-use tour is skippable and remembered", async ({ browser }) => {
-  const context = await browser.newContext();
-  const page = await context.newPage();
-  await page.goto("/app");
-  await expect(page.getByTestId("tour")).toBeVisible();
-  await page.getByRole("button", { name: "Skip the tour" }).click();
-  await expect(page.getByTestId("tour")).toHaveCount(0);
-  await page.reload();
+test("Back returns from a loaded sample to the start screen", async ({ page }) => {
+  await loadSample(page, /Sample A/, "sample_a_mm");
+  await page.getByRole("button", { name: "Back" }).click();
   await expect(page.getByTestId("empty-state")).toBeVisible();
-  await expect(page.getByTestId("tour")).toHaveCount(0);
-  await context.close();
+  await expect(page.getByRole("button", { name: "Back" })).toHaveCount(0);
+  await page.getByRole("button", { name: /Sample C/ }).first().click();
+  await expect(page.getByTestId("overall-status")).toBeVisible({ timeout: 60_000 });
 });
 
 test("clicking a door in 3D and an element in the list both open the detail panel", async ({ page }) => {
   await loadSample(page, /Sample A/, "sample_a_mm");
-  const box = (await page.locator(".viewport").boundingBox())!;
   const before = await colourStats(page, await viewportShot(page));
+  const box = (await page.locator(".viewport").boundingBox())!; // after the shot: it scrolls the viewport into view
   await page.mouse.click(box.x + before.redCentre!.x, box.y + before.redCentre!.y);
   const panel = page.getByTestId("detail-panel");
   await expect(panel).toBeVisible();

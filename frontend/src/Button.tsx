@@ -12,10 +12,11 @@ export default function Button({ primary, tone = "ink", size = "md", ...rest }: 
       size={size}
       radius={10}
       tint={color}
-      tintOpacity={primary ? 0.92 : 0.04}
+      tintOpacity={primary ? 1 : 0.07}
       textColor={primary ? (ink ? "#ffffff" : "#191F30") : color}
       lineColor={primary ? (ink ? "#3447C7" : "#ffffff") : color}
-      baseColor={ink ? "#8b93a8" : "#ffffff"}
+      baseColor={ink ? "#6b7390" : "#ffffff"}
+      style={{ fontWeight: primary ? 600 : 500 }}
       {...rest}
     />
   );

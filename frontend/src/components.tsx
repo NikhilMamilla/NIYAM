@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type DragEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type DragEvent } from "react";
 import type { AuditResult, Counts, RuleResult, RuleStatus, Sample, Verdict } from "./api";
 import { Term } from "./glossary";
 import Button from "./Button";
@@ -36,15 +36,15 @@ export function CountList({ counts, compact = false }: { counts: Counts; compact
 }
 
 /** Samples with a one-line plain description each (the files are synthetic test buildings). */
-export const SAMPLES: { name: string; label: string; line: string }[] = [
-  { name: "sample_a_mm", label: "Sample A", line: "Doors on two floors, in millimetres: some exits too narrow, some revolving." },
-  { name: "sample_b_m", label: "Sample B", line: "The same kind of doors, modelled in metres." },
-  { name: "sample_c_no_fireexit_mm", label: "Sample C", line: "Doors that do not say whether they are exits: nothing can be decided." },
-  { name: "sample_d_rooms_stairs_mm", label: "Sample D", line: "Rooms and stair flights, in millimetres; some lack shape or room type." },
-  { name: "sample_e_rooms_stairs_m", label: "Sample E", line: "Rooms and stair flights, in metres." },
+export const SAMPLES: { name: string; label: string; line: string; tags: string[] }[] = [
+  { name: "sample_a_mm", label: "Sample A", line: "Doors on two floors: some exits too narrow, some revolving.", tags: ["Doors", "mm"] },
+  { name: "sample_b_m", label: "Sample B", line: "The same kind of doors, modelled in metres.", tags: ["Doors", "m"] },
+  { name: "sample_c_no_fireexit_mm", label: "Sample C", line: "Doors that do not say whether they are exits: nothing can be decided.", tags: ["Doors", "mm", "Data missing"] },
+  { name: "sample_d_rooms_stairs_mm", label: "Sample D", line: "Rooms and stair flights; some lack shape or room type.", tags: ["Rooms", "Stairs", "mm"] },
+  { name: "sample_e_rooms_stairs_m", label: "Sample E", line: "Rooms and stair flights, modelled in metres.", tags: ["Rooms", "Stairs", "m"] },
 ];
 
-export function StartPanel(props: { samples: Sample[]; busy: boolean; current: string | null; onFile: (f: File) => void; onSample: (n: string) => void }) {
+export function StartPanel(props: { wide?: boolean; samples: Sample[]; busy: boolean; current: string | null; onFile: (f: File) => void; onSample: (n: string) => void }) {
   const inputId = useId();
   const [dragging, setDragging] = useState(false);
   const onDrop = (e: DragEvent) => {
@@ -55,12 +55,18 @@ export function StartPanel(props: { samples: Sample[]; busy: boolean; current: s
   };
   const available = SAMPLES.filter((s) => props.samples.some((x) => x.name === s.name));
   return (
-    <section className="panel start" aria-labelledby={`${inputId}-h`} data-tour="start">
-      <h2 id={`${inputId}-h`} className="panel-title">Load a building</h2>
+    <section className={`panel start${props.wide ? " start--wide" : ""}`} aria-labelledby={`${inputId}-h`}>
+      <header className="start-head">
+        <span className="start-step" aria-hidden="true">1</span>
+        <div>
+          <h2 id={`${inputId}-h`}>Load a building</h2>
+          <p>Upload an IFC4 model, or try a sample.</p>
+        </div>
+      </header>
       <div className={dragging ? "dropzone dragging" : "dropzone"}
            onDragOver={(e) => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop}>
-        <IconUpload className="dropzone-icon" />
-        <p>Drop an <Term k="IFC">IFC4</Term> file here, or</p>
+        <span className="dropzone-badge" aria-hidden="true"><IconUpload className="dropzone-icon" /></span>
+        <p className="dropzone-title">Drop an <Term k="IFC">IFC4</Term> file here</p>
         <Button as="label" htmlFor={inputId} size="sm" primary>Choose a file</Button>
         <input id={inputId} className="visually-hidden" type="file" accept=".ifc" disabled={props.busy}
                onChange={(e) => { const f = e.target.files?.[0]; if (f) props.onFile(f); e.target.value = ""; }} />
@@ -68,17 +74,25 @@ export function StartPanel(props: { samples: Sample[]; busy: boolean; current: s
       </div>
       {available.length > 0 && (
         <div className="samples">
-          <h3 className="samples-label">Or open a synthetic sample building</h3>
+          <p className="start-or"><span>or try a sample building</span></p>
           <ul className="sample-list">
-            {available.map((s) => (
-              <li key={s.name}>
-                <button type="button" className={`sample ${props.current === s.name ? "current" : ""}`} disabled={props.busy}
-                        aria-pressed={props.current === s.name} onClick={() => props.onSample(s.name)}>
-                  <span className="sample-name">{s.label}</span>
-                  <span className="sample-line">{s.line}</span>
-                </button>
-              </li>
-            ))}
+            {available.map((s) => {
+              const on = props.current === s.name;
+              return (
+                <li key={s.name}>
+                  <button type="button" className={`sample ${on ? "current" : ""}`} disabled={props.busy}
+                          aria-pressed={on} onClick={() => props.onSample(s.name)}>
+                    <span className="sample-badge" aria-hidden="true">{s.label.slice(-1)}</span>
+                    <span className="sample-body">
+                      <span className="sample-name">{s.label}</span>
+                      <span className="sample-line">{s.line}</span>
+                      <span className="sample-tags" aria-hidden="true">{s.tags.map((t) => <i key={t}>{t}</i>)}</span>
+                    </span>
+                    <span className="sample-go" aria-hidden="true">{on ? "✓" : "→"}</span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
@@ -100,27 +114,31 @@ export function SummaryStrip(props: { audit: AuditResult; fileName: string; file
   const s = plainSummary(audit);
   const e = audit.summary.elements;
   return (
-    <section className="panel summary" aria-labelledby="summary-h" data-tour="summary">
+    <section className="panel summary" aria-labelledby="summary-h">
       <h2 id="summary-h" className="visually-hidden">Audit summary</h2>
-      <p className="file-line" title={props.fileName}>{props.fileName} <span>· {formatBytes(props.fileSize)}</span></p>
-      <p className="story" data-testid="plain-summary">{s.sentence}</p>
-      <div className="overall" data-testid="overall-status" aria-live="polite"><StatusBadge status={audit.status} big /></div>
-      <p className="explanation">{STATUS_EXPLANATION[audit.status]}</p>
-      <p className="affected" data-testid="elements-affected">
-        Distinct elements: <span className="num">{e.with_failed}</span> with violations, <span className="num">{e.with_unchecked}</span> <Term k="unchecked">could not be fully checked</Term>, <span className="num">{e.clean}</span> clean
-        {" "}(of <span className="num">{e.total_in_model_of_scoped_classes}</span> the rules apply to)
-      </p>
-      <details className="disclosure checks">
-        <summary>Checks run: one per rule and element</summary>
-        <CountList counts={audit.summary.checks} />
-      </details>
-      <div className="exports" aria-label="Exports">
-        <Button as="a" size="sm" href={props.reportUrl} target="_blank" rel="noopener noreferrer" data-testid="open-report"><IconDownload />HTML report</Button>
-        <Button as="a" size="sm" href={props.bcfUrl} download data-testid="download-bcf"><IconDownload /><span><Term k="BCF">BCF</Term> issues</span></Button>
-        <Button size="sm" data-testid="download-json"
-                onClick={() => downloadText(`${props.fileName.replace(/\.ifc$/i, "")}-audit.json`, JSON.stringify(audit, null, 2), "application/json")}>
-          <IconDownload />JSON
-        </Button>
+      <div className="summary-main">
+        <p className="file-line" title={props.fileName}>{props.fileName} <span>· {formatBytes(props.fileSize)}</span></p>
+        <p className="story" data-testid="plain-summary">{s.sentence}</p>
+        <div className="overall" data-testid="overall-status" aria-live="polite"><StatusBadge status={audit.status} big /></div>
+        <p className="explanation">{STATUS_EXPLANATION[audit.status]}</p>
+      </div>
+      <div className="summary-side">
+        <p className="affected" data-testid="elements-affected">
+          Distinct elements: <span className="num">{e.with_failed}</span> with violations, <span className="num">{e.with_unchecked}</span> <Term k="unchecked">could not be fully checked</Term>, <span className="num">{e.clean}</span> clean
+          {" "}(of <span className="num">{e.total_in_model_of_scoped_classes}</span> the rules apply to)
+        </p>
+        <details className="disclosure checks">
+          <summary>Checks run: one per rule and element</summary>
+          <CountList counts={audit.summary.checks} />
+        </details>
+        <div className="exports" aria-label="Exports">
+          <Button as="a" size="sm" href={props.reportUrl} target="_blank" rel="noopener noreferrer" data-testid="open-report"><IconDownload />HTML report</Button>
+          <Button as="a" size="sm" href={props.bcfUrl} download data-testid="download-bcf"><IconDownload /><span><Term k="BCF">BCF</Term> issues</span></Button>
+          <Button size="sm" data-testid="download-json"
+                  onClick={() => downloadText(`${props.fileName.replace(/\.ifc$/i, "")}-audit.json`, JSON.stringify(audit, null, 2), "application/json")}>
+            <IconDownload />JSON
+          </Button>
+        </div>
       </div>
     </section>
   );
@@ -145,7 +163,7 @@ export function RuleList(props: { audit: AuditResult; selectedExpressId: number 
     return props.audit.rules.filter((r) => f.test(r) && (!q || `${r.clause_id} ${r.rule_text} ${r.clause_text}`.toLowerCase().includes(q)));
   }, [props.audit, filter, query]);
   return (
-    <section className="panel rules" aria-labelledby="rules-h" data-tour="rules">
+    <section className="panel rules" aria-labelledby="rules-h">
       <div className="rules-head">
         <h2 id="rules-h" className="panel-title">Rules <span className="num">({props.audit.rules.length})</span></h2>
         <label htmlFor={searchId} className="visually-hidden">Search rules</label>
@@ -293,66 +311,39 @@ export function Legend() {
   );
 }
 
+type Dir = "left" | "right" | "up";
+/** A hand-drawn style arrow. "left" and "right" point sideways, "up" points up, "down" points down. */
+function Arrow({ dir, className = "" }: { dir: Dir | "down"; className?: string }) {
+  const turn = { right: 0, down: 90, left: 180, up: 270 }[dir];
+  return (
+    <svg className={`arrow ${className}`} viewBox="0 0 64 24" aria-hidden="true" focusable="false" style={{ transform: `rotate(${turn}deg)` }}>
+      <path d="M3 12c14-5 28 5 52 0M45 4l11 8-11 8" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+const GUIDE = [
+  { title: "Load a model", text: "Upload an IFC4 file, or pick one of the synthetic sample buildings below." },
+  { title: "Explore it in 3D", text: "Red breaks a rule, amber could not be checked, grey passed. Drag to orbit, scroll to zoom." },
+  { title: "Ask why", text: "Select an element to see the rule, the reason and the clause it came from." },
+];
+
 export function EmptyState({ onSample }: { onSample: (name: string) => void }) {
   return (
-    <div className="empty-state" data-testid="empty-state">
+    <div className="empty-state guide" data-testid="empty-state">
+      <p className="guide-kicker">How to check a building</p>
       <h2>Check a building model in three steps</h2>
-      <ol>
-        <li><strong>Load a model.</strong> Upload an IFC4 file, or open one of the synthetic samples on the left.</li>
-        <li><strong>Read the verdicts.</strong> Red breaks a rule, amber could not be checked, grey passed. Every verdict has a word and an icon too.</li>
-        <li><strong>Ask why.</strong> Select an element to see the rule, the reason and the clause it came from.</li>
+      <ol className="guide-steps">
+        {GUIDE.map((g, i) => (
+          <li key={g.title} className="guide-step">
+            <span className="guide-num" aria-hidden="true">{i + 1}</span>
+            <span className="guide-copy"><strong>{g.title}</strong><span>{g.text}</span></span>
+            {i === 0 && <Button primary size="sm" className="guide-go" onClick={() => onSample("sample_a_mm")}>Open sample A</Button>}
+            {i < GUIDE.length - 1 && <Arrow dir="right" className="guide-next" />}
+          </li>
+        ))}
       </ol>
-      <Button primary onClick={() => onSample("sample_a_mm")}>Open sample A</Button>
     </div>
   );
 }
 
-const TOUR = [
-  { target: "start", title: "Load a building", text: "Upload your own IFC4 file or open a synthetic sample." },
-  { target: "stage", title: "The light table", text: "Your model in 3D, coloured by verdict. Drag to orbit, scroll to zoom, click an element to select it." },
-  { target: "summary", title: "The verdict in words", text: "A plain summary first, then the counts and the exports." },
-  { target: "rules", title: "Rules", text: "Every draft rule, with its broken and unchecked elements. Filter or search them." },
-];
-const TOUR_KEY = "niyam.tour.done";
-
-export function Tour({ ready }: { ready: boolean }) {
-  const [step, setStep] = useState<number | null>(null);
-  useEffect(() => {
-    if (!ready) return;
-    let done = false;
-    try { done = window.localStorage.getItem(TOUR_KEY) === "1"; } catch { done = false; }
-    if (!done) setStep(0);
-  }, [ready]);
-  const finish = useCallback(() => {
-    setStep(null);
-    try { window.localStorage.setItem(TOUR_KEY, "1"); } catch { /* storage unavailable: the tour shows again next time */ }
-  }, []);
-  useEffect(() => {
-    document.querySelectorAll("[data-tour-active]").forEach((el) => el.removeAttribute("data-tour-active"));
-    if (step !== null) document.querySelector(`[data-tour="${TOUR[step]!.target}"]`)?.setAttribute("data-tour-active", "");
-  }, [step]);
-  useEffect(() => {
-    if (step === null) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [step, finish]);
-  if (step === null) return null;
-  const t = TOUR[step]!;
-  return (
-    <div className="tour" role="dialog" aria-modal="false" aria-labelledby="tour-h" data-testid="tour">
-      <p className="tour-step num">{step + 1} of {TOUR.length}</p>
-      <div className="tour-copy">
-        <h2 id="tour-h">{t.title}</h2>
-        <p className="tour-text">{t.text}</p>
-      </div>
-      <div className="tour-actions">
-        <Button size="sm" tone="light" onClick={finish}>Skip the tour</Button>
-        <Button size="sm" tone="light" primary onClick={() => (step + 1 < TOUR.length ? setStep(step + 1) : finish())}>
-          {step + 1 < TOUR.length ? "Next" : "Done"}
-        </Button>
-        <button type="button" className="tour-close" aria-label="Close the tour" onClick={finish}>×</button>
-      </div>
-    </div>
-  );
-}

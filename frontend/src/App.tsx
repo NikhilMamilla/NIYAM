@@ -5,7 +5,7 @@ import {
   ApiError, auditSample, auditUpload, bcfUrl, fetchSampleBytes, getRulepack, listSamples, reportUrl,
   type AuditResult, type Sample,
 } from "./api";
-import { DetailPanel, EmptyState, Legend, RuleList, SAMPLES, StartPanel, SummaryStrip, Tour, VerdictBadge } from "./components";
+import { DetailPanel, EmptyState, Legend, RuleList, SAMPLES, StartPanel, SummaryStrip, VerdictBadge } from "./components";
 import Button from "./Button";
 import { IconReset, IconUnchecked } from "./icons";
 import {
@@ -43,8 +43,8 @@ export default function App({ initialSample = null }: { initialSample?: string |
   const [picked, setPicked] = useState<{ localId: number; globalId: string | null } | null>(null);
   const [onlyIssues, setOnlyIssues] = useState(false);
   const [implausible, setImplausible] = useState(0);
-  const [leftOpen, setLeftOpen] = useState(true);
   const [orbit, setOrbit] = useState(false);
+  const [camera, setCamera] = useState<ViewPreset>("iso");
   const [atmosphere, setAtmosphere] = useState<Atmosphere>("golden");
   const [quality, setQuality] = useState<Quality>("low");
   const [hover, setHover] = useState<{ x: number; y: number; name: string; detail: string } | null>(null);
@@ -81,6 +81,7 @@ export default function App({ initialSample = null }: { initialSample?: string |
     setSelected(null);
     setPicked(null);
     setOnlyIssues(false);
+    setCamera("iso");
     setFile(label);
     setView("loading");
     setIdMapping("");
@@ -125,6 +126,25 @@ export default function App({ initialSample = null }: { initialSample?: string |
     setView("ready");
   }, []);
 
+  // Back to the start screen: forget the model and its audit; a request still in flight is ignored.
+  const backToStart = () => {
+    runToken.current++;
+    setPhase("idle");
+    setError(null);
+    setAudit(null);
+    setFile(null);
+    setSelected(null);
+    setPicked(null);
+    setOnlyIssues(false);
+    setCamera("iso");
+    setView("empty");
+    setIdMapping("");
+    setImplausible(0);
+    setHover(null);
+    void viewerRef.current?.clearModel();
+    window.scrollTo({ top: 0 });
+  };
+
   const onFile = (f: File) =>
     void run({ name: f.name, size: f.size, sample: null }, f.arrayBuffer().then((b) => new Uint8Array(b)), auditUpload(f));
 
@@ -139,7 +159,7 @@ export default function App({ initialSample = null }: { initialSample?: string |
   useEffect(() => {
     if (phase === "idle" || !window.matchMedia("(max-width: 760px)").matches) return;
     const stage = stageRef.current;
-    if (stage) window.scrollTo({ top: stage.getBoundingClientRect().top + window.scrollY, behavior: "instant" });
+    if (stage) window.scrollTo({ top: stage.getBoundingClientRect().top + window.scrollY - 76, behavior: "instant" }); // 76 = the sticky bar and a gap
   }, [phase]);
 
   // deep link: /app?sample=sample_a_mm opens that sample once the sample list is known
@@ -185,11 +205,12 @@ export default function App({ initialSample = null }: { initialSample?: string |
   };
   const resetView = async () => {
     setOnlyIssues(false);
+    setCamera("iso");
     await selectExpress(null);
     await viewerRef.current?.setOnlyIssues(false);
     await viewerRef.current?.frame();
   };
-  const preset = (p: ViewPreset) => void viewerRef.current?.preset(p);
+  const preset = (p: ViewPreset) => { setCamera(p); void viewerRef.current?.preset(p); };
 
   const plain = audit ? plainSummary(audit) : null;
   const issueCount = audit ? audit.summary.elements.with_failed + audit.summary.elements.with_unchecked : 0;
@@ -199,29 +220,9 @@ export default function App({ initialSample = null }: { initialSample?: string |
   const sampleMeta = file?.sample ? SAMPLES.find((s) => s.name === file.sample) : null;
   const ready = view === "ready";
 
-  return (
-    <div className={`dash ${leftOpen ? "" : "left-closed"}`}>
-      <a href="#verdicts" className="skip-link">Skip to the verdicts</a>
-      <header className="dash-top">
-        <Button size="sm" aria-expanded={leftOpen} aria-controls="left-panel"
-                onClick={() => setLeftOpen(!leftOpen)} title={leftOpen ? "Hide the load panel" : "Show the load panel"}>
-          <span className="hamburger" aria-hidden="true" /><span className="visually-hidden">{leftOpen ? "Hide" : "Show"} the load panel</span>
-        </Button>
-        <Link to="/" className="brand" translate="no">NIYAM</Link>
-        <h1 className="dash-title">Check a building model</h1>
-        {draftRules && (
-          <span className="draft-badge" title="The rule encodings have not been reviewed by a person yet.">
-            <IconUnchecked />
-            <span className="draft-long">Draft rules, not human-reviewed</span>
-            <span className="draft-short">Draft rules</span>
-          </span>
-        )}
-        <Button as={Link} to="/" size="sm">About <span className="about-niyam">NIYAM</span></Button>
-      </header>
-
-      <div className="dash-body">
-        <aside id="left-panel" className="dash-left" hidden={!leftOpen} aria-label="Load a building">
-          <div aria-live="polite" className="live">
+  const status = (
+    <>
+      <div aria-live="polite" className="live">
             {phase === "working" && <p className="progress"><span className="spinner" aria-hidden="true" />Auditing the model on the server…</p>}
           </div>
           {error && (
@@ -232,84 +233,133 @@ export default function App({ initialSample = null }: { initialSample?: string |
             </div>
           )}
           {file && file.size > LARGE_MODEL_BYTES && <p className="note">This model is {formatBytes(file.size)}: the 3D view may be slow. The audit itself runs on the server.</p>}
-          <StartPanel samples={samples} busy={phase === "working"} current={file?.sample ?? null} onFile={onFile} onSample={onSample} />
-        </aside>
+    </>
+  );
+  const detailOpen = !!(audit && file && (selected !== null || picked));
 
-        <section ref={stageRef} className="dash-stage" aria-labelledby="stage-h" data-tour="stage">
-          <h2 id="stage-h" className="visually-hidden">3D model</h2>
-          <p className="visually-hidden" id="viewport-summary" data-testid="viewport-summary">{textAlternative}</p>
-          <div className="stage-tools" role="toolbar" aria-label="3D view controls">
-            <div className="segmented" role="group" aria-label="Camera">
-              {(["iso", "plan", "front"] as ViewPreset[]).map((p) => (
-                <button key={p} type="button" className="tool" disabled={!ready} onClick={() => preset(p)}>{p === "iso" ? "3D" : p === "plan" ? "Plan" : "Front"}</button>
-              ))}
-            </div>
-            <button type="button" className="tool" disabled={!ready} onClick={() => void resetView()}><IconReset />Reset</button>
-            <button type="button" className="tool" aria-pressed={onlyIssues} disabled={!ready || issueCount === 0} onClick={() => void toggleOnlyIssues()}>Only issues</button>
-            <span className="tool-gap" />
-            <span className="tool-break" aria-hidden="true" />
-            <button type="button" className="tool" aria-pressed={orbit} disabled={!ready} title="Keep the model turning"
-                    onClick={() => { setOrbit(!orbit); viewerRef.current?.setAutoOrbit(!orbit); }}>Orbit</button>
-            <button type="button" className="tool" aria-pressed={atmosphere === "neutral"}
-                    onClick={() => { const a = atmosphere === "golden" ? "neutral" : "golden"; setAtmosphere(a); viewerRef.current?.setAtmosphere(a); }}>
-              {atmosphere === "golden" ? "Neutral light" : "Golden hour"}
-            </button>
-            <button type="button" className="tool" aria-label={`Quality: ${quality === "low" ? "Low" : "High"}. Switch to ${quality === "low" ? "High" : "Low"}.`}
-                    onClick={() => { const q = quality === "low" ? "high" : "low"; setQuality(q); viewerRef.current?.setQuality(q); }}>
-              Quality: {quality === "low" ? "Low" : "High"}
-            </button>
-          </div>
-          <div className="viewport-wrap">
-            <div ref={viewportRef} className="viewport" role="img" aria-label="3D model view" aria-describedby="viewport-summary"
-                 data-view-state={view} data-id-mapping={idMapping} />
-            {view === "empty" && <EmptyState onSample={onSample} />}
-            {view === "loading" && <p className="viewport-message"><span className="spinner" aria-hidden="true" />Preparing the 3D view…</p>}
-            {view === "failed" && <p className="viewport-message">The 3D view could not be shown for this file. The audit results on the right are still valid.</p>}
-            {ready && hover && (
-              <div className="hover-tip" style={{ left: hover.x + 14, top: hover.y + 14 }} aria-hidden="true">
-                <strong>{hover.name}</strong><span>{hover.detail}</span>
-              </div>
-            )}
-            {ready && implausible > 0 && (
-              <p className="viewport-warning" role="status" data-testid="implausible-geometry">
-                {implausible} element{implausible === 1 ? " is" : "s are"} drawn more than 200 m across. The file
-                probably stores their shape in the wrong unit; NIYAM draws the file as it is.
+  return (
+    <div className="dash">
+      <a href="#verdicts" className="skip-link">Skip to the verdicts</a>
+      <header className="dash-top">
+        <div className="dash-top-start">
+          {view !== "empty" && (
+            <Button size="sm" radius={12} className="dash-back" onClick={backToStart}>
+              <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5" /></svg>
+              Back
+            </Button>
+          )}
+          <Link to="/" className="brand" translate="no">NIYAM</Link>
+          <h1 className="dash-title">Check a building model</h1>
+        </div>
+        <div className="dash-top-end">
+          {file && <span className="file-chip" title={file.name}><span className="file-chip-dot" aria-hidden="true" />{file.name}</span>}
+          {draftRules && (
+            <span className="draft-badge" title="The rule encodings have not been reviewed by a person yet.">
+              <IconUnchecked />
+              <span className="draft-long">Draft rules, not human-reviewed</span>
+              <span className="draft-short">Draft rules</span>
+            </span>
+          )}
+          <Button as={Link} to="/" size="sm" radius={12}>About <span className="about-niyam">NIYAM</span></Button>
+        </div>
+      </header>
+      <main className={`dash-main${view === "empty" ? " dash-main--start" : ""}`} id="main">
+        {view !== "empty" && <div className="dash-status">{status}</div>}
+        {audit && file && (
+          <section className="dash-headline" id="verdicts" aria-label="Verdicts" tabIndex={-1}>
+            <SummaryStrip audit={audit} fileName={file.name} fileSize={file.size} reportUrl={reportUrl(audit.audit_id)} bcfUrl={bcfUrl(audit.audit_id)} />
+            {errorRules(audit).length > 0 && (
+              <p className="note" role="status" data-testid="rules-with-errors">
+                {errorRules(audit).length} rule(s) could not be run ({errorRules(audit).map((r) => r.clause_id).join(", ")}), so the result is never better than Not fully checked.
               </p>
             )}
-          </div>
-          <div className="stage-foot">
-            <Legend />
-            <p className="stage-caption">
-              {sampleMeta ? "Synthetic test building: only the modelled elements are drawn." : "Only the modelled elements are drawn."}
-              {" "}Sky and ground are scenery. 3D by That Open Engine.
-            </p>
-          </div>
-        </section>
+          </section>
+        )}
 
-        <aside className="dash-right" id="verdicts" aria-label="Verdicts" tabIndex={-1}>
-          {!audit && phase !== "working" && <p className="right-empty">Verdicts appear here after a model is loaded.</p>}
-          {phase === "working" && <p className="right-empty"><span className="spinner" aria-hidden="true" />Waiting for the audit…</p>}
-          {audit && file && (selected !== null || picked) && (
-            <DetailPanel summary={selected === null ? null : summaries.get(selected) ?? null} pickedWithoutRules={picked}
-                         onClose={() => { void selectExpress(null); setPicked(null); }} onDownloadReadiness={downloadReadiness} />
+      <section ref={stageRef} className="dash-stage" aria-labelledby="stage-h">
+        <h2 id="stage-h" className="visually-hidden">3D model</h2>
+        <p className="visually-hidden" id="viewport-summary" data-testid="viewport-summary">{textAlternative}</p>
+        <div className="stage-tools" role="toolbar" aria-label="3D view controls">
+          <div className="tool-group" role="group" aria-label="Camera">
+            <span className="tool-label" aria-hidden="true">View</span>
+            {(["iso", "plan", "front"] as ViewPreset[]).map((p) => (
+              <Button key={p} size="sm" tone="light" radius={10} primary={camera === p} aria-pressed={camera === p} disabled={!ready} onClick={() => preset(p)}>
+                {p === "iso" ? "3D" : p === "plan" ? "Plan" : "Front"}
+              </Button>
+            ))}
+            <Button size="sm" tone="light" radius={10} disabled={!ready} onClick={() => void resetView()}><IconReset />Reset</Button>
+          </div>
+          <div className="tool-group" role="group" aria-label="What to show">
+            <span className="tool-label" aria-hidden="true">Show</span>
+            <Button size="sm" tone="light" radius={10} primary={onlyIssues} aria-pressed={onlyIssues} disabled={!ready || issueCount === 0} onClick={() => void toggleOnlyIssues()}>Only issues</Button>
+            <Button size="sm" tone="light" radius={10} primary={orbit} aria-pressed={orbit} disabled={!ready} title="Keep the model turning"
+                    onClick={() => { setOrbit(!orbit); viewerRef.current?.setAutoOrbit(!orbit); }}>Orbit</Button>
+          </div>
+          <div className="tool-group" role="group" aria-label="Look">
+            <span className="tool-label" aria-hidden="true">Look</span>
+            <Button size="sm" tone="light" radius={10} primary={atmosphere === "neutral"} aria-pressed={atmosphere === "neutral"}
+                    onClick={() => { const a = atmosphere === "golden" ? "neutral" : "golden"; setAtmosphere(a); viewerRef.current?.setAtmosphere(a); }}>
+              {atmosphere === "golden" ? "Neutral light" : "Golden hour"}
+            </Button>
+            <Button size="sm" tone="light" radius={10} aria-label={`Quality: ${quality === "low" ? "Low" : "High"}. Switch to ${quality === "low" ? "High" : "Low"}.`}
+                    onClick={() => { const q = quality === "low" ? "high" : "low"; setQuality(q); viewerRef.current?.setQuality(q); }}>
+              Quality: {quality === "low" ? "Low" : "High"}
+            </Button>
+          </div>
+        </div>
+        <div className="viewport-wrap">
+          <div ref={viewportRef} className="viewport" role="img" aria-label="3D model view" aria-describedby="viewport-summary"
+               data-view-state={view} data-id-mapping={idMapping} />
+          {view === "loading" && <p className="viewport-message"><span className="spinner" aria-hidden="true" />Preparing the 3D view…</p>}
+          {view === "failed" && <p className="viewport-message">The 3D view could not be shown for this file. The audit results are still valid.</p>}
+          {ready && hover && (
+            <div className="hover-tip" style={{ left: hover.x + 14, top: hover.y + 14 }} aria-hidden="true">
+              <strong>{hover.name}</strong><span>{hover.detail}</span>
+            </div>
           )}
-          {audit && file && selected === null && !picked && (
-            <>
-              <SummaryStrip audit={audit} fileName={file.name} fileSize={file.size} reportUrl={reportUrl(audit.audit_id)} bcfUrl={bcfUrl(audit.audit_id)} />
-              {errorRules(audit).length > 0 && (
-                <p className="note" role="status" data-testid="rules-with-errors">
-                  {errorRules(audit).length} rule(s) could not be run ({errorRules(audit).map((r) => r.clause_id).join(", ")}), so the result is never better than Not fully checked.
-                </p>
-              )}
-              <RuleList audit={audit} selectedExpressId={selected} onSelect={(id) => void selectExpress(id)} />
-              {plain && plain.withFailed + plain.withUnchecked > 0 && (
-                <p className="right-foot">Select an element in the list or the 3D view to see why. <VerdictBadge verdict="unchecked" /> means data is missing, not that the element passed.</p>
-              )}
-            </>
+          {ready && implausible > 0 && (
+            <p className="viewport-warning" role="status" data-testid="implausible-geometry">
+              {implausible} element{implausible === 1 ? " is" : "s are"} drawn more than 200 m across. The file
+              probably stores their shape in the wrong unit; NIYAM draws the file as it is.
+            </p>
           )}
-        </aside>
-      </div>
-      <Tour ready={samples.length > 0} />
+        </div>
+        <div className="stage-foot">
+          <Legend />
+          {ready && <p className="stage-hint">Drag to orbit · scroll to zoom · click an element</p>}
+          <p className="stage-caption">
+            {sampleMeta ? "Synthetic test building: only the modelled elements are drawn." : "Only the modelled elements are drawn."}
+            {" "}Sky and ground are scenery. 3D by That Open Engine.
+          </p>
+        </div>
+      </section>
+
+        {audit && file && (
+          <section className="dash-rules" aria-label="Rules">
+            <RuleList audit={audit} selectedExpressId={selected} onSelect={(id) => void selectExpress(id)} />
+            {plain && plain.withFailed + plain.withUnchecked > 0 && (
+              <p className="right-foot">Select an element in the list or the 3D view to see why. <VerdictBadge verdict="unchecked" /> means data is missing, not that the element passed.</p>
+            )}
+          </section>
+        )}
+
+        {view === "empty" && (
+          <div className="start-screen">
+            <div className="start-screen-inner">
+              {status}
+              <EmptyState onSample={onSample} />
+              <StartPanel wide samples={samples} busy={phase === "working"} current={file?.sample ?? null} onFile={onFile} onSample={onSample} />
+            </div>
+          </div>
+        )}
+      </main>
+
+      <aside className={`detail-drawer${detailOpen ? " open" : ""}`} aria-label="Element detail" inert={!detailOpen}>
+        {detailOpen && audit && file && (
+          <DetailPanel summary={selected === null ? null : summaries.get(selected) ?? null} pickedWithoutRules={picked}
+                       onClose={() => { void selectExpress(null); setPicked(null); }} onDownloadReadiness={downloadReadiness} />
+        )}
+      </aside>
     </div>
   );
 }
