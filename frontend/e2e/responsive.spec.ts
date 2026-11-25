@@ -1,11 +1,14 @@
-// Landing page at 375, 768 and 1440 px: no horizontal overflow, nothing wider than the viewport, every image with alt
-// text (charts and tables scroll inside their own box on purpose), a working skip link, and keyboard focus that reaches the main actions with a visible ring.
+// Landing page at 375, 768, 1280 and 1440 px: no horizontal overflow, nothing wider than the viewport, every image
+// with alt text (charts and tables scroll inside their own box on purpose), a working skip link, and keyboard focus
+// that reaches the main actions with a visible ring. 1280 sits in the gap between the demo sheet's two-column
+// breakpoint (960px) and its full-size card stack (around 920px natural width): the card stack must scale itself
+// down to fit there, not just at the three sizes a page is usually checked at.
 // Full-page screenshots go to test-results/responsive/ for a person to look at.
 import { expect, test } from "@playwright/test";
 
 test.use({ reducedMotion: "reduce" });
 
-for (const width of [375, 768, 1440]) {
+for (const width of [375, 768, 1280, 1440]) {
   test(`landing at ${width} px: no layout break`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");

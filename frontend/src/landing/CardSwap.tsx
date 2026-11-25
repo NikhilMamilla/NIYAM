@@ -90,8 +90,10 @@ const CardSwap = forwardRef<CardSwapHandle, CardSwapProps>(function CardSwap(
   const count = items.length;
   const [order, setOrder] = useState<number[]>(() => items.map((_, i) => i));
   const [hovered, setHovered] = useState(false);
+  const [scale, setScale] = useState(1);
   const drag = useRef<{ x: number; dragging: boolean } | null>(null);
   const frontRef = useRef<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   // Keep the order array the same length as items (e.g. when DEMO is edited), front card first.
   useEffect(() => {
@@ -127,6 +129,18 @@ const CardSwap = forwardRef<CardSwapHandle, CardSwapProps>(function CardSwap(
   const stageH = Math.ceil(height + Math.max(0, visible - 1) * verticalDistance + skewPad + 64);
   const originX = 32 + width / 2;
   const originY = stageH - 32 - height / 2;
+
+  // Scale the whole stack down to fit the root's actual rendered box (it can be narrower than the stage's
+  // natural size at widths between the layout's breakpoints); never scales up past 1.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const fit = () => setScale(Math.min(1, root.clientWidth / stageW, root.clientHeight / stageH || 1));
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(root);
+    return () => ro.disconnect();
+  }, [stageW, stageH]);
 
   const rootStyle = useMemo(() => {
     // Built as a plain Record first and spread (not written as literal keys) into the final cast: a custom
@@ -184,6 +198,7 @@ const CardSwap = forwardRef<CardSwapHandle, CardSwapProps>(function CardSwap(
 
   return (
     <div
+      ref={rootRef}
       className={`card-swap${className ? ` ${className}` : ""}`}
       style={rootStyle}
       tabIndex={0}
@@ -200,7 +215,7 @@ const CardSwap = forwardRef<CardSwapHandle, CardSwapProps>(function CardSwap(
       <div className="card-swap-sizer" aria-hidden="true">
         <span />
       </div>
-      <div className="card-swap-stage">
+      <div className="card-swap-stage" style={{ transform: `translate(-50%, -50%) scale(${scale})` }}>
         {items.map((item, itemIndex) => {
           const position = order.indexOf(itemIndex);
           const onStage = position >= 0 && position < visible;
