@@ -100,15 +100,19 @@ def facts(with_tests: bool) -> dict[str, int]:
         out = subprocess.run([str(py), "-m", "pytest", "--collect-only", "-q", "-p", "no:cacheprovider"], cwd=ROOT / "backend",
                              capture_output=True, text=True).stdout
         f["tests.backend"] = int(re.search(r"(\d+) tests? collected", out).group(1))
-        out = subprocess.run("npx vitest list", cwd=ROOT / "frontend", capture_output=True, text=True, shell=True).stdout
-        f["tests.frontend"] = len([l for l in out.splitlines() if l.strip() and ".test." in l])
+        # a run, not `vitest list`: list misses tests that a run counts (41 run vs 37 listed on 25 November 2026)
+        report = ROOT / "frontend" / "test-results" / "vitest-count.json"
+        subprocess.run(f'npx vitest run --reporter=json --outputFile="{report}"', cwd=ROOT / "frontend",
+                       capture_output=True, text=True, shell=True)
+        f["tests.frontend"] = json.loads(report.read_text(encoding="utf-8"))["numTotalTests"]
     return f
 
 
 # (regex whose group 1 is the number, {keyword before it on the line: fact}, fact when no keyword or None = any)
 RUN_CTX = {r"run 1|pilot|4c4519": "pilot", r"run 2|headline|5b7edb": "headline", r"Telangana|TGBR|4b9c93": "telangana"}
 CLAIMS: list[tuple[str, dict[str, str], str | None]] = [
-    (r"(?<!to )\b(\d+) clauses\b", {r"MBBL": "clauses.MBBL2016", r"Telangana|TGBR": "clauses.TGBR2012"}, "clauses.total"),
+    # at most 3 digits: in "MBBL 2016 clauses" the number is a year, not a count
+    (r"(?<!to )\b(\d{1,3}) clauses\b", {r"MBBL": "clauses.MBBL2016", r"Telangana|TGBR": "clauses.TGBR2012"}, "clauses.total"),
     (r"\b(\d+) clauses read", {}, "clauses.total"),
     (r"\((\d+) rules, \d+ annexures", {}, "clauses.TGBR2012.rules"),
     (r"\b(\d+) annexures", {}, "clauses.TGBR2012.annexures"),
