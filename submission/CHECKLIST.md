@@ -10,7 +10,7 @@
 | Submission email | `submission/email.md` | needs the team: fill in `[DEMO VIDEO LINK]`, confirm the samples zip should be attached (130 KB), then send to dbi@cdcpindia.org |
 | Sample audits zip | `submission/NIYAM_samples.zip` | done (not committed, gitignored; regenerate with `python -c "import shutil; shutil.make_archive('submission/NIYAM_samples','zip','submission','samples')"`) |
 | Repository push | `origin/main` and tags | done |
-| Live demo (GitHub Pages) | https://nikhilmamilla.github.io/NIYAM/, built by `.github/workflows/deploy-pages.yml` | see open item 2 |
+| Live demo (GitHub Pages) | https://nikhilmamilla.github.io/NIYAM/, built by `.github/workflows/deploy-pages.yml` | done: live, checked by `e2e-static` against the live URL (8 passed) |
 | Upload API (Render) | `render.yaml`, `docs/deploy.md` | optional, prepared: five clicks in `docs/deploy.md` |
 | Deck facts (sources for every number) | `submission/deck-facts.md` | done, pre-existing |
 | Demo script (shot list) | `submission/demo-script.md` | done, pre-existing |
@@ -25,8 +25,7 @@
    cleanup removed the recorded `.webm` from git (it stays on this machine and is gitignored; the team records
    its own, per the cleanup task's instruction). Re-run `npx playwright test demo-video` to produce a fresh one,
    or record manually following `submission/demo-script.md`.
-2. Live demo address: GitHub sends every `nikhilmamilla.github.io/...` address to the custom domain set on the
-   `NikhilMamilla.github.io` repository (`nikhilmamilla.me`), and that domain is now served by Vercel, which has no
-   `/NIYAM/`. Until that custom domain is removed from that repository's Pages settings (or `/NIYAM/` is routed on
-   Vercel), the live link lands on a 404. Check the link before sending the email.
+2. Live demo address: fixed on 26 November 2026 by removing the custom domain `nikhilmamilla.me` from the
+   `NikhilMamilla.github.io` repository (it forwarded every github.io address to Vercel, where `/NIYAM/` is a
+   404). `nikhilmamilla.me` itself is unaffected; plain `nikhilmamilla.github.io` no longer forwards to it.
 3. Optional: produce the MP4 if a reviewer's system cannot play WebM.
