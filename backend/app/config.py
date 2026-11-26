@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     max_upload_mb: float = 100.0
     geometric_timeout_s: float = 60.0  # per geometric rule, wall clock, in its sandbox process
     cors_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    # Public deployment (render.yaml): only health, samples, rulepack, audit and its downloads; uploads capped at
+    # 20 MB and IFC only; the model is a temp file deleted after the audit; the exports are kept in memory only.
+    deploy_mode: Literal["full", "audit-only"] = "full"
+    allowed_origins: str = ""  # comma-separated origins added to cors_origins, e.g. the GitHub Pages site
+    rate_limit_per_minute: int = 10  # audit requests per client IP in audit-only mode
 
 
 settings = Settings()
