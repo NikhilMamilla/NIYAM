@@ -1,0 +1,345 @@
+{
+ "audit_id": "32137d26-5e0a-4696-a535-92113bae7727",
+ "status": "noncompliant",
+ "summary": {
+  "checks": {
+   "passed": 4,
+   "failed": 3,
+   "unchecked": 6,
+   "out_of_scope": 10
+  },
+  "elements": {
+   "total_in_model_of_scoped_classes": 14,
+   "with_failed": 3,
+   "with_unchecked": 5,
+   "clean": 6
+  },
+  "rules_with_errors": 0
+ },
+ "rules": [
+  {
+   "unit_id": "MBBL2016-5.4.2#1",
+   "clause_id": "MBBL2016-5.4.2",
+   "clause_text": "5.4.2 Revolving Doors\nRevolving door shall not be provided as a means of fire exit.",
+   "rule_text": "Revolving door shall not be provided as a means of fire exit.",
+   "source_doc": "MBBL-2016",
+   "page": 100,
+   "severity": "error",
+   "human_reviewed": false,
+   "status": "nothing_checked",
+   "counts": {
+    "passed": 0,
+    "failed": 0,
+    "unchecked": 0,
+    "out_of_scope": 0
+   },
+   "elements": [],
+   "error": null
+  },
+  {
+   "unit_id": "MBBL2016-5.4.1#b",
+   "clause_id": "MBBL2016-5.4.1",
+   "clause_text": "5.4.1 Doorways\na. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor\nor passageway providing continuous and protected means of egress.\nb. No exit doorway shall be less than 1m in width. Doorways shall be not less than 2\nm in height. Doorways for bathrooms, water closet, stores etc. shall be not less than\n0.75m wide.\nc. Exit doorways shall open outwards, that is, away from the room but shall not\nobstruct the travel along any exit. No door, when opened, shall reduce the required\nwidth of stairway or landing to less than 0.9m, overhead or sliding doors shall not\nbe installed.\nd. Exit door shall not open immediately upon a flight or stairs, a landing equal to at\nleast the width of the door shall be provided in the stairway at each doorway, level\nof landing shall be the same as that of the floor which it serves.\ne. Exit doorways shall be openable from the side which they serve without the use of a\nkey.\nf. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding\nthe direction of exit.",
+   "rule_text": "No exit doorway shall be less than 1m in width.",
+   "source_doc": "MBBL-2016",
+   "page": 100,
+   "severity": "error",
+   "human_reviewed": false,
+   "status": "nothing_checked",
+   "counts": {
+    "passed": 0,
+    "failed": 0,
+    "unchecked": 0,
+    "out_of_scope": 0
+   },
+   "elements": [],
+   "error": null
+  },
+  {
+   "unit_id": "MBBL2016-5.4.1#c",
+   "clause_id": "MBBL2016-5.4.1",
+   "clause_text": "5.4.1 Doorways\na. Every doorway shall open into an enclosed stairway, a horizontal exit, on a corridor\nor passageway providing continuous and protected means of egress.\nb. No exit doorway shall be less than 1m in width. Doorways shall be not less than 2\nm in height. Doorways for bathrooms, water closet, stores etc. shall be not less than\n0.75m wide.\nc. Exit doorways shall open outwards, that is, away from the room but shall not\nobstruct the travel along any exit. No door, when opened, shall reduce the required\nwidth of stairway or landing to less than 0.9m, overhead or sliding doors shall not\nbe installed.\nd. Exit door shall not open immediately upon a flight or stairs, a landing equal to at\nleast the width of the door shall be provided in the stairway at each doorway, level\nof landing shall be the same as that of the floor which it serves.\ne. Exit doorways shall be openable from the side which they serve without the use of a\nkey.\nf. Mirrors shall not be placed in exit ways or exit doors to avoid confusion regarding\nthe direction of exit.",
+   "rule_text": "overhead or sliding doors shall not be installed",
+   "source_doc": "MBBL-2016",
+   "page": 100,
+   "severity": "error",
+   "human_reviewed": false,
+   "status": "nothing_checked",
+   "counts": {
+    "passed": 0,
+    "failed": 0,
+    "unchecked": 0,
+    "out_of_scope": 0
+   },
+   "elements": [],
+   "error": null
+  },
+  {
+   "unit_id": "MBBL2016-4.5.2#1",
+   "clause_id": "MBBL2016-4.5.2",
+   "clause_text": "4.5.2 Size\nThe area of a bathroom shall not be less than 1.8 m2 with a minimum width of 1.2 m.\nThe floor area of water-closet shall be 1.1 m2 with a minimum width of 0.9 m. If bath\nand water-closet are combined, its floor area shall not be less than 2.8 m2 with a\nminimum width of 1.2 m.",
+   "rule_text": "The area of a bathroom shall not be less than 1.8 m2",
+   "source_doc": "MBBL-2016",
+   "page": 70,
+   "severity": "error",
+   "human_reviewed": false,
+   "status": "noncompliant",
+   "counts": {
+    "passed": 2,
+    "failed": 1,
+    "unchecked": 2,
+    "out_of_scope": 4
+   },
+   "elements": [
+    {
+     "global_id": "01M_mG7mnMFeejaQMhLKTC",
+     "express_id": 15,
+     "name": "D-B-01 bathroom 2.4 m2",
+     "ifc_class": "IfcSpace",
+     "verdict": "passed",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "2rNp0YwxDMzA6w25ZqLoWA",
+     "express_id": 38,
+     "name": "D-B-02 small bathroom 1.5 m2",
+     "ifc_class": "IfcSpace",
+     "verdict": "failed",
+     "reason_plain": "Computed floor area is 1.50 m2; this rule requires at least 1.8 m2.",
+     "reason_raw": "geometric check MBBL2016-4.5.2#1 reported fail (measured 1.5, required 1.8)"
+    },
+    {
+     "global_id": "3FvhxUetHMJ8lMq5VN5pI_",
+     "express_id": 54,
+     "name": "D-B-03 bathroom exactly 1.8 m2",
+     "ifc_class": "IfcSpace",
+     "verdict": "passed",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "1ipwkcF$PKwRSewC87Xr94",
+     "express_id": 70,
+     "name": "D-B-04 bathroom without geometry",
+     "ifc_class": "IfcSpace",
+     "verdict": "unchecked",
+     "reason_plain": "This bathroom has no geometry, so its floor area could not be computed.",
+     "reason_raw": "geometric check MBBL2016-4.5.2#1 reported unchecked"
+    },
+    {
+     "global_id": "2tiEP8_ozJ7xJZoYLZCfW5",
+     "express_id": 74,
+     "name": "D-H-01 living room 3.0 m high",
+     "ifc_class": "IfcSpace",
+     "verdict": "out_of_scope",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "1vXJtjLJvOFB_ufu60JMhc",
+     "express_id": 90,
+     "name": "D-H-02 bedroom 2.5 m high",
+     "ifc_class": "IfcSpace",
+     "verdict": "out_of_scope",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "2FNYVOtifL1986zAI55uCq",
+     "express_id": 106,
+     "name": "D-H-03 bedroom without geometry",
+     "ifc_class": "IfcSpace",
+     "verdict": "out_of_scope",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "0Ag9nIYZPVEPTGtJYjyliD",
+     "express_id": 110,
+     "name": "D-S-01 store room",
+     "ifc_class": "IfcSpace",
+     "verdict": "out_of_scope",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "3618C9R3vMvhyjh$BcnOPy",
+     "express_id": 126,
+     "name": "D-X-01 space without category",
+     "ifc_class": "IfcSpace",
+     "verdict": "unchecked",
+     "reason_plain": "This space does not declare its category (Pset_SpaceCommon.Category), so it is unknown whether the rule applies.",
+     "reason_raw": "geometric check MBBL2016-4.5.2#1 reported unchecked"
+    }
+   ],
+   "error": null
+  },
+  {
+   "unit_id": "MBBL2016-4.3.1.1#1",
+   "clause_id": "MBBL2016-4.3.1.1",
+   "clause_text": "4.3.1.1 The height of all rooms for human habitation shall not be less than 2.75 m measured\nfrom the surface of the floor to the lowest point of the ceiling (bottom of slab)\nprovided that the minimum clear headway under any beam shall not be less than 2.4 m.\nIn the case of pitched roof, the average height of rooms shall not be less than 2.75 m.\nThe minimum clear head room under a beam, folded plates or eaves shall be 2.4 m. In\nthe case of air-conditioned rooms, a height of not less than 2.4 m measured from the\nsurface of the floor to the lowest point of air-conditioning duct or the false ceiling shall\nbe provided.",
+   "rule_text": "The height of all rooms for human habitation shall not be less than 2.75 m measured from the surface of the floor to the lowest point of the ceiling (bottom of slab)",
+   "source_doc": "MBBL-2016",
+   "page": 69,
+   "severity": "error",
+   "human_reviewed": false,
+   "status": "noncompliant",
+   "counts": {
+    "passed": 1,
+    "failed": 1,
+    "unchecked": 2,
+    "out_of_scope": 5
+   },
+   "elements": [
+    {
+     "global_id": "01M_mG7mnMFeejaQMhLKTC",
+     "express_id": 15,
+     "name": "D-B-01 bathroom 2.4 m2",
+     "ifc_class": "IfcSpace",
+     "verdict": "out_of_scope",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "2rNp0YwxDMzA6w25ZqLoWA",
+     "express_id": 38,
+     "name": "D-B-02 small bathroom 1.5 m2",
+     "ifc_class": "IfcSpace",
+     "verdict": "out_of_scope",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "3FvhxUetHMJ8lMq5VN5pI_",
+     "express_id": 54,
+     "name": "D-B-03 bathroom exactly 1.8 m2",
+     "ifc_class": "IfcSpace",
+     "verdict": "out_of_scope",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "1ipwkcF$PKwRSewC87Xr94",
+     "express_id": 70,
+     "name": "D-B-04 bathroom without geometry",
+     "ifc_class": "IfcSpace",
+     "verdict": "out_of_scope",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "2tiEP8_ozJ7xJZoYLZCfW5",
+     "express_id": 74,
+     "name": "D-H-01 living room 3.0 m high",
+     "ifc_class": "IfcSpace",
+     "verdict": "passed",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "1vXJtjLJvOFB_ufu60JMhc",
+     "express_id": 90,
+     "name": "D-H-02 bedroom 2.5 m high",
+     "ifc_class": "IfcSpace",
+     "verdict": "failed",
+     "reason_plain": "Computed room height is 2.50 m; this rule requires at least 2.75 m.",
+     "reason_raw": "geometric check MBBL2016-4.3.1.1#1 reported fail (measured 2.5, required 2.75)"
+    },
+    {
+     "global_id": "2FNYVOtifL1986zAI55uCq",
+     "express_id": 106,
+     "name": "D-H-03 bedroom without geometry",
+     "ifc_class": "IfcSpace",
+     "verdict": "unchecked",
+     "reason_plain": "This habitable room has no geometry, so its height could not be computed.",
+     "reason_raw": "geometric check MBBL2016-4.3.1.1#1 reported unchecked"
+    },
+    {
+     "global_id": "0Ag9nIYZPVEPTGtJYjyliD",
+     "express_id": 110,
+     "name": "D-S-01 store room",
+     "ifc_class": "IfcSpace",
+     "verdict": "out_of_scope",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "3618C9R3vMvhyjh$BcnOPy",
+     "express_id": 126,
+     "name": "D-X-01 space without category",
+     "ifc_class": "IfcSpace",
+     "verdict": "unchecked",
+     "reason_plain": "This space does not declare its category (Pset_SpaceCommon.Category), so it is unknown whether the rule applies.",
+     "reason_raw": "geometric check MBBL2016-4.3.1.1#1 reported unchecked"
+    }
+   ],
+   "error": null
+  },
+  {
+   "unit_id": "MBBL2016-4.17.2#A",
+   "clause_id": "MBBL2016-4.17.2",
+   "clause_text": "4.17.2 Minimum width\nThe minimum width of staircase shall be as follows:\nA Residential buildings (dwellings) 1.0 m\nNOTE \u2014 For row housing with 2\nstoreys, the min. width of shall be 0.75\nB Residential hotel buildings 1.5 m\nC Assembly buildings like auditoria, 2.0 m\ntheatres and cinemas\nD Educational building 1.5 m\nE Institutional buildings 2.0 m\nF All other buildings 1.5 m",
+   "rule_text": "The minimum width of staircase shall be as follows: A Residential buildings (dwellings) 1.0 m",
+   "source_doc": "MBBL-2016",
+   "page": 75,
+   "severity": "error",
+   "human_reviewed": false,
+   "status": "noncompliant",
+   "counts": {
+    "passed": 1,
+    "failed": 1,
+    "unchecked": 2,
+    "out_of_scope": 1
+   },
+   "elements": [
+    {
+     "global_id": "2Gk12hXTPSbv7omxgU13gE",
+     "express_id": 139,
+     "name": "D-ST-01 residential flight 1.2 m",
+     "ifc_class": "IfcStairFlight",
+     "verdict": "passed",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "2skuOy3ubKew80cBSPHXAV",
+     "express_id": 153,
+     "name": "D-ST-02 residential flight 0.9 m",
+     "ifc_class": "IfcStairFlight",
+     "verdict": "failed",
+     "reason_plain": "Computed stair width is 0.90 m; this rule requires at least 1 m.",
+     "reason_raw": "geometric check MBBL2016-4.17.2#A reported fail (measured 0.9, required 1)"
+    },
+    {
+     "global_id": "31M$zvq_bK28bK4DUkmvL6",
+     "express_id": 166,
+     "name": "D-ST-03 residential flight without geometry",
+     "ifc_class": "IfcStairFlight",
+     "verdict": "unchecked",
+     "reason_plain": "This stair flight has no geometry, so its width could not be computed.",
+     "reason_raw": "geometric check MBBL2016-4.17.2#A reported unchecked"
+    },
+    {
+     "global_id": "3GMOxTBbnSV8XT23jQmz$0",
+     "express_id": 173,
+     "name": "D-ST-04 commercial flight 0.8 m",
+     "ifc_class": "IfcStairFlight",
+     "verdict": "out_of_scope",
+     "reason_plain": null,
+     "reason_raw": null
+    },
+    {
+     "global_id": "3ooqFAWsbSzvD_f9Azz42D",
+     "express_id": 190,
+     "name": "D-ST-05 flight in a building without occupancy",
+     "ifc_class": "IfcStairFlight",
+     "verdict": "unchecked",
+     "reason_plain": "The building of this stair flight does not declare its occupancy (Pset_BuildingCommon.OccupancyType), so it is unknown whether the rule applies.",
+     "reason_raw": "geometric check MBBL2016-4.17.2#A reported unchecked"
+    }
+   ],
+   "error": null
+  }
+ ]
+}

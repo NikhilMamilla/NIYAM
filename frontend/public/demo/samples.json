@@ -1,0 +1,27 @@
+[
+ {
+  "name": "sample_a_mm",
+  "description": "Synthetic 2-storey model in millimetres, 12 doors covering every v0 rule case.",
+  "size_bytes": 17881
+ },
+ {
+  "name": "sample_b_m",
+  "description": "Synthetic 2-storey model in metres, 10 doors covering every v0 rule case.",
+  "size_bytes": 14885
+ },
+ {
+  "name": "sample_c_no_fireexit_mm",
+  "description": "Synthetic model whose 4 doors have no FireExit data: the audit is incomplete.",
+  "size_bytes": 6963
+ },
+ {
+  "name": "sample_d_rooms_stairs_mm",
+  "description": "Synthetic model in millimetres: 9 spaces and 5 stair flights for the geometric rules.",
+  "size_bytes": 11484
+ },
+ {
+  "name": "sample_e_rooms_stairs_m",
+  "description": "Synthetic model in metres: 8 spaces and 4 stair flights for the geometric rules.",
+  "size_bytes": 10270
+ }
+]
