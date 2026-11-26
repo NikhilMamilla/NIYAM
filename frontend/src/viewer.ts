@@ -89,7 +89,7 @@ export class Viewer {
   async load(bytes: Uint8Array): Promise<void> {
     await this.clearModel();
     const loader = this.components.get(OBC.IfcLoader);
-    await loader.setup({ autoSetWasm: false, wasm: { path: "/web-ifc/", absolute: true } });
+    await loader.setup({ autoSetWasm: false, wasm: { path: `${import.meta.env.BASE_URL}web-ifc/`, absolute: true } });
     const model = await loader.load(bytes, true, "model");
     this.world.scene.three.add(model.object);
     this.model = model;

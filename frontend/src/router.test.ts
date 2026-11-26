@@ -14,6 +14,13 @@ describe("routeOf", () => {
     expect(routeOf("/app", "?sample=../../etc")).toEqual({ page: "app", sample: null });
   });
 
+  it("strips the GitHub Pages base path before routing", () => {
+    expect(routeOf("/NIYAM/", "", "/NIYAM")).toEqual({ page: "landing" });
+    expect(routeOf("/NIYAM", "", "/NIYAM")).toEqual({ page: "landing" });
+    expect(routeOf("/NIYAM/app", "?sample=sample_a_mm", "/NIYAM")).toEqual({ page: "app", sample: "sample_a_mm" });
+    expect(routeOf("/NIYAMX/app", "", "/NIYAM")).toEqual({ page: "not-found", path: "/NIYAMX/app" });
+  });
+
   it("reports unknown paths", () => {
     expect(routeOf("/nope")).toEqual({ page: "not-found", path: "/nope" });
   });

@@ -1,9 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { colourStats, hueStats } from "./pixels";
+import { expectedFromTruth } from "./truth";
 
 const SHOTS = "test-results/shots"; // debug screenshots only (gitignored); the published set comes from shots.spec.ts
-const SAMPLES = "../fixtures/samples";
 const RULE_IDS = ["MBBL2016-5.4.2", "MBBL2016-5.4.1", "MBBL2016-5.4.1", "MBBL2016-4.5.2", "MBBL2016-4.3.1.1",
   "MBBL2016-4.17.2"];
 
@@ -22,25 +22,6 @@ function watchConsoleErrors(page: Page): string[] {
   page.on("console", (m) => { if (m.type() === "error") errors.push(m.text().slice(0, 300)); });
   page.on("pageerror", (e) => errors.push(e.message));
   return errors;
-}
-
-type TruthElement = { expected: Record<string, string> };
-type Truth = { doors?: TruthElement[]; spaces?: TruthElement[]; stairs?: TruthElement[] };
-
-/** Expected summary computed from the hand-written truth file, independently of the audit engine. */
-function expectedFromTruth(name: string) {
-  const truth = JSON.parse(readFileSync(`${SAMPLES}/${name}.truth.json`, "utf-8")) as Truth;
-  const elements = [...(truth.doors ?? []), ...(truth.spaces ?? []), ...(truth.stairs ?? [])];
-  const checks: Record<string, number> = { passed: 0, failed: 0, unchecked: 0, out_of_scope: 0 };
-  let withFailed = 0;
-  let withUnchecked = 0;
-  for (const element of elements) {
-    const verdicts = Object.values(element.expected);
-    for (const v of verdicts) checks[v] = (checks[v] ?? 0) + 1;
-    if (verdicts.includes("failed")) withFailed += 1;
-    else if (verdicts.includes("unchecked")) withUnchecked += 1;
-  }
-  return { checks, withFailed, withUnchecked, total: elements.length };
 }
 
 const IFC2X3 = "../fixtures/invalid/ifc2x3_minimal.ifc";

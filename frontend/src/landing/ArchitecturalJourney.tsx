@@ -5,17 +5,18 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import siteJson from "../data/site-data.json";
 import type { SiteData } from "../data/buildSiteData";
 import { IconFailed, IconPassed, IconUnchecked } from "../icons";
+import { asset } from "../router";
 
 const site = siteJson as unknown as SiteData;
 const ex   = site.workedExample;
 
 const STAGES = [
-  { key: "clause",   num: "01", name: "Clause",   img: "/journey/stage-01-clause.webp",   alt: "Blueprint of exit doorway with ≥ 1.0 m width annotation" },
-  { key: "draft",    num: "02", name: "Draft",    img: "/journey/stage-02-draft.png",    alt: "Blueprint doorway with open door and ≥ 1.0 m dimension" },
-  { key: "gate",     num: "03", name: "Gate",     img: "/journey/stage-03-gate.png",     alt: "Two test buildings: one passing (1.2 m), one failing (0.8 m)" },
-  { key: "rulepack", num: "04", name: "Rulepack", img: "/journey/stage-04-rulepack.png", alt: "Card file box with rule cards filed in a rulepack" },
-  { key: "audit",    num: "05", name: "Audit",    img: "/journey/stage-05-audit.png",    alt: "Audited building: red door fails (0.8 m), green passes (1.2 m), amber unchecked (0.9 m)" },
-  { key: "view",     num: "06", name: "3D View",  img: "/journey/stage-06-3d.png",       alt: "3D cutaway building with verdict-coloured elements" },
+  { key: "clause",   num: "01", name: "Clause",   img: asset("/journey/stage-01-clause.webp"),   alt: "Blueprint of exit doorway with ≥ 1.0 m width annotation" },
+  { key: "draft",    num: "02", name: "Draft",    img: asset("/journey/stage-02-draft.png"),    alt: "Blueprint doorway with open door and ≥ 1.0 m dimension" },
+  { key: "gate",     num: "03", name: "Gate",     img: asset("/journey/stage-03-gate.png"),     alt: "Two test buildings: one passing (1.2 m), one failing (0.8 m)" },
+  { key: "rulepack", num: "04", name: "Rulepack", img: asset("/journey/stage-04-rulepack.png"), alt: "Card file box with rule cards filed in a rulepack" },
+  { key: "audit",    num: "05", name: "Audit",    img: asset("/journey/stage-05-audit.png"),    alt: "Audited building: red door fails (0.8 m), green passes (1.2 m), amber unchecked (0.9 m)" },
+  { key: "view",     num: "06", name: "3D View",  img: asset("/journey/stage-06-3d.png"),       alt: "3D cutaway building with verdict-coloured elements" },
 ] as const;
 
 // ─── Fade ─────────────────────────────────────────────────────────────────────
