@@ -92,7 +92,7 @@ Run ids: pilot run 1 `20261118T133025Z-4c4519`, headline run 2 `20261118T140452Z
 
 | Fact | Source | Supports |
 |---|---|---|
-| pytest: 534 passed; vitest: 41 passed; Playwright: 27 passed (end-to-end, incl. the demo script) | `STATUS.md`, Final test run | "Tested end to end." |
+| pytest: 545 passed; vitest: 46 passed; Playwright: 29 passed, plus 8 on the GitHub Pages build (end-to-end, incl. the demo script and the GitHub Pages build with no backend) | `STATUS.md`, Final test run | "Tested end to end." |
 | Every BCF export of samples A to E passes the BCF 2.1 schemas | `submission/samples/README.md` | "Open BCF 2.1 output." |
 | Lighthouse, built landing page: Accessibility 100, Best Practices 100, SEO 100 (desktop and mobile); Performance 58 desktop, 47 mobile | `STATUS.md`, Known issues | Only if asked; do not lead with it. |
 

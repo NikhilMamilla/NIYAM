@@ -28,6 +28,7 @@ Attached:
 - NIYAM_TeamAbhyudaya_DBI2026_Stage2.pdf (slide deck, 10 pages)
 - NIYAM_samples.zip (sample audits: IFC models, BCF/HTML/JSON reports, truth files) [optional, if size permits]
 
+Live demo: https://nikhilmamilla.github.io/NIYAM/
 Repository: https://github.com/NikhilMamilla/NIYAM
 Demo video: [DEMO VIDEO LINK]
 
