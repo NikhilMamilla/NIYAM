@@ -651,10 +651,10 @@ function DemoSheet() {
             <CardSwap
               ref={swap}
               items={DEMO.map((d) => ({ title: d.title, image: d.src, icon: d.icon, alt: d.alt }))}
-              width={680}
-              height={470}
+              width={1050}
+              height={460}
               cardDistance={44}
-              verticalDistance={50}
+              verticalDistance={40}
               depth={80}
               skewAmount={4}
               visibleCards={DEMO.length}
@@ -711,13 +711,22 @@ function LimitsSheet() {
   return (
     <Sheet id="limits" sheet="A-11" title="What this does not show, yet" className="sheet-limits">
       <section className="statements" aria-labelledby="statements-h">
-        <h3 id="statements-h">What NIYAM is, and is not</h3>
-        <dl>
-          {site.statements.map((s) => (
-            <div key={s.title} className="statement"><dt>{s.title}</dt><dd>{s.text}</dd></div>
+        <div className="statements-bar mono">
+          <span id="statements-h">What NIYAM is, and is not</span>
+          <span>{site.statements.length} statements</span>
+        </div>
+        <ol className="statements-timeline">
+          {site.statements.map((s, i) => (
+            <li key={s.title} className="timeline-item">
+              <span className="statement-id mono">S-{String(i + 1).padStart(2, "0")}</span>
+              <div className="timeline-body">
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </div>
+            </li>
           ))}
-        </dl>
-        <p className="meta">The same sentences open the project README.</p>
+        </ol>
+        <p className="statements-foot mono">The same sentences open the project README.</p>
       </section>
       <div className="void-plan">
         <div className="plan-bar mono">
@@ -896,7 +905,7 @@ function DocsSheet() {
       </p>
       <div className="docs-grid">
         {DOC_GROUPS.map((g) => (
-          <section key={g.title} className={`docs-card${g === DOC_GROUPS[0] ? " docs-card--wide" : ""}`} aria-labelledby={`docs-${g.title.replace(/\W+/g, "-")}`}>
+          <section key={g.title} className={`docs-card${g.title === "Start here" || g.title === "Licence and sources" ? " docs-card--wide" : ""}`} aria-labelledby={`docs-${g.title.replace(/\W+/g, "-")}`}>
             <h3 id={`docs-${g.title.replace(/\W+/g, "-")}`}>{g.title}</h3>
             <p className="docs-blurb">{g.blurb}</p>
             <ul className="file-list">{g.docs.map((d) => <FileRow key={d.file} {...d} onView={setViewing} />)}</ul>
