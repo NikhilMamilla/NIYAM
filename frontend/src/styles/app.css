@@ -89,6 +89,13 @@
   border: 2px dashed color-mix(in srgb, var(--line) 45%, transparent); border-radius: var(--radius-3); background: color-mix(in srgb, var(--line) 4%, var(--panel));
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out); }
 .dropzone.dragging { border-color: var(--line); background: var(--line-soft); transform: scale(1.01); }
+.dropzone--off { opacity: 0.75; }
+.dropzone--off .dropzone-badge { background: var(--panel); color: var(--ink-3); }
+.dropzone--off .hint { max-width: 40ch; color: var(--ink-2); }
+/* Static demo (GitHub Pages): one quiet line under the bar, never a modal */
+.demo-banner { margin: 0; padding: 8px var(--s-4); border-bottom: 1px solid var(--rule); background: var(--line-soft);
+  font-size: var(--step--1); line-height: 1.45; color: var(--ink-2); text-align: center; }
+.demo-banner a { color: var(--line); font-weight: 600; }
 .dropzone:focus-within label.specular-button { box-shadow: var(--focus); }
 .dropzone-badge { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; background: var(--line-soft); color: var(--line); }
 .dropzone-icon { width: 26px; height: 26px; }
