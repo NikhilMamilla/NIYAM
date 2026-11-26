@@ -16,9 +16,11 @@ If PowerShell refuses to run the scripts, allow local scripts for this window fi
 
 On Linux or macOS use `./scripts/demo.sh` and `source .venv/bin/activate` instead.
 
-**Hosted alternative:** none. NIYAM is not deployed anywhere; it runs only on the juror's machine. Without
-installing anything, the committed outputs for samples A to E (HTML report, JSON, BCF) are in `submission/samples/`,
-and the screenshots are in `submission/screens/`.
+**Without installing anything:** open https://nikhilmamilla.github.io/NIYAM/ (the dashboard is at `/NIYAM/app`).
+It runs in demo mode: the 5 sample buildings show the results the real NIYAM engine produced, with the 3D view,
+the clause cards and the HTML, JSON and BCF downloads; uploading your own IFC file needs the local install above.
+The committed outputs for samples A to E are also in `submission/samples/`, and the screenshots in
+`submission/screens/`.
 
 **Without the web app:** `cd backend; .venv\Scripts\Activate.ps1; python -m app.audit.cli run ..\fixtures\samples\sample_a_mm.ifc --out ..\eval\runs\audit-demo`
 prints the per-rule table and writes `report.json`, `report.html` and `issues.bcf`.

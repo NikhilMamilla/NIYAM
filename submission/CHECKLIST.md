@@ -7,9 +7,11 @@
 | Demo video (silent) | `submission/video/niyam-demo-silent.webm` | done locally, not committed (gitignored per the repo cleanup; regenerate with `npx playwright test demo-video`, see `frontend/e2e/demo-video.spec.ts`) |
 | Demo video (MP4/H.264) | `submission/video/niyam-demo-silent.mp4` | needs the team: no `ffmpeg` on this machine; re-run `frontend/e2e/demo-video.spec.ts` on a machine with `ffmpeg` on PATH, or convert the `.webm` by hand |
 | Narration script | `submission/video/narration.md` | done |
-| Submission email | `submission/email.md` | needs the team: fill in `[REPO LINK]` and `[DEMO VIDEO LINK]`, confirm the samples zip should be attached (130 KB), then send to dbi@cdcpindia.org |
+| Submission email | `submission/email.md` | needs the team: fill in `[DEMO VIDEO LINK]`, confirm the samples zip should be attached (130 KB), then send to dbi@cdcpindia.org |
 | Sample audits zip | `submission/NIYAM_samples.zip` | done (not committed, gitignored; regenerate with `python -c "import shutil; shutil.make_archive('submission/NIYAM_samples','zip','submission','samples')"`) |
-| Repository push | `origin/main`, `origin/submission-v2` | needs the team: `gh repo view` reports the repo is PUBLIC, so this run did not push (see report below); push yourself when ready, or ask to make the repo private first if that was unintended |
+| Repository push | `origin/main` and tags | done |
+| Live demo (GitHub Pages) | https://nikhilmamilla.github.io/NIYAM/, built by `.github/workflows/deploy-pages.yml` | see open item 2 |
+| Upload API (Render) | `render.yaml`, `docs/deploy.md` | optional, prepared: five clicks in `docs/deploy.md` |
 | Deck facts (sources for every number) | `submission/deck-facts.md` | done, pre-existing |
 | Demo script (shot list) | `submission/demo-script.md` | done, pre-existing |
 | Run guide | `submission/how-to-run.md` | done, pre-existing |
@@ -23,7 +25,8 @@
    cleanup removed the recorded `.webm` from git (it stays on this machine and is gitignored; the team records
    its own, per the cleanup task's instruction). Re-run `npx playwright test demo-video` to produce a fresh one,
    or record manually following `submission/demo-script.md`.
-2. Decide whether to push `main` and the `submission-v2` tag: the GitHub repository is public, so this run left
-   it unpushed per instruction. If the organisers need the repo link, push it yourself (`git push origin main
-   --tags`) or make the repository private first if that was not intended.
+2. Live demo address: GitHub sends every `nikhilmamilla.github.io/...` address to the custom domain set on the
+   `NikhilMamilla.github.io` repository (`nikhilmamilla.me`), and that domain is now served by Vercel, which has no
+   `/NIYAM/`. Until that custom domain is removed from that repository's Pages settings (or `/NIYAM/` is routed on
+   Vercel), the live link lands on a 404. Check the link before sending the email.
 3. Optional: produce the MP4 if a reviewer's system cannot play WebM.

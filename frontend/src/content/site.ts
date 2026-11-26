@@ -62,13 +62,19 @@ export const DOC_GROUPS: { title: string; blurb: string; docs: Doc[] }[] = [
     ],
   },
   {
-    title: "Review, data and licence",
+    title: "Review and data",
     blurb: "For reviewers, and the files the tools use.",
     docs: [
       { label: "Reviewer guide", file: "REVIEWER_GUIDE.pdf", about: "How a domain expert reviews the draft rules and returns decisions." },
       { label: "Review sheet for rule reviewers", file: "review-sheet.csv", about: "Every draft rule with the sentence, the check and blank decision columns." },
       { label: "Data readiness file (IDS 1.0)", file: "niyam-data-readiness.ids", about: "Open it against your model to see what data to add before auditing." },
       { label: "A real gate rejection", file: "gate-rejection.json", about: "One candidate rule the gate refused, with the reason." },
+    ],
+  },
+  {
+    title: "Licence and sources",
+    blurb: "The project's licence and the sources behind every regulatory fact.",
+    docs: [
       { label: "Licence (MIT)", file: "LICENSE", about: "Free to use, copy and change, with the licence notice kept; three copied UI components keep their own terms." },
       { label: "Third-party notices", file: "THIRD_PARTY_NOTICES.pdf", about: "Every shipped package, font, component and data file, with its licence and source." },
       { label: "Sources for the regulatory facts", file: "sources.pdf", about: "The pages behind each date and rule on this site, with access dates." },

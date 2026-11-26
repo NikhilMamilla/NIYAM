@@ -1,5 +1,9 @@
 # NIYAM
 
+**Live:** https://nikhilmamilla.github.io/NIYAM/ (the dashboard is at `/NIYAM/app`). It runs in demo mode: the 5
+sample buildings show the results the real engine produced; to audit your own IFC file, run NIYAM locally
+([Quickstart](#quickstart)). Deployment details: [`docs/deploy.md`](docs/deploy.md).
+
 **What.** NIYAM turns sentences from Indian building bye-laws into machine checks and runs them on IFC building
 models. Its sources are the MoHUA Model Building Bye-Laws 2016 and, as a second source, the Telangana Building Rules
 2012 (G.O.Ms.No.168, original text, amendments not applied). Declared data becomes buildingSMART
@@ -147,10 +151,13 @@ Its numbers only show that the pipeline works; never quote them. For a real run 
 ## Repository layout
 
 ```
-.                       README, LICENSE, THIRD_PARTY_NOTICES.md, CITATION.cff, STATUS.md, .gitignore, .env.example
+.                       README, LICENSE, THIRD_PARTY_NOTICES.md, CITATION.cff, STATUS.md, .gitignore, .env.example,
+                        render.yaml + .dockerignore (the prepared Render API, docs/deploy.md)
+.github/workflows/      deploy-pages.yml: builds and publishes the GitHub Pages site on every push to main
 backend/                FastAPI service: audit engine, verifier gate, LLM compiler, evaluation harness
   app/                  the service's source
   tests/                pytest
+  Dockerfile            the public API image (DEPLOY_MODE=audit-only)
 docs/                   method, limits, sources, the rule review sheets and the AI second-opinion review
   examples/             small committed JSON examples linked from the docs
   readiness/            the generated data-readiness IDS
@@ -160,8 +167,9 @@ eval/                   evaluation configs and every committed run's results
   results/              pilot run, headline run 2, Telangana case study, millimetre-fix re-score
 frontend/               the React/TypeScript landing page and audit app (Vite, Three.js)
   e2e/                  Playwright tests, including the demo script and demo video recorder
-  public/               images, downloadable PDFs, the web-ifc wasm copy point
-  scripts/              build-time helpers (site-data, PDF/download sync)
+  e2e-static/           Playwright tests of the GitHub Pages build with no backend (or the live site)
+  public/               images, downloadable PDFs, the web-ifc wasm copy point; demo/: saved sample results
+  scripts/              build-time helpers (site-data, PDF/download sync, Pages build and local Pages server)
   src/                  the app's source
 fixtures/               synthetic IFC4 test buildings and expected answers
   ifc/, heldout/        dev and held-out pairs per rule

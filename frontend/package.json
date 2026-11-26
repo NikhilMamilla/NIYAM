@@ -9,6 +9,7 @@
     "dev": "vite",
     "prebuild": "node scripts/sync-downloads.mjs",
     "build": "npm run typecheck && vite build",
+    "build:pages": "node scripts/build-pages.mjs",
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "e2e": "playwright test",

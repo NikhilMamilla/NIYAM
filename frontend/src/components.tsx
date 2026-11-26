@@ -44,14 +44,15 @@ export const SAMPLES: { name: string; label: string; line: string; tags: string[
   { name: "sample_e_rooms_stairs_m", label: "Sample E", line: "Rooms and stair flights, modelled in metres.", tags: ["Rooms", "Stairs", "m"] },
 ];
 
-export function StartPanel(props: { wide?: boolean; samples: Sample[]; busy: boolean; current: string | null; onFile: (f: File) => void; onSample: (n: string) => void }) {
+export function StartPanel(props: { wide?: boolean; samples: Sample[]; busy: boolean; current: string | null; onFile: (f: File) => void; onSample: (n: string) => void; uploadOff?: string }) {
   const inputId = useId();
   const [dragging, setDragging] = useState(false);
+  const off = !!props.uploadOff;
   const onDrop = (e: DragEvent) => {
     e.preventDefault();
     setDragging(false);
     const file = e.dataTransfer.files[0];
-    if (file && !props.busy) props.onFile(file);
+    if (file && !props.busy && !off) props.onFile(file);
   };
   const available = SAMPLES.filter((s) => props.samples.some((x) => x.name === s.name));
   return (
@@ -63,14 +64,17 @@ export function StartPanel(props: { wide?: boolean; samples: Sample[]; busy: boo
           <p>Upload an IFC4 model, or try a sample.</p>
         </div>
       </header>
-      <div className={dragging ? "dropzone dragging" : "dropzone"}
+      <div className={`dropzone${dragging && !off ? " dragging" : ""}${off ? " dropzone--off" : ""}`} data-testid="dropzone"
            onDragOver={(e) => { e.preventDefault(); setDragging(true); }} onDragLeave={() => setDragging(false)} onDrop={onDrop}>
         <span className="dropzone-badge" aria-hidden="true"><IconUpload className="dropzone-icon" /></span>
         <p className="dropzone-title">Drop an <Term k="IFC">IFC4</Term> file here</p>
-        <Button as="label" htmlFor={inputId} size="sm" primary>Choose a file</Button>
-        <input id={inputId} className="visually-hidden" type="file" accept=".ifc" disabled={props.busy}
+        <Button as="label" htmlFor={inputId} size="sm" primary disabled={off}>Choose a file</Button>
+        <input id={inputId} className="visually-hidden" type="file" accept=".ifc" disabled={props.busy || off}
+               aria-describedby={off ? `${inputId}-off` : undefined}
                onChange={(e) => { const f = e.target.files?.[0]; if (f) props.onFile(f); e.target.value = ""; }} />
-        <p className="hint">Audited on the NIYAM server, drawn in 3D in your browser.</p>
+        {off
+          ? <p className="hint" id={`${inputId}-off`}>{props.uploadOff}</p>
+          : <p className="hint">Audited on the NIYAM server, drawn in 3D in your browser.</p>}
       </div>
       {available.length > 0 && (
         <div className="samples">

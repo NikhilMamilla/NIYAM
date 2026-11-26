@@ -67,9 +67,11 @@ geometric items); after it, no item changes outcome, because on the fixtures the
    animation on the demo-step buttons (sheet A-09, unrelated to this stage); not investigated further.
 4. **BCF viewpoints** carry component selections only (no camera, no snapshot); the files pass the BCF 2.1 schemas
    but were not opened in a third-party BCF viewer.
-5. **No hosted deployment.** NIYAM runs only locally (`submission/how-to-run.md`). `scripts/demo.ps1` now creates
-   `backend\.venv` itself with Python 3.11 or 3.12 if it is missing (never a newer default `python`); confirmed in a
-   clean clone on a machine whose default `python` is 3.13.
+5. **Hosted: demo mode only.** GitHub Pages publishes the site (`docs/deploy.md`); with no backend it shows the
+   engine's saved results for the 5 samples and cannot audit an uploaded file. The Render API is prepared
+   (`render.yaml`) but not deployed. Locally, `scripts/demo.ps1` creates `backend\.venv` itself with Python 3.11 or
+   3.12 if it is missing (never a newer default `python`); confirmed in a clean clone on a machine whose default
+   `python` is 3.13.
 6. **Run backend pytest and Playwright one after the other**: run at the same time on this machine they produced
    failures that passed when re-run alone (cause not investigated).
 7. **Coverage.** The Stage 1 target of 40 to 60 clauses is not met (25 MBBL units; `docs/spec-backlog.md`).
@@ -98,14 +100,14 @@ python ..\scripts\rescore_after_mm_fix.py compare        # refuses unless the co
 `score before` needs the code before the fix (commit `53b0cd6`, for example in a separate `git worktree`); its
 output is committed as `eval/results/rescore-after-mm-fix/before.json`.
 
-## Final test run (25 November 2026, branch final-lock, one suite after another)
+## Final test run (26 November 2026, branch deploy, one suite after another)
 
 | Check | Result |
 |---|---|
-| Backend | pytest: 534 passed |
-| Frontend unit | vitest: 41 passed |
-| Types and build | tsc clean; `npm run build` built |
-| End-to-end | Playwright: 28 passed (workers=1) |
+| Backend | pytest: 545 passed (534 before the deployment work, plus the demo-data drift test and the public API mode) |
+| Frontend unit | vitest: 46 passed |
+| Types and build | tsc clean; `npm run build` and `npm run build:pages` built |
+| End-to-end | Playwright: 29 passed (workers=1; 28 before plus the demo-video spec); GitHub Pages build with no backend (`playwright.static.config.ts`): 8 passed |
 | check_public_ready | no secrets in the tree or the full history; 0 personal-path and 0 file warnings |
 | check_numbers --tests | 1,067 numbers checked in 30 files, 0 mismatches |
 | check_images | 30 referenced images, 29 published files, 0 problems |

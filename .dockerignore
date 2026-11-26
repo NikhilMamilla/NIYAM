@@ -1,0 +1,8 @@
+# The API image (backend/Dockerfile) needs only these; everything else stays out of the build context.
+*
+!backend/requirements.txt
+!backend/pyproject.toml
+!backend/app/
+!rules/rulepack/
+!fixtures/samples/
+**/__pycache__

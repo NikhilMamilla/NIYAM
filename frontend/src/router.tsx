@@ -4,8 +4,15 @@ import { useEffect, useState, type AnchorHTMLAttributes, type MouseEvent } from 
 
 export type Route = { page: "landing" } | { page: "app"; sample: string | null } | { page: "not-found"; path: string };
 
+// The site's base path: "" locally, "/NIYAM" on GitHub Pages. Routes are written without it.
+const BASE = import.meta.env.BASE_URL.replace(/\/+$/, "");
+export const href = (to: string) => BASE + to;
+/** A file in public/, under the base path. */
+export const asset = (path: string) => BASE + path;
+
 /** Parse a location into a route (pure, unit-tested). */
-export function routeOf(pathname: string, search = ""): Route {
+export function routeOf(pathname: string, search = "", base = BASE): Route {
+  if (base && (pathname === base || pathname.startsWith(`${base}/`))) pathname = pathname.slice(base.length);
   const path = pathname.replace(/\/+$/, "") || "/";
   if (path === "/") return { page: "landing" };
   if (path === "/app") {
@@ -18,9 +25,10 @@ export function routeOf(pathname: string, search = ""): Route {
 const listeners = new Set<() => void>();
 
 export function navigate(to: string, opts: { replace?: boolean } = {}) {
-  if (to === window.location.pathname + window.location.search) return;
-  if (opts.replace) window.history.replaceState(null, "", to);
-  else window.history.pushState(null, "", to);
+  const url = href(to);
+  if (url === window.location.pathname + window.location.search) return;
+  if (opts.replace) window.history.replaceState(null, "", url);
+  else window.history.pushState(null, "", url);
   for (const l of listeners) l();
   if (!to.includes("#")) window.scrollTo({ top: 0 });
 }
@@ -48,5 +56,5 @@ export function Link({ to, onClick, ...rest }: AnchorHTMLAttributes<HTMLAnchorEl
     e.preventDefault();
     navigate(to);
   };
-  return <a href={to} onClick={handle} {...rest} />;
+  return <a href={href(to)} onClick={handle} {...rest} />;
 }

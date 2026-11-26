@@ -1,0 +1,19 @@
+# Render Blueprint for the NIYAM API (prepared, not deployed): docs/deploy.md has the steps.
+# Public mode: only health, samples, rulepack, audit and its downloads; uploads capped at 20 MB, IFC only,
+# rate-limited per IP; nothing is kept on disk. No LLM, no API keys.
+services:
+  - type: web
+    name: niyam-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: DEPLOY_MODE
+        value: audit-only
+      - key: ALLOWED_ORIGINS
+        value: https://nikhilmamilla.github.io
+      - key: MAX_UPLOAD_MB
+        value: "20"

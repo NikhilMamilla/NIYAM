@@ -2,8 +2,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import readinessIds from "../../docs/readiness/niyam-data-readiness.ids?raw";
 import {
-  ApiError, auditSample, auditUpload, bcfUrl, fetchSampleBytes, getRulepack, listSamples, reportUrl,
-  type AuditResult, type Sample,
+  ApiError, DEMO_MESSAGE, apiMode, auditSample, auditUpload, bcfUrl, fetchSampleBytes, getRulepack, listSamples, reportUrl,
+  type AuditResult, type Mode, type Sample,
 } from "./api";
 import { DetailPanel, EmptyState, Legend, RuleList, SAMPLES, StartPanel, SummaryStrip, VerdictBadge } from "./components";
 import Button from "./Button";
@@ -54,11 +54,13 @@ export default function App({ initialSample = null }: { initialSample?: string |
   const maps = useRef({ localByExpress: new Map<number, number>(), expressByLocal: new Map<number, number>() });
   const runToken = useRef(0);
   const autoStarted = useRef(false);
+  const [mode, setMode] = useState<Mode | null>(null);
 
   const summaries = useMemo(() => (audit ? elementsByExpressId(audit) : new Map()), [audit]);
 
   useEffect(() => {
     document.title = "NIYAM app: check a building model";
+    void apiMode().then(setMode);
     listSamples().then(setSamples).catch(() => setSamples([]));
     getRulepack().then((p) => setDraftRules(p.rules.some((r) => !r.human_reviewed))).catch(() => setDraftRules(true));
   }, []);
@@ -223,7 +225,7 @@ export default function App({ initialSample = null }: { initialSample?: string |
   const status = (
     <>
       <div aria-live="polite" className="live">
-            {phase === "working" && <p className="progress"><span className="spinner" aria-hidden="true" />Auditing the model on the server…</p>}
+            {phase === "working" && <p className="progress"><span className="spinner" aria-hidden="true" />{mode === "static" ? "Loading the engine's saved result…" : "Auditing the model on the server…"}</p>}
           </div>
           {error && (
             <div className="banner error" role="alert">
@@ -263,6 +265,11 @@ export default function App({ initialSample = null }: { initialSample?: string |
           <Button as={Link} to="/" size="sm" radius={12}>About <span className="about-niyam">NIYAM</span></Button>
         </div>
       </header>
+      {mode === "static" && (
+        <p className="demo-banner" role="note" data-testid="demo-banner">
+          {DEMO_MESSAGE.replace("How to run).", "")}<a href="https://github.com/NikhilMamilla/NIYAM#quickstart" target="_blank" rel="noopener noreferrer">How to run</a>).
+        </p>
+      )}
       <main className={`dash-main${view === "empty" ? " dash-main--start" : ""}`} id="main">
         {view !== "empty" && <div className="dash-status">{status}</div>}
         {audit && file && (
@@ -348,7 +355,8 @@ export default function App({ initialSample = null }: { initialSample?: string |
             <div className="start-screen-inner">
               {status}
               <EmptyState onSample={onSample} />
-              <StartPanel wide samples={samples} busy={phase === "working"} current={file?.sample ?? null} onFile={onFile} onSample={onSample} />
+              <StartPanel wide samples={samples} busy={phase === "working"} current={file?.sample ?? null} onFile={onFile} onSample={onSample}
+                          uploadOff={mode === "static" ? "Uploads are off in this demo: the 5 sample results come from the real NIYAM engine. To audit your own IFC file, run NIYAM locally (see How to run)." : undefined} />
             </div>
           </div>
         )}
